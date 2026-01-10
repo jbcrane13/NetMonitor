@@ -26,6 +26,7 @@
 	2510D9B32F13033000C8C91B /* TargetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B42F13033000C8C91B /* TargetsView.swift */; };
 	2510D9B52F13034000C8C91B /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B62F13034000C8C91B /* DevicesView.swift */; };
 	2510D9B72F13035000C8C91B /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B82F13035000C8C91B /* ToolsView.swift */; };
+	2510D9B92F13036000C8C91B /* PreviewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9BA2F13036000C8C91B /* PreviewContainer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		2510D9B42F13033000C8C91B /* TargetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetsView.swift; sourceTree = "<group>"; };
 		2510D9B62F13034000C8C91B /* DevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesView.swift; sourceTree = "<group>"; };
 		2510D9B82F13035000C8C91B /* ToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolsView.swift; sourceTree = "<group>"; };
+		2510D9BA2F13036000C8C91B /* PreviewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewContainer.swift; sourceTree = "<group>"; };
 		2A000002000000000000000A /* NetMonitorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetMonitorApp.swift; sourceTree = "<group>"; };
 		2A000004000000000000000A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2A000006000000000000000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 		2A00001F000000000000000A /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
+				2510D9BA2F13036000C8C91B /* PreviewContainer.swift */,
 				2A000008000000000000000A /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
@@ -325,6 +328,7 @@
 				2510D9B32F13033000C8C91B /* TargetsView.swift in Sources */,
 				2510D9B52F13034000C8C91B /* DevicesView.swift in Sources */,
 				2510D9B72F13035000C8C91B /* ToolsView.swift in Sources */,
+				2510D9B92F13036000C8C91B /* PreviewContainer.swift in Sources */,
 				2A000001000000000000000A /* NetMonitorApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

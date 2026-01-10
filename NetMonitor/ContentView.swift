@@ -35,10 +35,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: [
-            NetworkTarget.self,
-            TargetMeasurement.self,
-            LocalDevice.self,
-            MonitoringSession.self
-        ], inMemory: true)
+        .modelContainer(PreviewContainer().container)
 }
