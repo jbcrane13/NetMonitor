@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NetMonitor is a professional network monitoring application for macOS that provides real-time network diagnostics, target monitoring, local device discovery, and network utilities. It communicates with an iOS companion app and serves as the primary monitoring hub.
 
-**Target Platform**: macOS 14.0+ (Sonoma and later)
+**Target Platform**: macOS 15.0+ (Sequoia and later)
 **Architecture**: MVVM with SwiftUI
 **Language**: Swift with async/await and Actors
 
