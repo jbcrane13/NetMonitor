@@ -8,17 +8,37 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var selectedSection: Section? = .dashboard
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationSplitView {
+            SidebarView(selection: $selectedSection)
+        } detail: {
+            switch selectedSection {
+            case .dashboard:
+                DashboardView()
+            case .targets:
+                TargetsView()
+            case .devices:
+                DevicesView()
+            case .tools:
+                ToolsView()
+            case .settings:
+                SettingsView()
+            case nil:
+                Text("Select a section")
+            }
         }
-        .padding()
+        .frame(minWidth: 900, minHeight: 600)
     }
 }
 
 #Preview {
     ContentView()
+        .modelContainer(for: [
+            NetworkTarget.self,
+            TargetMeasurement.self,
+            LocalDevice.self,
+            MonitoringSession.self
+        ], inMemory: true)
 }
