@@ -19,6 +19,7 @@
 		2A000009000000000000000A /* NetMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00000A000000000000000A /* NetMonitorTests.swift */; };
 		2A00000B000000000000000A /* NetMonitorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00000C000000000000000A /* NetMonitorUITests.swift */; };
 		2A00000D000000000000000A /* NetMonitorUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00000E000000000000000A /* NetMonitorUITestsLaunchTests.swift */; };
+	2510D9AB2F13025400C8C91B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9AA2F13025400C8C91B /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 		2510D9A32F13024300C8C91B /* MonitoringSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonitoringSession.swift; path = NetMonitor/Models/MonitoringSession.swift; sourceTree = "<group>"; };
 		2510D9A42F13024300C8C91B /* NetworkTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkTarget.swift; path = NetMonitor/Models/NetworkTarget.swift; sourceTree = "<group>"; };
 		2510D9A52F13024300C8C91B /* TargetMeasurement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TargetMeasurement.swift; path = NetMonitor/Models/TargetMeasurement.swift; sourceTree = "<group>"; };
+		2510D9AA2F13025400C8C91B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2A000002000000000000000A /* NetMonitorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetMonitorApp.swift; sourceTree = "<group>"; };
 		2A000004000000000000000A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2A000006000000000000000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			children = (
 				2A000002000000000000000A /* NetMonitorApp.swift */,
 				2A000004000000000000000A /* ContentView.swift */,
+				2510D9AC2F13025400C8C91B /* Views */,
 				2A000006000000000000000A /* Assets.xcassets */,
 				2A000014000000000000000A /* NetMonitor.entitlements */,
 				2A00001F000000000000000A /* Preview Content */,
@@ -141,6 +144,14 @@
 				2A000008000000000000000A /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		2510D9AC2F13025400C8C91B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2510D9AA2F13025400C8C91B /* SettingsView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -289,6 +300,7 @@
 				2510D9A72F13024300C8C91B /* TargetMeasurement.swift in Sources */,
 				2510D9A82F13024300C8C91B /* NetworkTarget.swift in Sources */,
 				2510D9A92F13024300C8C91B /* LocalDevice.swift in Sources */,
+				2510D9AB2F13025400C8C91B /* SettingsView.swift in Sources */,
 				2A000001000000000000000A /* NetMonitorApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
