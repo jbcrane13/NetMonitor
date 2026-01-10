@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2510D9A12F12D19400C8C91B /* NetMonitorShared in Frameworks */ = {isa = PBXBuildFile; productRef = 2510D9A02F12D19400C8C91B /* NetMonitorShared */; };
+		2510D9A62F13024300C8C91B /* MonitoringSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A32F13024300C8C91B /* MonitoringSession.swift */; };
+		2510D9A72F13024300C8C91B /* TargetMeasurement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A52F13024300C8C91B /* TargetMeasurement.swift */; };
+		2510D9A82F13024300C8C91B /* NetworkTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A42F13024300C8C91B /* NetworkTarget.swift */; };
+		2510D9A92F13024300C8C91B /* LocalDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A22F13024300C8C91B /* LocalDevice.swift */; };
 		2A000001000000000000000A /* NetMonitorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000002000000000000000A /* NetMonitorApp.swift */; };
 		2A000003000000000000000A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000004000000000000000A /* ContentView.swift */; };
 		2A000005000000000000000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A000006000000000000000A /* Assets.xcassets */; };
@@ -34,17 +39,21 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2A000013000000000000000A /* NetMonitor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetMonitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2510D9A22F13024300C8C91B /* LocalDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalDevice.swift; path = NetMonitor/Models/LocalDevice.swift; sourceTree = "<group>"; };
+		2510D9A32F13024300C8C91B /* MonitoringSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonitoringSession.swift; path = NetMonitor/Models/MonitoringSession.swift; sourceTree = "<group>"; };
+		2510D9A42F13024300C8C91B /* NetworkTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkTarget.swift; path = NetMonitor/Models/NetworkTarget.swift; sourceTree = "<group>"; };
+		2510D9A52F13024300C8C91B /* TargetMeasurement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TargetMeasurement.swift; path = NetMonitor/Models/TargetMeasurement.swift; sourceTree = "<group>"; };
 		2A000002000000000000000A /* NetMonitorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetMonitorApp.swift; sourceTree = "<group>"; };
 		2A000004000000000000000A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2A000006000000000000000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2A000008000000000000000A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		2A000014000000000000000A /* NetMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetMonitor.entitlements; sourceTree = "<group>"; };
-		2A000015000000000000000A /* NetMonitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetMonitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A00000A000000000000000A /* NetMonitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetMonitorTests.swift; sourceTree = "<group>"; };
-		2A000016000000000000000A /* NetMonitorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetMonitorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A00000C000000000000000A /* NetMonitorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetMonitorUITests.swift; sourceTree = "<group>"; };
 		2A00000E000000000000000A /* NetMonitorUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetMonitorUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		2A000013000000000000000A /* NetMonitor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetMonitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A000014000000000000000A /* NetMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetMonitor.entitlements; sourceTree = "<group>"; };
+		2A000015000000000000000A /* NetMonitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetMonitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A000016000000000000000A /* NetMonitorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetMonitorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2510D9A12F12D19400C8C91B /* NetMonitorShared in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +85,10 @@
 		2A00001A000000000000000A = {
 			isa = PBXGroup;
 			children = (
+				2510D9A22F13024300C8C91B /* LocalDevice.swift */,
+				2510D9A32F13024300C8C91B /* MonitoringSession.swift */,
+				2510D9A42F13024300C8C91B /* NetworkTarget.swift */,
+				2510D9A52F13024300C8C91B /* TargetMeasurement.swift */,
 				2A00001B000000000000000A /* NetMonitor */,
 				2A00001C000000000000000A /* NetMonitorTests */,
 				2A00001D000000000000000A /* NetMonitorUITests */,
@@ -92,14 +106,6 @@
 				2A00001F000000000000000A /* Preview Content */,
 			);
 			path = NetMonitor;
-			sourceTree = "<group>";
-		};
-		2A00001F000000000000000A /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				2A000008000000000000000A /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		2A00001C000000000000000A /* NetMonitorTests */ = {
@@ -129,6 +135,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		2A00001F000000000000000A /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				2A000008000000000000000A /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -146,6 +160,7 @@
 			);
 			name = NetMonitor;
 			packageProductDependencies = (
+				2510D9A02F12D19400C8C91B /* NetMonitorShared */,
 			);
 			productName = NetMonitor;
 			productReference = 2A000013000000000000000A /* NetMonitor.app */;
@@ -223,6 +238,9 @@
 			);
 			mainGroup = 2A00001A000000000000000A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2510D99F2F12D19400C8C91B /* XCLocalSwiftPackageReference "NetMonitorShared" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2A00001E000000000000000A /* Products */;
 			projectDirPath = "";
@@ -267,6 +285,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A000003000000000000000A /* ContentView.swift in Sources */,
+				2510D9A62F13024300C8C91B /* MonitoringSession.swift in Sources */,
+				2510D9A72F13024300C8C91B /* TargetMeasurement.swift in Sources */,
+				2510D9A82F13024300C8C91B /* NetworkTarget.swift in Sources */,
+				2510D9A92F13024300C8C91B /* LocalDevice.swift in Sources */,
 				2A000001000000000000000A /* NetMonitorApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -549,15 +571,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2A00002D000000000000000A /* Build configuration list for PBXProject "NetMonitor" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2A00002E000000000000000A /* Debug */,
-				2A00002F000000000000000A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		2A000020000000000000000A /* Build configuration list for PBXNativeTarget "NetMonitor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -585,7 +598,30 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		2A00002D000000000000000A /* Build configuration list for PBXProject "NetMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2A00002E000000000000000A /* Debug */,
+				2A00002F000000000000000A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		2510D99F2F12D19400C8C91B /* XCLocalSwiftPackageReference "NetMonitorShared" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = NetMonitorShared;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2510D9A02F12D19400C8C91B /* NetMonitorShared */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetMonitorShared;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2A000010000000000000000A /* Project object */;
 }
