@@ -210,3 +210,74 @@ Use `NSViewRepresentable` for advanced features not available in SwiftUI (e.g., 
 7. **Network Tools**: Add individual tools one by one
 8. **Companion Communication**: Implement Bonjour service and JSON protocol
 9. **Settings & Polish**: Complete settings, notifications, theme support
+
+## Phase 2: Core Monitoring Engine (COMPLETE)
+
+Phase 2 adds real-time network monitoring capabilities.
+
+### Monitoring Services
+
+**NetworkMonitorService Protocol:**
+- Actor-based protocol for thread-safe monitoring
+- All implementations must be actors
+- Returns TargetMeasurement with latency and reachability
+
+**HTTPMonitorService:**
+- Uses URLSession for HTTP/HTTPS checks
+- HEAD requests for minimal data transfer
+- Respects timeout settings
+- Maps HTTP status codes (200-399 = reachable)
+
+**ICMPMonitorService:**
+- ICMP Echo Request/Reply (ping)
+- CFSocket wrapper for low-level access
+- Sequence number tracking
+- Note: Full CFSocket implementation pending
+
+### MonitoringSession
+
+**@MainActor @Observable State Holder:**
+```swift
+@MainActor
+@Observable
+final class MonitoringSession {
+    var isMonitoring: Bool
+    var latestResults: [UUID: TargetMeasurement]
+}
+```
+
+**Key Features:**
+- Coordinates monitoring of all enabled targets
+- Routes checks to appropriate service by protocol
+- Publishes results to UI via @Observable
+- Manages task lifecycle (start/stop/cancel)
+- Background SwiftData saves for persistence
+
+### Dashboard
+
+**Live Monitoring UI:**
+- Real-time target status cards
+- Start/Stop monitoring button
+- Latency display per target
+- Status indicators (green/red/gray)
+- Grid layout for multiple targets
+
+**Statistics:**
+- Average, min, max latency
+- Uptime percentage
+- Line charts with recent measurements
+- @Query with predicates for efficient data access
+
+### Targets Management
+
+**CRUD Operations:**
+- Add new targets via sheet
+- Edit target settings
+- Enable/disable individual targets
+- Delete targets
+
+**Target Configuration:**
+- Name, host, optional port
+- Protocol selection (HTTP/HTTPS/ICMP/TCP)
+- Check interval (1-60 seconds)
+- Timeout (1-30 seconds)
