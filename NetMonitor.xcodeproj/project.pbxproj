@@ -26,6 +26,7 @@
 	2510D9B32F13033000C8C91B /* TargetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B42F13033000C8C91B /* TargetsView.swift */; };
 	2510D9B52F13034000C8C91B /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B62F13034000C8C91B /* DevicesView.swift */; };
 	2510D9B72F13035000C8C91B /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B82F13035000C8C91B /* ToolsView.swift */; };
+		A6661F2C5FBB49F1B1712FC1 /* TargetStatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DE539B230545DD8B5355D0 /* TargetStatisticsView.swift */; };
 	2510D9B92F13036000C8C91B /* PreviewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9BA2F13036000C8C91B /* PreviewContainer.swift */; };
 		BD9FA0B34C224F81A418BE80 /* NetworkMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A469B7BDEB6E401EBA080FBB /* NetworkMonitorService.swift */; };
 		063CF5C1823A4BAAA96F8B7B /* NetworkMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653444EE323D4714923EB389 /* NetworkMonitorServiceTests.swift */; };
@@ -66,6 +67,7 @@
 		2510D9B42F13033000C8C91B /* TargetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetsView.swift; sourceTree = "<group>"; };
 		2510D9B62F13034000C8C91B /* DevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesView.swift; sourceTree = "<group>"; };
 		2510D9B82F13035000C8C91B /* ToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolsView.swift; sourceTree = "<group>"; };
+		97DE539B230545DD8B5355D0 /* TargetStatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetStatisticsView.swift; sourceTree = "<group>"; };
 		2510D9BA2F13036000C8C91B /* PreviewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewContainer.swift; sourceTree = "<group>"; };
 		2A000002000000000000000A /* NetMonitorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetMonitorApp.swift; sourceTree = "<group>"; };
 		2A000004000000000000000A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 				2510D9B42F13033000C8C91B /* TargetsView.swift */,
 				2510D9B62F13034000C8C91B /* DevicesView.swift */,
 				2510D9B82F13035000C8C91B /* ToolsView.swift */,
+				97DE539B230545DD8B5355D0 /* TargetStatisticsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -368,6 +371,7 @@
 								2510D9B32F13033000C8C91B /* TargetsView.swift in Sources */,
 								2510D9B52F13034000C8C91B /* DevicesView.swift in Sources */,
 								2510D9B72F13035000C8C91B /* ToolsView.swift in Sources */,
+				A6661F2C5FBB49F1B1712FC1 /* TargetStatisticsView.swift in Sources */,
 								2510D9B92F13036000C8C91B /* PreviewContainer.swift in Sources */,
 								2A000001000000000000000A /* NetMonitorApp.swift in Sources */,
 								BD9FA0B34C224F81A418BE80 /* NetworkMonitorService.swift in Sources */,

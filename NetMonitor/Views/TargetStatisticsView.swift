@@ -1,0 +1,152 @@
+import SwiftUI
+import SwiftData
+import Charts
+
+struct TargetStatisticsView: View {
+    let target: NetworkTarget
+
+    @Query private var measurements: [TargetMeasurement]
+
+    init(target: NetworkTarget) {
+        self.target = target
+
+        // Query last 50 measurements for this target
+        let targetID = target.id
+        let predicate = #Predicate<TargetMeasurement> { measurement in
+            measurement.target?.id == targetID
+        }
+
+        _measurements = Query(
+            filter: predicate,
+            sort: [SortDescriptor(\TargetMeasurement.timestamp, order: .reverse)],
+            animation: .default
+        )
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Recent Measurements")
+                .font(.headline)
+
+            if measurements.isEmpty {
+                Text("No measurements yet")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                // Statistics
+                HStack(spacing: 32) {
+                    StatisticItem(
+                        title: "Avg Latency",
+                        value: averageLatency,
+                        unit: "ms"
+                    )
+
+                    StatisticItem(
+                        title: "Min Latency",
+                        value: minLatency,
+                        unit: "ms"
+                    )
+
+                    StatisticItem(
+                        title: "Max Latency",
+                        value: maxLatency,
+                        unit: "ms"
+                    )
+
+                    StatisticItem(
+                        title: "Uptime",
+                        value: uptime,
+                        unit: "%"
+                    )
+                }
+
+                // Chart
+                if #available(macOS 13.0, *) {
+                    Chart {
+                        ForEach(measurements.prefix(20).reversed()) { measurement in
+                            if let latency = measurement.latency {
+                                LineMark(
+                                    x: .value("Time", measurement.timestamp),
+                                    y: .value("Latency", latency)
+                                )
+                                .foregroundStyle(.cyan)
+                            }
+                        }
+                    }
+                    .frame(height: 150)
+                }
+            }
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .cornerRadius(12)
+    }
+
+    // MARK: - Statistics
+
+    private var averageLatency: String {
+        let latencies = measurements.compactMap { $0.latency }
+        guard !latencies.isEmpty else { return "—" }
+        let avg = latencies.reduce(0, +) / Double(latencies.count)
+        return String(format: "%.0f", avg)
+    }
+
+    private var minLatency: String {
+        guard let min = measurements.compactMap({ $0.latency }).min() else {
+            return "—"
+        }
+        return String(format: "%.0f", min)
+    }
+
+    private var maxLatency: String {
+        guard let max = measurements.compactMap({ $0.latency }).max() else {
+            return "—"
+        }
+        return String(format: "%.0f", max)
+    }
+
+    private var uptime: String {
+        guard !measurements.isEmpty else { return "—" }
+        let reachable = measurements.filter { $0.isReachable }.count
+        let percentage = (Double(reachable) / Double(measurements.count)) * 100
+        return String(format: "%.1f", percentage)
+    }
+}
+
+struct StatisticItem: View {
+    let title: String
+    let value: String
+    let unit: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            HStack(alignment: .firstTextBaseline, spacing: 2) {
+                Text(value)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+
+                Text(unit)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
+#Preview {
+    let container = PreviewContainer().container
+    let target = NetworkTarget(
+        name: "Test",
+        host: "1.1.1.1",
+        targetProtocol: .icmp
+    )
+    container.mainContext.insert(target)
+
+    return TargetStatisticsView(target: target)
+        .modelContainer(container)
+        .frame(width: 600)
+}
