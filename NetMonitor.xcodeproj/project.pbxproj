@@ -34,6 +34,7 @@
 		797B8A019436F78CCC11BFA9 /* ICMPMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD048F216895C502521CE659 /* ICMPMonitorService.swift */; };
 	469702AB229FA4BA93AF5983 /* MonitoringSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE7F7F545EA38B3B8F9DE02 /* MonitoringSession.swift */; };
 	DF61159D6D01427DAA18BFCE /* HTTPMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719663BC734C4A16BC0AB480 /* HTTPMonitorServiceTests.swift */; };
+		EAD61DA40AAA0D4676EA0906 /* AddTargetSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF0D348F4FB6B490148030A /* AddTargetSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,7 @@
 		BD048F216895C502521CE659 /* ICMPMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ICMPMonitorService.swift; path = NetMonitor/Services/ICMPMonitorService.swift; sourceTree = "<group>"; };
 	1FE7F7F545EA38B3B8F9DE02 /* MonitoringSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NetMonitor/Services/MonitoringSession.swift"; sourceTree = "<group>"; };
 	719663BC734C4A16BC0AB480 /* HTTPMonitorServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTTPMonitorServiceTests.swift; path = NetMonitorTests/Services/HTTPMonitorServiceTests.swift; sourceTree = "<group>"; };
+		8AF0D348F4FB6B490148030A /* AddTargetSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTargetSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,7 +146,7 @@
 		2A00001C000000000000000A /* NetMonitorTests */ = {
 			isa = PBXGroup;
 			children = (
-				2A00000A000000000000000A /* NetMonitorTests.swift */,
+2A00000A000000000000000A /* NetMonitorTests.swift */,
 			);
 			path = NetMonitorTests;
 			sourceTree = "<group>";
@@ -183,6 +185,7 @@
 				2510D9AA2F13025400C8C91B /* SettingsView.swift */,
 				2510D9B02F13031000C8C91B /* SidebarView.swift */,
 				2510D9B22F13032000C8C91B /* DashboardView.swift */,
+				8AF0D348F4FB6B490148030A /* AddTargetSheet.swift */,
 				2510D9B42F13033000C8C91B /* TargetsView.swift */,
 				2510D9B62F13034000C8C91B /* DevicesView.swift */,
 				2510D9B82F13035000C8C91B /* ToolsView.swift */,
@@ -353,24 +356,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A000003000000000000000A /* ContentView.swift in Sources */,
-				2510D9A62F13024300C8C91B /* SessionRecord.swift in Sources */,
-				2510D9A72F13024300C8C91B /* TargetMeasurement.swift in Sources */,
-				2510D9A82F13024300C8C91B /* NetworkTarget.swift in Sources */,
-				2510D9A92F13024300C8C91B /* LocalDevice.swift in Sources */,
-				2510D9AB2F13025400C8C91B /* SettingsView.swift in Sources */,
-				2510D9AD2F13030000C8C91B /* Section.swift in Sources */,
-				2510D9AF2F13031000C8C91B /* SidebarView.swift in Sources */,
-				2510D9B12F13032000C8C91B /* DashboardView.swift in Sources */,
-				2510D9B32F13033000C8C91B /* TargetsView.swift in Sources */,
-				2510D9B52F13034000C8C91B /* DevicesView.swift in Sources */,
-				2510D9B72F13035000C8C91B /* ToolsView.swift in Sources */,
-				2510D9B92F13036000C8C91B /* PreviewContainer.swift in Sources */,
-				2A000001000000000000000A /* NetMonitorApp.swift in Sources */,
-				BD9FA0B34C224F81A418BE80 /* NetworkMonitorService.swift in Sources */,
-				89E04559593A462CAAA86ACE /* HTTPMonitorService.swift in Sources */,
-				469702AB229FA4BA93AF5983 /* MonitoringSession.swift in Sources */,
-				EA0BF39708E4C575FEB755C7 /* ICMPSocket.swift in Sources */,
-				797B8A019436F78CCC11BFA9 /* ICMPMonitorService.swift in Sources */,
+								2510D9A62F13024300C8C91B /* SessionRecord.swift in Sources */,
+								2510D9A72F13024300C8C91B /* TargetMeasurement.swift in Sources */,
+								2510D9A82F13024300C8C91B /* NetworkTarget.swift in Sources */,
+								2510D9A92F13024300C8C91B /* LocalDevice.swift in Sources */,
+								2510D9AB2F13025400C8C91B /* SettingsView.swift in Sources */,
+								2510D9AD2F13030000C8C91B /* Section.swift in Sources */,
+								2510D9AF2F13031000C8C91B /* SidebarView.swift in Sources */,
+				EAD61DA40AAA0D4676EA0906 /* AddTargetSheet.swift in Sources */,
+								2510D9B12F13032000C8C91B /* DashboardView.swift in Sources */,
+								2510D9B32F13033000C8C91B /* TargetsView.swift in Sources */,
+								2510D9B52F13034000C8C91B /* DevicesView.swift in Sources */,
+								2510D9B72F13035000C8C91B /* ToolsView.swift in Sources */,
+								2510D9B92F13036000C8C91B /* PreviewContainer.swift in Sources */,
+								2A000001000000000000000A /* NetMonitorApp.swift in Sources */,
+								BD9FA0B34C224F81A418BE80 /* NetworkMonitorService.swift in Sources */,
+								89E04559593A462CAAA86ACE /* HTTPMonitorService.swift in Sources */,
+								469702AB229FA4BA93AF5983 /* MonitoringSession.swift in Sources */,
+								EA0BF39708E4C575FEB755C7 /* ICMPSocket.swift in Sources */,
+								797B8A019436F78CCC11BFA9 /* ICMPMonitorService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
