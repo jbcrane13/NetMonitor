@@ -138,16 +138,8 @@ final class MonitoringSession {
     }
 
     private func saveMeasurement(_ measurement: TargetMeasurement, for target: NetworkTarget) async {
-        // Create background context for saving
-        await Task.detached { [modelContext] in
-            // Note: This needs proper ModelContext handling for background saves
-            // For now, we'll save on main context
-            await MainActor.run {
-                // Associate measurement with target
-                target.measurements.append(measurement)
-
-                try? modelContext.save()
-            }
-        }.value
+        // Save on main context - optimization for background context can be added later
+        target.measurements.append(measurement)
+        try? modelContext.save()
     }
 }
