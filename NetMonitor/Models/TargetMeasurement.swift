@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class TargetMeasurement {
+final class TargetMeasurement: @unchecked Sendable {
     var id: UUID
     var timestamp: Date
     var latency: Double?

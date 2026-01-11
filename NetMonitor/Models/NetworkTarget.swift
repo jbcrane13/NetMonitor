@@ -3,7 +3,7 @@ import SwiftData
 import NetMonitorShared
 
 @Model
-final class NetworkTarget {
+final class NetworkTarget: @unchecked Sendable {
     var id: UUID
     var name: String
     var host: String
