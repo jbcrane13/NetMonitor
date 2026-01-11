@@ -44,3 +44,18 @@ public enum DeviceType: String, Codable, Sendable, CaseIterable {
         }
     }
 }
+
+// MARK: - TargetProtocol Extension
+
+extension TargetProtocol {
+    public var iconName: String {
+        switch self {
+        case .http, .https:
+            return "network"
+        case .icmp:
+            return "waveform.path.ecg"
+        case .tcp:
+            return "arrow.left.arrow.right"
+        }
+    }
+}

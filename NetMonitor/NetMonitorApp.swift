@@ -11,7 +11,7 @@ struct NetMonitorApp: App {
             NetworkTarget.self,
             TargetMeasurement.self,
             LocalDevice.self,
-            MonitoringSession.self
+            SessionRecord.self
         ])
 
         Settings {

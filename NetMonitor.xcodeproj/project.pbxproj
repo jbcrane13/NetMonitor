@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2510D9A12F12D19400C8C91B /* NetMonitorShared in Frameworks */ = {isa = PBXBuildFile; productRef = 2510D9A02F12D19400C8C91B /* NetMonitorShared */; };
-		2510D9A62F13024300C8C91B /* MonitoringSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A32F13024300C8C91B /* MonitoringSession.swift */; };
+		2510D9A62F13024300C8C91B /* SessionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A32F13024300C8C91B /* SessionRecord.swift */; };
 		2510D9A72F13024300C8C91B /* TargetMeasurement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A52F13024300C8C91B /* TargetMeasurement.swift */; };
 		2510D9A82F13024300C8C91B /* NetworkTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A42F13024300C8C91B /* NetworkTarget.swift */; };
 		2510D9A92F13024300C8C91B /* LocalDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A22F13024300C8C91B /* LocalDevice.swift */; };
@@ -32,6 +32,7 @@
 	89E04559593A462CAAA86ACE /* HTTPMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41601A9807D142ABB7181D76 /* HTTPMonitorService.swift */; };
 		EA0BF39708E4C575FEB755C7 /* ICMPSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726CC13E0EB775E7C7C19BD1 /* ICMPSocket.swift */; };
 		797B8A019436F78CCC11BFA9 /* ICMPMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD048F216895C502521CE659 /* ICMPMonitorService.swift */; };
+	469702AB229FA4BA93AF5983 /* MonitoringSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE7F7F545EA38B3B8F9DE02 /* MonitoringSession.swift */; };
 	DF61159D6D01427DAA18BFCE /* HTTPMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719663BC734C4A16BC0AB480 /* HTTPMonitorServiceTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -54,7 +55,7 @@
 
 /* Begin PBXFileReference section */
 		2510D9A22F13024300C8C91B /* LocalDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalDevice.swift; path = NetMonitor/Models/LocalDevice.swift; sourceTree = "<group>"; };
-		2510D9A32F13024300C8C91B /* MonitoringSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonitoringSession.swift; path = NetMonitor/Models/MonitoringSession.swift; sourceTree = "<group>"; };
+		2510D9A32F13024300C8C91B /* SessionRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonitoringSession.swift; path = NetMonitor/Models/SessionRecord.swift; sourceTree = "<group>"; };
 		2510D9A42F13024300C8C91B /* NetworkTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkTarget.swift; path = NetMonitor/Models/NetworkTarget.swift; sourceTree = "<group>"; };
 		2510D9A52F13024300C8C91B /* TargetMeasurement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TargetMeasurement.swift; path = NetMonitor/Models/TargetMeasurement.swift; sourceTree = "<group>"; };
 		2510D9AE2F13030000C8C91B /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Section.swift; path = NetMonitor/Models/Section.swift; sourceTree = "<group>"; };
@@ -81,6 +82,7 @@
 	41601A9807D142ABB7181D76 /* HTTPMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTTPMonitorService.swift; path = NetMonitor/Services/HTTPMonitorService.swift; sourceTree = "<group>"; };
 		726CC13E0EB775E7C7C19BD1 /* ICMPSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ICMPSocket.swift; path = NetMonitor/Services/ICMPSocket.swift; sourceTree = "<group>"; };
 		BD048F216895C502521CE659 /* ICMPMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ICMPMonitorService.swift; path = NetMonitor/Services/ICMPMonitorService.swift; sourceTree = "<group>"; };
+	1FE7F7F545EA38B3B8F9DE02 /* MonitoringSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NetMonitor/Services/MonitoringSession.swift"; sourceTree = "<group>"; };
 	719663BC734C4A16BC0AB480 /* HTTPMonitorServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTTPMonitorServiceTests.swift; path = NetMonitorTests/Services/HTTPMonitorServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -114,7 +116,7 @@
 			isa = PBXGroup;
 			children = (
 				2510D9A22F13024300C8C91B /* LocalDevice.swift */,
-				2510D9A32F13024300C8C91B /* MonitoringSession.swift */,
+				2510D9A32F13024300C8C91B /* SessionRecord.swift */,
 				2510D9A42F13024300C8C91B /* NetworkTarget.swift */,
 				2510D9A52F13024300C8C91B /* TargetMeasurement.swift */,
 				2510D9AE2F13030000C8C91B /* Section.swift */,
@@ -195,6 +197,7 @@
 				41601A9807D142ABB7181D76 /* HTTPMonitorService.swift */,
 				726CC13E0EB775E7C7C19BD1 /* ICMPSocket.swift */,
 				BD048F216895C502521CE659 /* ICMPMonitorService.swift */,
+				1FE7F7F545EA38B3B8F9DE02 /* MonitoringSession.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -350,7 +353,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A000003000000000000000A /* ContentView.swift in Sources */,
-				2510D9A62F13024300C8C91B /* MonitoringSession.swift in Sources */,
+				2510D9A62F13024300C8C91B /* SessionRecord.swift in Sources */,
 				2510D9A72F13024300C8C91B /* TargetMeasurement.swift in Sources */,
 				2510D9A82F13024300C8C91B /* NetworkTarget.swift in Sources */,
 				2510D9A92F13024300C8C91B /* LocalDevice.swift in Sources */,
@@ -365,6 +368,7 @@
 				2A000001000000000000000A /* NetMonitorApp.swift in Sources */,
 				BD9FA0B34C224F81A418BE80 /* NetworkMonitorService.swift in Sources */,
 				89E04559593A462CAAA86ACE /* HTTPMonitorService.swift in Sources */,
+				469702AB229FA4BA93AF5983 /* MonitoringSession.swift in Sources */,
 				EA0BF39708E4C575FEB755C7 /* ICMPSocket.swift in Sources */,
 				797B8A019436F78CCC11BFA9 /* ICMPMonitorService.swift in Sources */,
 			);

@@ -1,22 +1,166 @@
 import SwiftUI
+import SwiftData
 
 struct DashboardView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(MonitoringSession.self) private var session
+
+    @Query(sort: \NetworkTarget.name) private var targets: [NetworkTarget]
+
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
-                Text("Dashboard")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+            VStack(spacing: 20) {
+                // Header
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Dashboard")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
 
-                Text("Session monitoring will appear here")
-                    .foregroundStyle(.secondary)
+                        if let startTime = session.startTime {
+                            Text("Monitoring since \(startTime, format: .dateTime.hour().minute())")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    Spacer()
+
+                    // Start/Stop Button
+                    Button(action: {
+                        if session.isMonitoring {
+                            session.stopMonitoring()
+                        } else {
+                            session.startMonitoring()
+                        }
+                    }) {
+                        Label(
+                            session.isMonitoring ? "Stop Monitoring" : "Start Monitoring",
+                            systemImage: session.isMonitoring ? "stop.circle.fill" : "play.circle.fill"
+                        )
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(session.isMonitoring ? .red : .green)
+                }
+                .padding(.horizontal)
+
+                // Monitoring Status
+                if targets.isEmpty {
+                    ContentUnavailableView(
+                        "No Targets Configured",
+                        systemImage: "target",
+                        description: Text("Add network targets in the Targets section to start monitoring")
+                    )
+                } else {
+                    // Target Status Cards
+                    LazyVGrid(columns: [
+                        GridItem(.flexible()),
+                        GridItem(.flexible())
+                    ], spacing: 16) {
+                        ForEach(targets) { target in
+                            TargetStatusCard(
+                                target: target,
+                                measurement: session.latestMeasurement(for: target.id)
+                            )
+                        }
+                    }
+                    .padding(.horizontal)
+                }
             }
-            .padding()
+            .padding(.vertical)
         }
         .navigationTitle("Dashboard")
     }
 }
 
+// MARK: - Target Status Card
+
+struct TargetStatusCard: View {
+    let target: NetworkTarget
+    let measurement: TargetMeasurement?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header
+            HStack {
+                Image(systemName: target.targetProtocol.iconName)
+                    .foregroundStyle(.secondary)
+
+                Text(target.name)
+                    .font(.headline)
+
+                Spacer()
+
+                // Status Indicator
+                Circle()
+                    .fill(statusColor)
+                    .frame(width: 8, height: 8)
+            }
+
+            // Host
+            Text(target.host)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Divider()
+
+            // Metrics
+            if let measurement = measurement {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Latency")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+
+                        if let latency = measurement.latency {
+                            Text(String(format: "%.0f ms", latency))
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                        } else {
+                            Text("—")
+                                .font(.title3)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    Spacer()
+
+                    VStack(alignment: .trailing, spacing: 4) {
+                        Text("Status")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+
+                        Text(measurement.isReachable ? "Online" : "Offline")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundStyle(measurement.isReachable ? .green : .red)
+                    }
+                }
+            } else {
+                Text("Waiting for data...")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .cornerRadius(12)
+    }
+
+    private var statusColor: Color {
+        guard let measurement = measurement else {
+            return .gray
+        }
+        return measurement.isReachable ? .green : .red
+    }
+}
+
+// MARK: - Preview
+
 #Preview {
     DashboardView()
+        .modelContainer(PreviewContainer().container)
+        .environment(MonitoringSession(
+            modelContext: PreviewContainer().container.mainContext
+        ))
 }

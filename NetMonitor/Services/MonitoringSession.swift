@@ -87,6 +87,7 @@ final class MonitoringSession {
         // Create new monitoring task
         let task = Task { [weak self] in
             await self?.monitorTarget(target)
+            return ()
         }
 
         monitoringTasks[target.id] = task

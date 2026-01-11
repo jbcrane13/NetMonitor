@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class MonitoringSession {
+final class SessionRecord {
     var id: UUID
     var startedAt: Date
     var pausedAt: Date?
