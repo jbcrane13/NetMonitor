@@ -27,6 +27,8 @@
 	2510D9B52F13034000C8C91B /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B62F13034000C8C91B /* DevicesView.swift */; };
 	2510D9B72F13035000C8C91B /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B82F13035000C8C91B /* ToolsView.swift */; };
 	2510D9B92F13036000C8C91B /* PreviewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9BA2F13036000C8C91B /* PreviewContainer.swift */; };
+		BD9FA0B34C224F81A418BE80 /* NetworkMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A469B7BDEB6E401EBA080FBB /* NetworkMonitorService.swift */; };
+		063CF5C1823A4BAAA96F8B7B /* NetworkMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653444EE323D4714923EB389 /* NetworkMonitorServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +72,8 @@
 		2A000014000000000000000A /* NetMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetMonitor.entitlements; sourceTree = "<group>"; };
 		2A000015000000000000000A /* NetMonitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetMonitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A000016000000000000000A /* NetMonitorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetMonitorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A469B7BDEB6E401EBA080FBB /* NetworkMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkMonitorService.swift; path = NetMonitor/Services/NetworkMonitorService.swift; sourceTree = "<group>"; };
+		653444EE323D4714923EB389 /* NetworkMonitorServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkMonitorServiceTests.swift; path = NetMonitorTests/Services/NetworkMonitorServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,7 +114,8 @@
 				2A00001C000000000000000A /* NetMonitorTests */,
 				2A00001D000000000000000A /* NetMonitorUITests */,
 				2A00001E000000000000000A /* Products */,
-			);
+			
+				3288E8835E8D49CFA172DC79 /* Services */,);
 			sourceTree = "<group>";
 		};
 		2A00001B000000000000000A /* NetMonitor */ = {
@@ -173,6 +178,22 @@
 				2510D9B82F13035000C8C91B /* ToolsView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		3288E8835E8D49CFA172DC79 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A469B7BDEB6E401EBA080FBB /* NetworkMonitorService.swift */,
+			);
+			name = Services;
+			sourceTree = "<group>";
+		};
+		31BF5CD2F8084744A67C6AA0 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				653444EE323D4714923EB389 /* NetworkMonitorServiceTests.swift */,
+			);
+			name = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -330,6 +351,7 @@
 				2510D9B72F13035000C8C91B /* ToolsView.swift in Sources */,
 				2510D9B92F13036000C8C91B /* PreviewContainer.swift in Sources */,
 				2A000001000000000000000A /* NetMonitorApp.swift in Sources */,
+				BD9FA0B34C224F81A418BE80 /* NetworkMonitorService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +360,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A000009000000000000000A /* NetMonitorTests.swift in Sources */,
+				063CF5C1823A4BAAA96F8B7B /* NetworkMonitorServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
