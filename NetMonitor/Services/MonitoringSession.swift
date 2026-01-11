@@ -138,7 +138,8 @@ final class MonitoringSession {
         }
     }
 
-    private func saveMeasurement(_ measurement: TargetMeasurement, for target: NetworkTarget) async {
+    @MainActor
+    private func saveMeasurement(_ measurement: TargetMeasurement, for target: NetworkTarget) {
         // Save on main context - optimization for background context can be added later
         target.measurements.append(measurement)
         try? modelContext.save()
