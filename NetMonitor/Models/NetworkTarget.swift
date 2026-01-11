@@ -2,6 +2,11 @@ import Foundation
 import SwiftData
 import NetMonitorShared
 
+/// Network monitoring target configuration
+///
+/// @unchecked Sendable: SwiftData @Model classes with @Relationship cannot safely
+/// conform to Sendable due to mutable state and relationship management.
+/// Access should be confined to MainActor or properly isolated actor contexts.
 @Model
 final class NetworkTarget: @unchecked Sendable {
     var id: UUID

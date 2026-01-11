@@ -1,6 +1,11 @@
 import Foundation
 import SwiftData
 
+/// Measurement result from a network target check
+///
+/// @unchecked Sendable: SwiftData @Model classes cannot safely conform to Sendable
+/// due to mutable state. Access should be confined to MainActor or properly isolated
+/// actor contexts.
 @Model
 final class TargetMeasurement: @unchecked Sendable {
     var id: UUID

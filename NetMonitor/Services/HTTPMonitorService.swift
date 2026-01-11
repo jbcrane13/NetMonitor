@@ -51,21 +51,14 @@ actor HTTPMonitorService: NetworkMonitorService {
             )
 
         } catch let error as URLError {
-            let latency = Date().timeIntervalSince(startTime) * 1000
-
-            // Map URLError to our error types
-            let monitorError: NetworkMonitorError
             let errorMessage: String
 
             switch error.code {
             case .timedOut:
-                monitorError = .timeout
                 errorMessage = "Request timed out"
             case .notConnectedToInternet, .networkConnectionLost:
-                monitorError = .networkUnreachable
                 errorMessage = "Network unreachable"
             default:
-                monitorError = .unknownError(error)
                 errorMessage = error.localizedDescription
             }
 
@@ -73,6 +66,13 @@ actor HTTPMonitorService: NetworkMonitorService {
                 latency: nil,
                 isReachable: false,
                 errorMessage: errorMessage
+            )
+        } catch {
+            // Catch any non-URLError exceptions (SSL errors, etc.)
+            return TargetMeasurement(
+                latency: nil,
+                isReachable: false,
+                errorMessage: "Unexpected error: \(error.localizedDescription)"
             )
         }
     }
