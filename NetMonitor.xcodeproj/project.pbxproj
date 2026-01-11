@@ -30,6 +30,8 @@
 		BD9FA0B34C224F81A418BE80 /* NetworkMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A469B7BDEB6E401EBA080FBB /* NetworkMonitorService.swift */; };
 		063CF5C1823A4BAAA96F8B7B /* NetworkMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653444EE323D4714923EB389 /* NetworkMonitorServiceTests.swift */; };
 	89E04559593A462CAAA86ACE /* HTTPMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41601A9807D142ABB7181D76 /* HTTPMonitorService.swift */; };
+		EA0BF39708E4C575FEB755C7 /* ICMPSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726CC13E0EB775E7C7C19BD1 /* ICMPSocket.swift */; };
+		797B8A019436F78CCC11BFA9 /* ICMPMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD048F216895C502521CE659 /* ICMPMonitorService.swift */; };
 	DF61159D6D01427DAA18BFCE /* HTTPMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719663BC734C4A16BC0AB480 /* HTTPMonitorServiceTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -77,6 +79,8 @@
 		A469B7BDEB6E401EBA080FBB /* NetworkMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkMonitorService.swift; path = NetMonitor/Services/NetworkMonitorService.swift; sourceTree = "<group>"; };
 		653444EE323D4714923EB389 /* NetworkMonitorServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkMonitorServiceTests.swift; path = NetMonitorTests/Services/NetworkMonitorServiceTests.swift; sourceTree = "<group>"; };
 	41601A9807D142ABB7181D76 /* HTTPMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTTPMonitorService.swift; path = NetMonitor/Services/HTTPMonitorService.swift; sourceTree = "<group>"; };
+		726CC13E0EB775E7C7C19BD1 /* ICMPSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ICMPSocket.swift; path = NetMonitor/Services/ICMPSocket.swift; sourceTree = "<group>"; };
+		BD048F216895C502521CE659 /* ICMPMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ICMPMonitorService.swift; path = NetMonitor/Services/ICMPMonitorService.swift; sourceTree = "<group>"; };
 	719663BC734C4A16BC0AB480 /* HTTPMonitorServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTTPMonitorServiceTests.swift; path = NetMonitorTests/Services/HTTPMonitorServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -189,6 +193,8 @@
 			children = (
 				A469B7BDEB6E401EBA080FBB /* NetworkMonitorService.swift */,
 				41601A9807D142ABB7181D76 /* HTTPMonitorService.swift */,
+				726CC13E0EB775E7C7C19BD1 /* ICMPSocket.swift */,
+				BD048F216895C502521CE659 /* ICMPMonitorService.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -359,6 +365,8 @@
 				2A000001000000000000000A /* NetMonitorApp.swift in Sources */,
 				BD9FA0B34C224F81A418BE80 /* NetworkMonitorService.swift in Sources */,
 				89E04559593A462CAAA86ACE /* HTTPMonitorService.swift in Sources */,
+				EA0BF39708E4C575FEB755C7 /* ICMPSocket.swift in Sources */,
+				797B8A019436F78CCC11BFA9 /* ICMPMonitorService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
