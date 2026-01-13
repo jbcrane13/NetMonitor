@@ -74,6 +74,9 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
     /// Task for the current scan operation
     private var scanTask: Task<[DiscoveredDevice], Error>?
 
+    /// Tasks for ongoing service resolutions
+    private var resolutionTasks: [Task<Void, Never>] = []
+
     /// Queue for browser callbacks
     private let browserQueue = DispatchQueue(label: "com.netmonitor.bonjour.browser")
 
@@ -127,6 +130,13 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
             browser.cancel()
         }
         browsers.removeAll()
+
+        // Cancel all pending resolution tasks
+        for task in resolutionTasks {
+            task.cancel()
+        }
+        resolutionTasks.removeAll()
+
         isScanning = false
     }
 
@@ -142,23 +152,22 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
         isScanning = true
         discoveredServices = []
 
+        // Start discovery - store browsers in self.browsers so stopScan() can cancel them
+        for serviceType in serviceTypes {
+            let browser = createBrowser(for: serviceType)
+            browsers.append(browser)
+            browser.start(queue: browserQueue)
+        }
+
         let task = Task<[DiscoveredDevice], Error> { [self] in
-            // Start discovery
-            var activeBrowsers: [NWBrowser] = []
-
-            for serviceType in serviceTypes {
-                let browser = createBrowser(for: serviceType)
-                activeBrowsers.append(browser)
-                browser.start(queue: browserQueue)
-            }
-
             // Wait for 5 seconds to collect services
             try await Task.sleep(for: .seconds(5))
 
             // Stop all browsers
-            for browser in activeBrowsers {
+            for browser in await self.browsers {
                 browser.cancel()
             }
+            await self.clearBrowsers()
 
             // Convert discovered services to devices
             let currentServices = await self.discoveredServices
@@ -170,6 +179,7 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
         do {
             let result = try await task.value
             isScanning = false
+            scanTask = nil
             return result
         } catch {
             isScanning = false
@@ -184,6 +194,11 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
         scanTask = nil
         stopDiscovery()
         isScanning = false
+    }
+
+    /// Clear browsers array (helper for actor isolation)
+    private func clearBrowsers() {
+        browsers.removeAll()
     }
 
     // MARK: - Private Methods
@@ -270,10 +285,11 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
 
         discoveredServices.append(service)
 
-        // Resolve the service to get more details
-        Task {
+        // Resolve the service to get more details - track the task for cancellation
+        let resolutionTask = Task {
             await resolveService(result, serviceType: serviceType)
         }
+        resolutionTasks.append(resolutionTask)
     }
 
     /// Handle a removed service
