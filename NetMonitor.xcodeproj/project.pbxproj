@@ -48,6 +48,8 @@
 		MACV0003000000000000001A /* MACVendorLookupServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MACV0004000000000000001A /* MACVendorLookupServiceTests.swift */; };
 		DVRW0001000000000000001A /* DeviceRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DVRW0002000000000000001A /* DeviceRowView.swift */; };
 		DVDT0001000000000000001A /* DeviceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DVDT0002000000000000001A /* DeviceDetailView.swift */; };
+		MBRC0001000000000000001A /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = MBRC0002000000000000001A /* MenuBarController.swift */; };
+		MBPV0001000000000000001A /* MenuBarPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MBPV0002000000000000001A /* MenuBarPopoverView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +114,8 @@
 		MACV0004000000000000001A /* MACVendorLookupServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MACVendorLookupServiceTests.swift; path = NetMonitorTests/Services/MACVendorLookupServiceTests.swift; sourceTree = "<group>"; };
 		DVRW0002000000000000001A /* DeviceRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRowView.swift; sourceTree = "<group>"; };
 		DVDT0002000000000000001A /* DeviceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailView.swift; sourceTree = "<group>"; };
+		MBRC0002000000000000001A /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
+		MBPV0002000000000000001A /* MenuBarPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPopoverView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +166,7 @@
 				2A000002000000000000000A /* NetMonitorApp.swift */,
 				2A000004000000000000000A /* ContentView.swift */,
 				2510D9AC2F13025400C8C91B /* Views */,
+				MBGR0001000000000000001A /* MenuBar */,
 				2A000006000000000000000A /* Assets.xcassets */,
 				2A000014000000000000000A /* NetMonitor.entitlements */,
 				2A00001F000000000000000A /* Preview Content */,
@@ -251,6 +256,15 @@
 				MACV0004000000000000001A /* MACVendorLookupServiceTests.swift */,
 			);
 			name = Services;
+			sourceTree = "<group>";
+		};
+		MBGR0001000000000000001A /* MenuBar */ = {
+			isa = PBXGroup;
+			children = (
+				MBRC0002000000000000001A /* MenuBarController.swift */,
+				MBPV0002000000000000001A /* MenuBarPopoverView.swift */,
+			);
+			path = MenuBar;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -422,6 +436,8 @@
 								MACV0001000000000000001A /* MACVendorLookupService.swift in Sources */,
 								DVRW0001000000000000001A /* DeviceRowView.swift in Sources */,
 								DVDT0001000000000000001A /* DeviceDetailView.swift in Sources */,
+								MBRC0001000000000000001A /* MenuBarController.swift in Sources */,
+								MBPV0001000000000000001A /* MenuBarPopoverView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

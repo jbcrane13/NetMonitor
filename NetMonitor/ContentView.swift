@@ -9,14 +9,20 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(MonitoringSession.self) private var session: MonitoringSession?
     @State private var selectedSection: Section? = .dashboard
-    @State private var session: MonitoringSession?
+    @State private var localSession: MonitoringSession?
+
+    /// The active session - prefers environment, falls back to local
+    private var activeSession: MonitoringSession? {
+        session ?? localSession
+    }
 
     var body: some View {
         NavigationSplitView {
             SidebarView(selection: $selectedSection)
         } detail: {
-            if let session = session {
+            if let activeSession = activeSession {
                 Group {
                     switch selectedSection {
                     case .dashboard:
@@ -39,13 +45,15 @@ struct ContentView: View {
                             .accessibilityIdentifier("detail_empty")
                     }
                 }
-                .environment(session)
+                .environment(activeSession)
             }
         }
         .frame(minWidth: 900, minHeight: 600)
         .task {
-            // Create monitoring session on appear
-            session = MonitoringSession(modelContext: modelContext)
+            // Create local session only if not provided via environment
+            if session == nil && localSession == nil {
+                localSession = MonitoringSession(modelContext: modelContext)
+            }
         }
     }
 }
