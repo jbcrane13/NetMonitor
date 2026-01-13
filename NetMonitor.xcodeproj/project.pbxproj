@@ -46,6 +46,8 @@
 		DDCC0003000000000000001A /* DeviceDiscoveryCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDCC0004000000000000001A /* DeviceDiscoveryCoordinatorTests.swift */; };
 		MACV0001000000000000001A /* MACVendorLookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = MACV0002000000000000001A /* MACVendorLookupService.swift */; };
 		MACV0003000000000000001A /* MACVendorLookupServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = MACV0004000000000000001A /* MACVendorLookupServiceTests.swift */; };
+		DVRW0001000000000000001A /* DeviceRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DVRW0002000000000000001A /* DeviceRowView.swift */; };
+		DVDT0001000000000000001A /* DeviceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DVDT0002000000000000001A /* DeviceDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +110,8 @@
 		DDCC0004000000000000001A /* DeviceDiscoveryCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceDiscoveryCoordinatorTests.swift; path = NetMonitorTests/Services/DeviceDiscoveryCoordinatorTests.swift; sourceTree = "<group>"; };
 		MACV0002000000000000001A /* MACVendorLookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MACVendorLookupService.swift; path = NetMonitor/Services/MACVendorLookupService.swift; sourceTree = "<group>"; };
 		MACV0004000000000000001A /* MACVendorLookupServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MACVendorLookupServiceTests.swift; path = NetMonitorTests/Services/MACVendorLookupServiceTests.swift; sourceTree = "<group>"; };
+		DVRW0002000000000000001A /* DeviceRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRowView.swift; sourceTree = "<group>"; };
+		DVDT0002000000000000001A /* DeviceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +214,8 @@
 				8AF0D348F4FB6B490148030A /* AddTargetSheet.swift */,
 				2510D9B42F13033000C8C91B /* TargetsView.swift */,
 				2510D9B62F13034000C8C91B /* DevicesView.swift */,
+				DVRW0002000000000000001A /* DeviceRowView.swift */,
+				DVDT0002000000000000001A /* DeviceDetailView.swift */,
 				2510D9B82F13035000C8C91B /* ToolsView.swift */,
 				97DE539B230545DD8B5355D0 /* TargetStatisticsView.swift */,
 			);
@@ -414,6 +420,8 @@
 								BNJR0001000000000000001A /* BonjourDiscoveryService.swift in Sources */,
 								DDCC0001000000000000001A /* DeviceDiscoveryCoordinator.swift in Sources */,
 								MACV0001000000000000001A /* MACVendorLookupService.swift in Sources */,
+								DVRW0001000000000000001A /* DeviceRowView.swift in Sources */,
+								DVDT0001000000000000001A /* DeviceDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
