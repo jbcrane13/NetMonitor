@@ -51,6 +51,7 @@
 		MBRC0001000000000000001A /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = MBRC0002000000000000001A /* MenuBarController.swift */; };
 		MBPV0001000000000000001A /* MenuBarPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MBPV0002000000000000001A /* MenuBarPopoverView.swift */; };
 		MBCM0001000000000000001A /* MenuBarCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = MBCM0002000000000000001A /* MenuBarCommands.swift */; };
+		CMPT0001000000000000001A /* CompanionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMPT0002000000000000001A /* CompanionMessageTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,6 +119,7 @@
 		MBRC0002000000000000001A /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
 		MBPV0002000000000000001A /* MenuBarPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPopoverView.swift; sourceTree = "<group>"; };
 		MBCM0002000000000000001A /* MenuBarCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarCommands.swift; sourceTree = "<group>"; };
+		CMPT0002000000000000001A /* CompanionMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionMessageTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,9 +181,18 @@
 		2A00001C000000000000000A /* NetMonitorTests */ = {
 			isa = PBXGroup;
 			children = (
-2A00000A000000000000000A /* NetMonitorTests.swift */,
+				2A00000A000000000000000A /* NetMonitorTests.swift */,
+				PTCL0001000000000000001A /* Protocol */,
 			);
 			path = NetMonitorTests;
+			sourceTree = "<group>";
+		};
+		PTCL0001000000000000001A /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				CMPT0002000000000000001A /* CompanionMessageTests.swift */,
+			);
+			path = Protocol;
 			sourceTree = "<group>";
 		};
 		2A00001D000000000000000A /* NetMonitorUITests */ = {
@@ -457,6 +468,7 @@
 				BNJR0003000000000000001A /* BonjourDiscoveryServiceTests.swift in Sources */,
 				DDCC0003000000000000001A /* DeviceDiscoveryCoordinatorTests.swift in Sources */,
 				MACV0003000000000000001A /* MACVendorLookupServiceTests.swift in Sources */,
+				CMPT0001000000000000001A /* CompanionMessageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
