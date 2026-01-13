@@ -6,13 +6,14 @@ actor ARPScannerService: DeviceDiscoveryService {
 
     // MARK: - Properties
 
+    /// Per-IP probe timeout in seconds (default 1.0)
     let timeout: TimeInterval
     private(set) var isScanning: Bool = false
     private var scanTask: Task<[DiscoveredDevice], Error>?
 
     // MARK: - Initialization
 
-    init(timeout: TimeInterval = 30.0) {
+    init(timeout: TimeInterval = 1.0) {
         self.timeout = timeout
     }
 
@@ -281,6 +282,7 @@ actor ARPScannerService: DeviceDiscoveryService {
         }
 
         let tracker = ResumeTracker()
+        let probeTimeout = self.timeout
 
         return await withCheckedContinuation { continuation in
             let queue = DispatchQueue(label: "com.netmonitor.arpscanner.\(ip)")
@@ -307,8 +309,8 @@ actor ARPScannerService: DeviceDiscoveryService {
 
             connection.start(queue: queue)
 
-            // Timeout after 1 second
-            queue.asyncAfter(deadline: .now() + 1.0) { [tracker] in
+            // Timeout using the configured timeout value
+            queue.asyncAfter(deadline: .now() + probeTimeout) { [tracker] in
                 if tracker.tryResume() {
                     connection.cancel()
                     // Even if connection times out, the ARP cache might have been populated
@@ -328,37 +330,42 @@ actor ARPScannerService: DeviceDiscoveryService {
         process.standardOutput = pipe
         process.standardError = pipe
 
-        do {
-            try process.run()
-            process.waitUntilExit()
+        return await withCheckedContinuation { continuation in
+            process.terminationHandler = { _ in
+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                guard let output = String(data: data, encoding: .utf8) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
 
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            guard let output = String(data: data, encoding: .utf8) else {
-                return nil
+                // Parse MAC address from ARP output
+                // Example output: "192.168.1.1 (192.168.1.1) at aa:bb:cc:dd:ee:ff on en0 ifscope [ethernet]"
+                let pattern = "at ([0-9a-fA-F:]+)"
+                guard let regex = try? NSRegularExpression(pattern: pattern),
+                      let match = regex.firstMatch(
+                        in: output,
+                        range: NSRange(output.startIndex..., in: output)
+                      ),
+                      let macRange = Range(match.range(at: 1), in: output) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+
+                let mac = String(output[macRange])
+
+                // Validate MAC address format (skip incomplete entries like "(incomplete)")
+                if mac.contains(":") && mac.count >= 11 {
+                    continuation.resume(returning: mac)
+                } else {
+                    continuation.resume(returning: nil)
+                }
             }
 
-            // Parse MAC address from ARP output
-            // Example output: "192.168.1.1 (192.168.1.1) at aa:bb:cc:dd:ee:ff on en0 ifscope [ethernet]"
-            let pattern = "at ([0-9a-fA-F:]+)"
-            guard let regex = try? NSRegularExpression(pattern: pattern),
-                  let match = regex.firstMatch(
-                    in: output,
-                    range: NSRange(output.startIndex..., in: output)
-                  ),
-                  let macRange = Range(match.range(at: 1), in: output) else {
-                return nil
+            do {
+                try process.run()
+            } catch {
+                continuation.resume(returning: nil)
             }
-
-            let mac = String(output[macRange])
-
-            // Validate MAC address format (skip incomplete entries like "(incomplete)")
-            if mac.contains(":") && mac.count >= 11 {
-                return mac
-            }
-
-            return nil
-        } catch {
-            return nil
         }
     }
 }

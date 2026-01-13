@@ -4,11 +4,11 @@ import Testing
 @Suite("ARPScannerService Tests")
 struct ARPScannerServiceTests {
 
-    @Test("Scanner initializes with default timeout")
+    @Test("Scanner initializes with default per-IP probe timeout")
     func defaultTimeout() async {
         let scanner = ARPScannerService()
         let timeout = await scanner.timeout
-        #expect(timeout == 30.0)
+        #expect(timeout == 1.0)  // Per-IP probe timeout, not overall scan timeout
     }
 
     @Test("Scanner reports not scanning initially")
