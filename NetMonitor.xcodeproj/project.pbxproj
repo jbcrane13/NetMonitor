@@ -42,6 +42,8 @@
 		ARPS0003000000000000001A /* ARPScannerServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ARPS0004000000000000001A /* ARPScannerServiceTests.swift */; };
 		BNJR0001000000000000001A /* BonjourDiscoveryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BNJR0002000000000000001A /* BonjourDiscoveryService.swift */; };
 		BNJR0003000000000000001A /* BonjourDiscoveryServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BNJR0004000000000000001A /* BonjourDiscoveryServiceTests.swift */; };
+		DDCC0001000000000000001A /* DeviceDiscoveryCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDCC0002000000000000001A /* DeviceDiscoveryCoordinator.swift */; };
+		DDCC0003000000000000001A /* DeviceDiscoveryCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDCC0004000000000000001A /* DeviceDiscoveryCoordinatorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +102,8 @@
 		ARPS0004000000000000001A /* ARPScannerServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ARPScannerServiceTests.swift; path = NetMonitorTests/Services/ARPScannerServiceTests.swift; sourceTree = "<group>"; };
 		BNJR0002000000000000001A /* BonjourDiscoveryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BonjourDiscoveryService.swift; path = NetMonitor/Services/BonjourDiscoveryService.swift; sourceTree = "<group>"; };
 		BNJR0004000000000000001A /* BonjourDiscoveryServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BonjourDiscoveryServiceTests.swift; path = NetMonitorTests/Services/BonjourDiscoveryServiceTests.swift; sourceTree = "<group>"; };
+		DDCC0002000000000000001A /* DeviceDiscoveryCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceDiscoveryCoordinator.swift; path = NetMonitor/Services/DeviceDiscoveryCoordinator.swift; sourceTree = "<group>"; };
+		DDCC0004000000000000001A /* DeviceDiscoveryCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceDiscoveryCoordinatorTests.swift; path = NetMonitorTests/Services/DeviceDiscoveryCoordinatorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,6 +223,7 @@
 				DDSC0002000000000000001A /* DeviceDiscoveryService.swift */,
 				ARPS0002000000000000001A /* ARPScannerService.swift */,
 				BNJR0002000000000000001A /* BonjourDiscoveryService.swift */,
+				DDCC0002000000000000001A /* DeviceDiscoveryCoordinator.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -231,6 +236,7 @@
 				DDSC0004000000000000001A /* DeviceDiscoveryServiceTests.swift */,
 				ARPS0004000000000000001A /* ARPScannerServiceTests.swift */,
 				BNJR0004000000000000001A /* BonjourDiscoveryServiceTests.swift */,
+				DDCC0004000000000000001A /* DeviceDiscoveryCoordinatorTests.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -400,6 +406,7 @@
 								DDSC0001000000000000001A /* DeviceDiscoveryService.swift in Sources */,
 								ARPS0001000000000000001A /* ARPScannerService.swift in Sources */,
 								BNJR0001000000000000001A /* BonjourDiscoveryService.swift in Sources */,
+								DDCC0001000000000000001A /* DeviceDiscoveryCoordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,6 +420,7 @@
 				DDSC0003000000000000001A /* DeviceDiscoveryServiceTests.swift in Sources */,
 				ARPS0003000000000000001A /* ARPScannerServiceTests.swift in Sources */,
 				BNJR0003000000000000001A /* BonjourDiscoveryServiceTests.swift in Sources */,
+				DDCC0003000000000000001A /* DeviceDiscoveryCoordinatorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
