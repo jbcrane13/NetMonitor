@@ -20,7 +20,7 @@ struct DeviceDiscoveryCoordinatorTests {
 
     @Test("Merge discovery results updates existing device")
     @MainActor
-    func mergeUpdatesExisting() async throws {
+    func mergeUpdatesExisting() throws {
         let container = try ModelContainer(
             for: LocalDevice.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
@@ -46,7 +46,7 @@ struct DeviceDiscoveryCoordinatorTests {
             hostname: "new-hostname.local"
         )
 
-        await coordinator.mergeDiscoveredDevices([discovered])
+        coordinator.mergeDiscoveredDevices([discovered])
 
         // Verify hostname was updated
         let devices = try context.fetch(FetchDescriptor<LocalDevice>())
@@ -56,7 +56,7 @@ struct DeviceDiscoveryCoordinatorTests {
 
     @Test("Merge discovery results creates new device when not found")
     @MainActor
-    func mergeCreatesNewDevice() async throws {
+    func mergeCreatesNewDevice() throws {
         let container = try ModelContainer(
             for: LocalDevice.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
@@ -72,7 +72,7 @@ struct DeviceDiscoveryCoordinatorTests {
             hostname: "new-device.local"
         )
 
-        await coordinator.mergeDiscoveredDevices([discovered])
+        coordinator.mergeDiscoveredDevices([discovered])
 
         // Verify device was created
         let devices = try context.fetch(FetchDescriptor<LocalDevice>())

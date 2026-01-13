@@ -37,21 +37,32 @@ final class DeviceDiscoveryCoordinator {
 
         scanTask = Task {
             do {
+                try Task.checkCancellation()
+
                 // Phase 1: ARP Scan (60% of progress)
                 scanProgress = 0.1
                 let arpDevices = try await arpScanner.scanNetwork()
+
+                try Task.checkCancellation()
                 scanProgress = 0.6
 
                 // Phase 2: Bonjour Discovery (30% of progress)
                 let bonjourDevices = try await bonjourScanner.scanNetwork()
+
+                try Task.checkCancellation()
                 scanProgress = 0.9
 
                 // Merge results
                 let allDiscovered = mergeDiscoveryResults(arp: arpDevices, bonjour: bonjourDevices)
-                await mergeDiscoveredDevices(allDiscovered)
+                mergeDiscoveredDevices(allDiscovered)
+
+                // Mark devices not seen in this scan as offline
+                markOfflineDevices(currentIPs: Set(allDiscovered.map(\.ipAddress)))
 
                 scanProgress = 1.0
                 lastScanTime = Date()
+            } catch is CancellationError {
+                // Cancelled - exit gracefully
             } catch {
                 print("Scan error: \(error)")
             }
@@ -72,7 +83,7 @@ final class DeviceDiscoveryCoordinator {
     }
 
     /// Merge discovered devices into persistent storage
-    func mergeDiscoveredDevices(_ devices: [DiscoveredDevice]) async {
+    func mergeDiscoveredDevices(_ devices: [DiscoveredDevice]) {
         for discovered in devices {
             // Find existing device by MAC address (primary) or IP (fallback)
             let predicate: Predicate<LocalDevice>
