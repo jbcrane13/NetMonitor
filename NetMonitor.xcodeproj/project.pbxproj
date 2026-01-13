@@ -52,6 +52,8 @@
 		MBPV0001000000000000001A /* MenuBarPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MBPV0002000000000000001A /* MenuBarPopoverView.swift */; };
 		MBCM0001000000000000001A /* MenuBarCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = MBCM0002000000000000001A /* MenuBarCommands.swift */; };
 		CMPT0001000000000000001A /* CompanionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMPT0002000000000000001A /* CompanionMessageTests.swift */; };
+		CSVC0001000000000000001A /* CompanionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0002000000000000001A /* CompanionService.swift */; };
+		CSVC0003000000000000001A /* CompanionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0004000000000000001A /* CompanionServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +122,8 @@
 		MBPV0002000000000000001A /* MenuBarPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPopoverView.swift; sourceTree = "<group>"; };
 		MBCM0002000000000000001A /* MenuBarCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarCommands.swift; sourceTree = "<group>"; };
 		CMPT0002000000000000001A /* CompanionMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionMessageTests.swift; sourceTree = "<group>"; };
+		CSVC0002000000000000001A /* CompanionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionService.swift; path = NetMonitor/Services/CompanionService.swift; sourceTree = "<group>"; };
+		CSVC0004000000000000001A /* CompanionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionServiceTests.swift; path = NetMonitorTests/Services/CompanionServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -253,6 +257,7 @@
 				BNJR0002000000000000001A /* BonjourDiscoveryService.swift */,
 				DDCC0002000000000000001A /* DeviceDiscoveryCoordinator.swift */,
 				MACV0002000000000000001A /* MACVendorLookupService.swift */,
+				CSVC0002000000000000001A /* CompanionService.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -267,6 +272,7 @@
 				BNJR0004000000000000001A /* BonjourDiscoveryServiceTests.swift */,
 				DDCC0004000000000000001A /* DeviceDiscoveryCoordinatorTests.swift */,
 				MACV0004000000000000001A /* MACVendorLookupServiceTests.swift */,
+				CSVC0004000000000000001A /* CompanionServiceTests.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -453,6 +459,7 @@
 								MBRC0001000000000000001A /* MenuBarController.swift in Sources */,
 								MBPV0001000000000000001A /* MenuBarPopoverView.swift in Sources */,
 								MBCM0001000000000000001A /* MenuBarCommands.swift in Sources */,
+								CSVC0001000000000000001A /* CompanionService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -469,6 +476,7 @@
 				DDCC0003000000000000001A /* DeviceDiscoveryCoordinatorTests.swift in Sources */,
 				MACV0003000000000000001A /* MACVendorLookupServiceTests.swift in Sources */,
 				CMPT0001000000000000001A /* CompanionMessageTests.swift in Sources */,
+				CSVC0003000000000000001A /* CompanionServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
