@@ -11,6 +11,9 @@ import SwiftData
 @main
 struct NetMonitorApp: App {
     @State private var monitoringSession: MonitoringSession?
+    @State private var deviceDiscovery: DeviceDiscoveryCoordinator?
+    @State private var companionService: CompanionService?
+    @State private var companionHandler: CompanionMessageHandler?
     @State private var menuBarController: MenuBarController?
 
     var sharedModelContainer: ModelContainer = {
@@ -33,9 +36,11 @@ struct NetMonitorApp: App {
         WindowGroup {
             ContentView()
                 .environment(monitoringSession)
+                .environment(deviceDiscovery)
                 .onAppear {
-                    setupMonitoringSession()
-                    setupMenuBar()
+                    Task { @MainActor in
+                        await setupServices()
+                    }
                 }
         }
         .modelContainer(sharedModelContainer)
@@ -56,17 +61,51 @@ struct NetMonitorApp: App {
     }
 
     @MainActor
-    private func setupMonitoringSession() {
+    private func setupServices() async {
+        let context = sharedModelContainer.mainContext
+
+        // 1. Set up monitoring session
         if monitoringSession == nil {
-            let context = sharedModelContainer.mainContext
             monitoringSession = MonitoringSession(modelContext: context)
         }
-    }
 
-    @MainActor
-    private func setupMenuBar() {
-        guard let session = monitoringSession, menuBarController == nil else { return }
-        menuBarController = MenuBarController(monitoringSession: session)
-        menuBarController?.setup()
+        // 2. Set up device discovery
+        if deviceDiscovery == nil {
+            deviceDiscovery = DeviceDiscoveryCoordinator(modelContext: context)
+        }
+
+        // 3. Set up companion service
+        if let session = monitoringSession,
+           let discovery = deviceDiscovery,
+           companionService == nil {
+            companionHandler = CompanionMessageHandler(
+                modelContext: context,
+                monitoringSession: session,
+                deviceDiscovery: discovery
+            )
+
+            companionService = CompanionService()
+
+            // Create a local reference that can be safely captured
+            let handler = companionHandler
+            do {
+                try await companionService?.start { @Sendable message, clientID in
+                    await MainActor.run {
+                        Task {
+                            _ = await handler?.handle(message, from: clientID)
+                        }
+                    }
+                    return nil
+                }
+            } catch {
+                print("Failed to start companion service: \(error)")
+            }
+        }
+
+        // 4. Set up menu bar
+        if let session = monitoringSession, menuBarController == nil {
+            menuBarController = MenuBarController(monitoringSession: session)
+            menuBarController?.setup()
+        }
     }
 }
