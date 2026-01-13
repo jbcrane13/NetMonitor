@@ -54,6 +54,7 @@
 		CMPT0001000000000000001A /* CompanionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMPT0002000000000000001A /* CompanionMessageTests.swift */; };
 		CSVC0001000000000000001A /* CompanionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0002000000000000001A /* CompanionService.swift */; };
 		CSVC0003000000000000001A /* CompanionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0004000000000000001A /* CompanionServiceTests.swift */; };
+		CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMHD0002000000000000001A /* CompanionMessageHandler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,6 +125,7 @@
 		CMPT0002000000000000001A /* CompanionMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionMessageTests.swift; sourceTree = "<group>"; };
 		CSVC0002000000000000001A /* CompanionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionService.swift; path = NetMonitor/Services/CompanionService.swift; sourceTree = "<group>"; };
 		CSVC0004000000000000001A /* CompanionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionServiceTests.swift; path = NetMonitorTests/Services/CompanionServiceTests.swift; sourceTree = "<group>"; };
+		CMHD0002000000000000001A /* CompanionMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionMessageHandler.swift; path = NetMonitor/Services/CompanionMessageHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -258,6 +260,7 @@
 				DDCC0002000000000000001A /* DeviceDiscoveryCoordinator.swift */,
 				MACV0002000000000000001A /* MACVendorLookupService.swift */,
 				CSVC0002000000000000001A /* CompanionService.swift */,
+				CMHD0002000000000000001A /* CompanionMessageHandler.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -460,6 +463,7 @@
 								MBPV0001000000000000001A /* MenuBarPopoverView.swift in Sources */,
 								MBCM0001000000000000001A /* MenuBarCommands.swift in Sources */,
 								CSVC0001000000000000001A /* CompanionService.swift in Sources */,
+								CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
