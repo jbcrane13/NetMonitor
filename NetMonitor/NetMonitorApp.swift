@@ -39,6 +39,16 @@ struct NetMonitorApp: App {
                 }
         }
         .modelContainer(sharedModelContainer)
+        .commands {
+            MenuBarCommands(
+                isMonitoring: Binding(
+                    get: { monitoringSession?.isMonitoring ?? false },
+                    set: { _ in }
+                ),
+                startMonitoring: { monitoringSession?.startMonitoring() },
+                stopMonitoring: { monitoringSession?.stopMonitoring() }
+            )
+        }
 
         Settings {
             SettingsView()
