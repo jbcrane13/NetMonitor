@@ -17,6 +17,7 @@ final class CompanionMessageHandler {
     private let modelContext: ModelContext
     private let monitoringSession: MonitoringSession
     private let deviceDiscovery: DeviceDiscoveryCoordinator
+    private let wakeOnLanService: WakeOnLanService
 
     init(
         modelContext: ModelContext,
@@ -26,6 +27,7 @@ final class CompanionMessageHandler {
         self.modelContext = modelContext
         self.monitoringSession = monitoringSession
         self.deviceDiscovery = deviceDiscovery
+        self.wakeOnLanService = WakeOnLanService()
     }
 
     /// Process an incoming message and return an optional response
@@ -190,79 +192,11 @@ final class CompanionMessageHandler {
             ))
         }
 
-        // Parse MAC address
-        guard let macBytes = parseMACAddress(mac) else {
-            return .toolResult(ToolResultPayload(
-                tool: "wakeOnLan",
-                success: false,
-                result: "Invalid MAC address format: \(mac)"
-            ))
-        }
-
-        // Build magic packet: 6 bytes of 0xFF followed by MAC address repeated 16 times
-        var packet = Data(repeating: 0xFF, count: 6)
-        for _ in 0..<16 {
-            packet.append(contentsOf: macBytes)
-        }
-
-        // Send UDP broadcast packet
-        let sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
-        guard sock >= 0 else {
-            return .toolResult(ToolResultPayload(
-                tool: "wakeOnLan",
-                success: false,
-                result: "Failed to create socket"
-            ))
-        }
-        defer { close(sock) }
-
-        // Enable broadcast
-        var broadcast: Int32 = 1
-        setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &broadcast, socklen_t(MemoryLayout<Int32>.size))
-
-        // Set destination: broadcast on port 9
-        var addr = sockaddr_in()
-        addr.sin_family = sa_family_t(AF_INET)
-        addr.sin_port = UInt16(9).bigEndian
-        inet_pton(AF_INET, "255.255.255.255", &addr.sin_addr)
-
-        // Send packet
-        let sent = packet.withUnsafeBytes { ptr in
-            withUnsafePointer(to: &addr) { addrPtr in
-                addrPtr.withMemoryRebound(to: sockaddr.self, capacity: 1) { sockaddrPtr in
-                    sendto(sock, ptr.baseAddress, packet.count, 0, sockaddrPtr, socklen_t(MemoryLayout<sockaddr_in>.size))
-                }
-            }
-        }
-
-        if sent > 0 {
-            return .toolResult(ToolResultPayload(
-                tool: "wakeOnLan",
-                success: true,
-                result: "Magic packet sent to \(mac)"
-            ))
-        } else {
-            return .toolResult(ToolResultPayload(
-                tool: "wakeOnLan",
-                success: false,
-                result: "Failed to send magic packet"
-            ))
-        }
-    }
-
-    private func parseMACAddress(_ mac: String) -> [UInt8]? {
-        let cleaned = mac.replacingOccurrences(of: ":", with: "")
-                        .replacingOccurrences(of: "-", with: "")
-        guard cleaned.count == 12 else { return nil }
-
-        var bytes: [UInt8] = []
-        var index = cleaned.startIndex
-        for _ in 0..<6 {
-            let nextIndex = cleaned.index(index, offsetBy: 2)
-            guard let byte = UInt8(cleaned[index..<nextIndex], radix: 16) else { return nil }
-            bytes.append(byte)
-            index = nextIndex
-        }
-        return bytes
+        // TODO: Implement Wake on LAN
+        return .toolResult(ToolResultPayload(
+            tool: "wakeOnLan",
+            success: false,
+            result: "Wake on LAN not yet implemented for MAC: \(mac)"
+        ))
     }
 }
