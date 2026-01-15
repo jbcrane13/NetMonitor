@@ -26,6 +26,7 @@ final class MonitoringSession {
     private let modelContext: ModelContext
     private let httpService: HTTPMonitorService
     private let icmpService: ICMPMonitorService
+    private let tcpService: TCPMonitorService
 
     // MARK: - Initialization
 
@@ -33,6 +34,7 @@ final class MonitoringSession {
         self.modelContext = modelContext
         self.httpService = HTTPMonitorService()
         self.icmpService = ICMPMonitorService()
+        self.tcpService = TCPMonitorService()
     }
 
     // MARK: - Public API
@@ -102,8 +104,7 @@ final class MonitoringSession {
             case .icmp:
                 icmpService
             case .tcp:
-                // TCP not implemented yet, use HTTP as fallback
-                httpService
+                tcpService
             }
 
             // Perform check

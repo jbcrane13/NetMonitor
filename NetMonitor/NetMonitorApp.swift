@@ -16,6 +16,11 @@ struct NetMonitorApp: App {
     @State private var companionHandler: CompanionMessageHandler?
     @State private var menuBarController: MenuBarController?
 
+    /// Check if running in UI test mode
+    private var isUITesting: Bool {
+        ProcessInfo.processInfo.arguments.contains("--uitesting")
+    }
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             NetworkTarget.self,
@@ -62,6 +67,9 @@ struct NetMonitorApp: App {
 
     @MainActor
     private func setupServices() async {
+        // Skip services setup in UI test mode for clean termination
+        guard !isUITesting else { return }
+
         let context = sharedModelContainer.mainContext
 
         // 1. Set up monitoring session

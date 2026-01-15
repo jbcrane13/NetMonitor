@@ -11,6 +11,11 @@ struct DeviceDetailView: View {
     @State private var editedNotes: String = ""
     @State private var selectedDeviceType: DeviceType = .unknown
 
+    // Sheet presentation state
+    @State private var showingPingSheet = false
+    @State private var showingPortScanSheet = false
+    @State private var showingWOLSheet = false
+
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
@@ -34,6 +39,15 @@ struct DeviceDetailView: View {
                     isEditing.toggle()
                 }
             }
+        }
+        .sheet(isPresented: $showingPingSheet) {
+            DevicePingSheet(ipAddress: device.ipAddress)
+        }
+        .sheet(isPresented: $showingPortScanSheet) {
+            DevicePortScanSheet(ipAddress: device.ipAddress)
+        }
+        .sheet(isPresented: $showingWOLSheet) {
+            DeviceWOLSheet(macAddress: device.macAddress, deviceName: device.displayName)
         }
     }
 
@@ -190,20 +204,20 @@ struct DeviceDetailView: View {
                 actionButton(
                     title: "Ping",
                     systemImage: "waveform.path",
-                    action: { /* TODO: Implement ping action */ }
+                    action: { showingPingSheet = true }
                 )
 
                 actionButton(
                     title: "Port Scan",
                     systemImage: "network",
-                    action: { /* TODO: Implement port scan action */ }
+                    action: { showingPortScanSheet = true }
                 )
 
                 if !device.macAddress.isEmpty {
                     actionButton(
                         title: "Wake",
                         systemImage: "power",
-                        action: { /* TODO: Implement WOL action */ }
+                        action: { showingWOLSheet = true }
                     )
                 }
 
