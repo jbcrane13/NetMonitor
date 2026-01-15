@@ -16,6 +16,7 @@ final class CompanionMessageHandler {
     private let modelContext: ModelContext
     private let monitoringSession: MonitoringSession
     private let deviceDiscovery: DeviceDiscoveryCoordinator
+    private let wakeOnLanService: WakeOnLanService
 
     init(
         modelContext: ModelContext,
@@ -25,6 +26,7 @@ final class CompanionMessageHandler {
         self.modelContext = modelContext
         self.monitoringSession = monitoringSession
         self.deviceDiscovery = deviceDiscovery
+        self.wakeOnLanService = WakeOnLanService()
     }
 
     /// Process an incoming message and return an optional response
@@ -189,11 +191,25 @@ final class CompanionMessageHandler {
             ))
         }
 
-        // TODO: Implement Wake on LAN
-        return .toolResult(ToolResultPayload(
-            tool: "wakeOnLan",
-            success: false,
-            result: "Wake on LAN not yet implemented for MAC: \(mac)"
-        ))
+        do {
+            try await wakeOnLanService.wake(macAddress: mac)
+            return .toolResult(ToolResultPayload(
+                tool: "wakeOnLan",
+                success: true,
+                result: "Magic packet sent to \(mac)"
+            ))
+        } catch let error as WakeOnLanError {
+            return .toolResult(ToolResultPayload(
+                tool: "wakeOnLan",
+                success: false,
+                result: error.localizedDescription
+            ))
+        } catch {
+            return .toolResult(ToolResultPayload(
+                tool: "wakeOnLan",
+                success: false,
+                result: "Wake on LAN failed: \(error.localizedDescription)"
+            ))
+        }
     }
 }
