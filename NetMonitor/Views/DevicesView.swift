@@ -10,6 +10,9 @@ struct DevicesView: View {
     @State private var selectedDevice: LocalDevice?
     @State private var searchText: String = ""
     @State private var filterOnlineOnly: Bool = false
+    @State private var wolService = WakeOnLanService()
+    @State private var wolAlertMessage: String?
+    @State private var showWolAlert: Bool = false
 
     var filteredDevices: [LocalDevice] {
         var result = devices
@@ -54,6 +57,23 @@ struct DevicesView: View {
                 coordinator = DeviceDiscoveryCoordinator(modelContext: modelContext)
             }
         }
+        .alert("Wake on LAN", isPresented: $showWolAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(wolAlertMessage ?? "")
+        }
+    }
+
+    // MARK: - Wake on LAN
+
+    private func sendWakeOnLan(to device: LocalDevice) async {
+        do {
+            try await wolService.wake(macAddress: device.macAddress)
+            wolAlertMessage = "Magic packet sent to \(device.displayName)"
+        } catch {
+            wolAlertMessage = "Failed to wake \(device.displayName): \(error.localizedDescription)"
+        }
+        showWolAlert = true
     }
 
     // MARK: - Device List
@@ -183,7 +203,9 @@ struct DevicesView: View {
 
         if !device.macAddress.isEmpty {
             Button {
-                // TODO: Implement WOL
+                Task {
+                    await sendWakeOnLan(to: device)
+                }
             } label: {
                 Label("Wake on LAN", systemImage: "power")
             }
