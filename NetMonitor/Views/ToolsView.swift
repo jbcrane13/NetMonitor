@@ -208,22 +208,19 @@ struct PingToolView: View {
         results = []
         isRunning = true
 
+        // Views are @MainActor - no need for MainActor.run
         Task {
             for seq in 1...count {
                 guard isRunning else { break }
 
                 let result = await executePing(sequence: seq)
-                await MainActor.run {
-                    results.append(result)
-                }
+                results.append(result)
 
                 if seq < count && isRunning {
                     try? await Task.sleep(for: .seconds(1))
                 }
             }
-            await MainActor.run {
-                isRunning = false
-            }
+            isRunning = false
         }
     }
 
@@ -365,7 +362,8 @@ struct TracerouteToolView: View {
         output = "Tracing route to \(targetHost)...\n"
         isRunning = true
 
-        Task.detached {
+        // Use regular Task - views are already @MainActor
+        Task {
             let process = Process()
             let pipe = Pipe()
 
@@ -380,21 +378,15 @@ struct TracerouteToolView: View {
                 // Read output incrementally
                 let handle = pipe.fileHandleForReading
                 for try await line in handle.bytes.lines {
-                    await MainActor.run {
-                        output += line + "\n"
-                    }
+                    output += line + "\n"
                 }
 
                 process.waitUntilExit()
             } catch {
-                await MainActor.run {
-                    output += "Error: \(error.localizedDescription)\n"
-                }
+                output += "Error: \(error.localizedDescription)\n"
             }
 
-            await MainActor.run {
-                isRunning = false
-            }
+            isRunning = false
         }
     }
 }
@@ -492,6 +484,7 @@ struct PortScannerToolView: View {
         isRunning = true
         progress = 0
 
+        // Views are @MainActor - no need for MainActor.run
         Task {
             let total = end - start + 1
             var scanned = 0
@@ -499,25 +492,17 @@ struct PortScannerToolView: View {
             for port in start...end {
                 guard isRunning else { break }
 
-                await MainActor.run {
-                    currentPort = port
-                }
+                currentPort = port
 
                 if await isPortOpen(host: host, port: port) {
-                    await MainActor.run {
-                        openPorts.append(port)
-                    }
+                    openPorts.append(port)
                 }
 
                 scanned += 1
-                await MainActor.run {
-                    progress = Double(scanned) / Double(total)
-                }
+                progress = Double(scanned) / Double(total)
             }
 
-            await MainActor.run {
-                isRunning = false
-            }
+            isRunning = false
         }
     }
 
@@ -627,7 +612,8 @@ struct DNSLookupToolView: View {
         results = []
         isRunning = true
 
-        Task.detached {
+        // Use regular Task - views are already @MainActor
+        Task {
             let process = Process()
             let pipe = Pipe()
 
@@ -643,18 +629,14 @@ struct DNSLookupToolView: View {
                 let data = pipe.fileHandleForReading.readDataToEndOfFile()
                 let output = String(data: data, encoding: .utf8) ?? ""
 
-                await MainActor.run {
-                    results = output.split(separator: "\n").map(String.init)
-                    if results.isEmpty {
-                        results = ["No records found"]
-                    }
-                    isRunning = false
+                results = output.split(separator: "\n").map(String.init)
+                if results.isEmpty {
+                    results = ["No records found"]
                 }
+                isRunning = false
             } catch {
-                await MainActor.run {
-                    results = ["Error: \(error.localizedDescription)"]
-                    isRunning = false
-                }
+                results = ["Error: \(error.localizedDescription)"]
+                isRunning = false
             }
         }
     }
@@ -701,7 +683,8 @@ struct WHOISToolView: View {
         output = "Looking up \(targetDomain)...\n"
         isRunning = true
 
-        Task.detached {
+        // Use regular Task - views are already @MainActor
+        Task {
             let process = Process()
             let pipe = Pipe()
 
@@ -717,15 +700,11 @@ struct WHOISToolView: View {
                 let data = pipe.fileHandleForReading.readDataToEndOfFile()
                 let result = String(data: data, encoding: .utf8) ?? "No output"
 
-                await MainActor.run {
-                    output = result
-                    isRunning = false
-                }
+                output = result
+                isRunning = false
             } catch {
-                await MainActor.run {
-                    output = "Error: \(error.localizedDescription)"
-                    isRunning = false
-                }
+                output = "Error: \(error.localizedDescription)"
+                isRunning = false
             }
         }
     }
@@ -875,7 +854,7 @@ struct DiscoveredService: Identifiable {
 }
 
 struct BonjourBrowserToolView: View {
-    @StateObject private var browser = BonjourBrowserModel()
+    @State private var browser = BonjourBrowserModel()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -929,19 +908,20 @@ struct BonjourBrowserToolView: View {
 }
 
 @MainActor
-class BonjourBrowserModel: ObservableObject {
-    @Published var services: [DiscoveredService] = []
-    @Published var isSearching = false
-    @Published var scanOutput: String = ""
+@Observable
+final class BonjourBrowserModel {
+    var services: [DiscoveredService] = []
+    var isSearching = false
+    var scanOutput: String = ""
 
     func start() {
         services = []
         isSearching = true
         scanOutput = "Scanning for services...\n"
 
-        // Use dns-sd command to browse for services
-        Task.detached {
-            await self.scanUsingDnsSd()
+        // Use regular Task - class is @MainActor
+        Task {
+            await scanUsingDnsSd()
         }
     }
 
@@ -971,15 +951,21 @@ class BonjourBrowserModel: ObservableObject {
 
                 let data = pipe.fileHandleForReading.readDataToEndOfFile()
                 if let output = String(data: data, encoding: .utf8) {
-                    await self.parseOutput(output, serviceType: serviceType)
+                    // Capture values before MainActor call
+                    let capturedOutput = output
+                    let capturedServiceType = serviceType
+
+                    await MainActor.run { [weak self] in
+                        self?.parseOutput(capturedOutput, serviceType: capturedServiceType)
+                    }
                 }
             } catch {
                 // Ignore errors, continue with next service type
             }
         }
 
-        await MainActor.run {
-            self.isSearching = false
+        await MainActor.run { [weak self] in
+            self?.isSearching = false
         }
     }
 

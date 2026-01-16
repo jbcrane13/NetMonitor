@@ -2,6 +2,8 @@ import Foundation
 import SwiftData
 import NetMonitorShared
 
+// MARK: - LocalDevice Model
+
 @Model
 final class LocalDevice {
     var id: UUID
@@ -40,5 +42,50 @@ final class LocalDevice {
         self.firstSeen = firstSeen
         self.lastSeen = lastSeen
         self.isOnline = isOnline
+    }
+}
+
+// MARK: - Computed Properties & Filtering
+
+extension LocalDevice {
+    /// Display name for the device (prioritizes custom name, then hostname, then IP)
+    var displayName: String {
+        customName ?? hostname ?? ipAddress
+    }
+
+    /// Check if device matches search text (case-insensitive)
+    /// - Parameter searchText: The search query
+    /// - Returns: True if device matches the search criteria
+    func matches(searchText: String) -> Bool {
+        guard !searchText.isEmpty else { return true }
+
+        return displayName.localizedCaseInsensitiveContains(searchText) ||
+               ipAddress.contains(searchText) ||
+               macAddress.localizedCaseInsensitiveContains(searchText) ||
+               (vendor?.localizedCaseInsensitiveContains(searchText) ?? false)
+    }
+
+    /// Filter devices by online status and search text
+    /// - Parameters:
+    ///   - devices: Array of devices to filter
+    ///   - onlineOnly: If true, only include online devices
+    ///   - searchText: Search text to filter by
+    /// - Returns: Filtered array of devices
+    static func filter(
+        _ devices: [LocalDevice],
+        onlineOnly: Bool,
+        searchText: String
+    ) -> [LocalDevice] {
+        var result = devices
+
+        if onlineOnly {
+            result = result.filter { $0.isOnline }
+        }
+
+        if !searchText.isEmpty {
+            result = result.filter { $0.matches(searchText: searchText) }
+        }
+
+        return result
     }
 }

@@ -48,7 +48,7 @@ struct ContentView: View {
                 .environment(activeSession)
             }
         }
-        .frame(minWidth: 900, minHeight: 600)
+        .frame(minWidth: 1000, minHeight: 600)
         .task {
             // Create local session only if not provided via environment
             if session == nil && localSession == nil {

@@ -80,6 +80,26 @@ final class MonitoringSession {
         return latestResults[targetID]
     }
 
+    // MARK: - Computed Statistics (extracted for testability)
+
+    /// Number of targets currently online
+    var onlineTargetCount: Int {
+        latestResults.values.filter { $0.isReachable }.count
+    }
+
+    /// Number of targets currently offline
+    var offlineTargetCount: Int {
+        latestResults.values.filter { !$0.isReachable }.count
+    }
+
+    /// Formatted average latency string across all targets
+    var averageLatencyString: String {
+        let latencies = latestResults.values.compactMap { $0.latency }
+        guard !latencies.isEmpty else { return "—" }
+        let avg = latencies.reduce(0, +) / Double(latencies.count)
+        return "\(Int(avg))ms"
+    }
+
     // MARK: - Private Methods
 
     private func startMonitoringTarget(_ target: NetworkTarget) {

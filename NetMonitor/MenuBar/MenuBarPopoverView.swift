@@ -185,22 +185,11 @@ struct MenuBarPopoverView: View {
         .padding()
     }
 
-    // MARK: - Computed Properties
+    // MARK: - Computed Properties (delegated to MonitoringSession for testability)
 
-    private var onlineTargetCount: Int {
-        session.latestResults.values.filter { $0.isReachable }.count
-    }
-
-    private var offlineTargetCount: Int {
-        session.latestResults.values.filter { !$0.isReachable }.count
-    }
-
-    private var averageLatencyString: String {
-        let latencies = session.latestResults.values.compactMap { $0.latency }
-        guard !latencies.isEmpty else { return "—" }
-        let avg = latencies.reduce(0, +) / Double(latencies.count)
-        return "\(Int(avg))ms"
-    }
+    private var onlineTargetCount: Int { session.onlineTargetCount }
+    private var offlineTargetCount: Int { session.offlineTargetCount }
+    private var averageLatencyString: String { session.averageLatencyString }
 }
 
 // MARK: - Preview

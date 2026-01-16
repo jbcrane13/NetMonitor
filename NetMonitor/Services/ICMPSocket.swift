@@ -79,11 +79,13 @@ actor ICMPSocket {
     /// - Returns: Round-trip time in milliseconds
     /// - Throws: NetworkMonitorError
     func sendEchoRequest(to host: String, identifier: UInt16, sequenceNumber: UInt16) async throws -> Double {
-        try await withCheckedThrowingContinuation { continuation in
-            Task.detached {
-                let result = await self.executePing(host: host)
-                continuation.resume(with: result)
-            }
+        // Execute ping directly within actor context - no need for Task.detached
+        let result = await executePing(host: host)
+        switch result {
+        case .success(let latency):
+            return latency
+        case .failure(let error):
+            throw error
         }
     }
 

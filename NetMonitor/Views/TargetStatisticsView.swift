@@ -82,35 +82,16 @@ struct TargetStatisticsView: View {
         .cornerRadius(12)
     }
 
-    // MARK: - Statistics
+    // MARK: - Statistics (extracted to TargetMeasurement model for testability)
 
-    private var averageLatency: String {
-        let latencies = measurements.compactMap { $0.latency }
-        guard !latencies.isEmpty else { return "—" }
-        let avg = latencies.reduce(0, +) / Double(latencies.count)
-        return String(format: "%.0f", avg)
+    private var statistics: MeasurementStatistics {
+        TargetMeasurement.calculateStatistics(from: Array(measurements))
     }
 
-    private var minLatency: String {
-        guard let min = measurements.compactMap({ $0.latency }).min() else {
-            return "—"
-        }
-        return String(format: "%.0f", min)
-    }
-
-    private var maxLatency: String {
-        guard let max = measurements.compactMap({ $0.latency }).max() else {
-            return "—"
-        }
-        return String(format: "%.0f", max)
-    }
-
-    private var uptime: String {
-        guard !measurements.isEmpty else { return "—" }
-        let reachable = measurements.filter { $0.isReachable }.count
-        let percentage = (Double(reachable) / Double(measurements.count)) * 100
-        return String(format: "%.1f", percentage)
-    }
+    private var averageLatency: String { statistics.averageLatencyFormatted }
+    private var minLatency: String { statistics.minLatencyFormatted }
+    private var maxLatency: String { statistics.maxLatencyFormatted }
+    private var uptime: String { statistics.uptimeFormatted }
 }
 
 struct StatisticItem: View {

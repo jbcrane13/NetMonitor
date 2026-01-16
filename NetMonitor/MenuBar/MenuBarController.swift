@@ -10,11 +10,12 @@ import AppKit
 
 /// Controls the menu bar status item and popover
 @MainActor
-final class MenuBarController: ObservableObject {
+@Observable
+final class MenuBarController {
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
 
-    @Published var isVisible: Bool = false
+    var isVisible: Bool = false
 
     private let monitoringSession: MonitoringSession
 

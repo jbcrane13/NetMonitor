@@ -18,43 +18,37 @@ struct DevicesView: View {
     @State private var actionTargetDevice: LocalDevice?
 
     var filteredDevices: [LocalDevice] {
-        var result = devices
-
-        if filterOnlineOnly {
-            result = result.filter { $0.isOnline }
-        }
-
-        if !searchText.isEmpty {
-            result = result.filter { device in
-                device.displayName.localizedCaseInsensitiveContains(searchText) ||
-                device.ipAddress.contains(searchText) ||
-                device.macAddress.localizedCaseInsensitiveContains(searchText) ||
-                (device.vendor?.localizedCaseInsensitiveContains(searchText) ?? false)
-            }
-        }
-
-        return result
+        // Use extracted filter logic from LocalDevice model for testability
+        LocalDevice.filter(devices, onlineOnly: filterOnlineOnly, searchText: searchText)
     }
 
     var body: some View {
-        NavigationSplitView {
+        HStack(spacing: 0) {
+            // Device list
             deviceList
-        } detail: {
-            if let device = selectedDevice {
-                DeviceDetailView(device: device)
-            } else {
-                ContentUnavailableView(
-                    "Select a Device",
-                    systemImage: "desktopcomputer",
-                    description: Text("Choose a device from the list to view details")
-                )
+                .frame(width: 350)
+
+            Divider()
+
+            // Detail pane
+            Group {
+                if let device = selectedDevice {
+                    DeviceDetailView(device: device)
+                } else {
+                    ContentUnavailableView(
+                        "Select a Device",
+                        systemImage: "desktopcomputer",
+                        description: Text("Choose a device from the list to view details")
+                    )
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .navigationTitle("Devices")
+        .searchable(text: $searchText, prompt: "Search devices...")
         .toolbar {
             toolbarContent
         }
-        .searchable(text: $searchText, prompt: "Search devices...")
         .onAppear {
             if coordinator == nil {
                 coordinator = DeviceDiscoveryCoordinator(modelContext: modelContext)
@@ -239,11 +233,20 @@ struct DevicePingSheet: View {
                     .font(.headline)
                 Spacer()
                 Button("Done") { dismiss() }
+                    .keyboardShortcut(.cancelAction)
             }
 
-            if isRunning || !results.isEmpty {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 4) {
+            Divider()
+
+            // Results area - always show placeholder when empty
+            ScrollView {
+                VStack(alignment: .leading, spacing: 4) {
+                    if results.isEmpty && !isRunning {
+                        Text("Click 'Start Ping' to begin")
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 40)
+                    } else {
                         ForEach(results) { result in
                             HStack {
                                 Text("Seq \(result.sequence):")
@@ -260,45 +263,54 @@ struct DevicePingSheet: View {
                                 }
                             }
                         }
+                        if isRunning {
+                            ProgressView()
+                                .padding(.top, 8)
+                        }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxHeight: 200)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 4)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(nsColor: .textBackgroundColor).opacity(0.5))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
 
-            Button(isRunning ? "Stop" : "Start Ping") {
-                if isRunning {
-                    isRunning = false
-                } else {
-                    runPing()
+            Divider()
+
+            HStack {
+                Spacer()
+                Button(isRunning ? "Stop" : "Start Ping") {
+                    if isRunning {
+                        isRunning = false
+                    } else {
+                        runPing()
+                    }
                 }
+                .buttonStyle(.borderedProminent)
             }
-            .buttonStyle(.borderedProminent)
         }
-        .padding()
-        .frame(width: 400, height: 350)
+        .padding(20)
+        .frame(minWidth: 400, minHeight: 350)
     }
 
     private func runPing() {
         results = []
         isRunning = true
 
+        // Views are @MainActor - no need for MainActor.run
         Task {
             for seq in 1...10 {
                 guard isRunning else { break }
 
                 let result = await executePing(sequence: seq)
-                await MainActor.run {
-                    results.append(result)
-                }
+                results.append(result)
 
                 if seq < 10 && isRunning {
                     try? await Task.sleep(for: .seconds(1))
                 }
             }
-            await MainActor.run {
-                isRunning = false
-            }
+            isRunning = false
         }
     }
 
@@ -427,8 +439,8 @@ struct DevicePortScanSheet: View {
 
             Spacer()
         }
-        .padding()
-        .frame(width: 400, height: 400)
+        .padding(20)
+        .frame(minWidth: 450, minHeight: 400)
     }
 
     private func runScan() {
@@ -444,6 +456,7 @@ struct DevicePortScanSheet: View {
         isRunning = true
         progress = 0
 
+        // Views are @MainActor - no need for MainActor.run
         Task {
             let total = end - start + 1
             var scanned = 0
@@ -451,25 +464,17 @@ struct DevicePortScanSheet: View {
             for port in start...end {
                 guard isRunning else { break }
 
-                await MainActor.run {
-                    currentPort = port
-                }
+                currentPort = port
 
                 if await isPortOpen(port: port) {
-                    await MainActor.run {
-                        openPorts.append(port)
-                    }
+                    openPorts.append(port)
                 }
 
                 scanned += 1
-                await MainActor.run {
-                    progress = Double(scanned) / Double(total)
-                }
+                progress = Double(scanned) / Double(total)
             }
 
-            await MainActor.run {
-                isRunning = false
-            }
+            isRunning = false
         }
     }
 
@@ -566,8 +571,8 @@ struct DeviceWOLSheet: View {
 
             Spacer()
         }
-        .padding()
-        .frame(width: 350, height: 250)
+        .padding(20)
+        .frame(minWidth: 380, minHeight: 280)
     }
 
     private func sendWakePacket() {

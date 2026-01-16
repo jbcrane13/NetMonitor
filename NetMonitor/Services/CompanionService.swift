@@ -149,20 +149,32 @@ actor CompanionService {
     }
 
     private nonisolated func receiveMessage(from connection: NWConnection, clientID: UUID) {
+        // Capture values before closure to avoid actor isolation issues
+        let capturedClientID = clientID
+        let capturedConnection = connection
+
         connection.receive(minimumIncompleteLength: 1, maximumLength: 65536) { [weak self] data, _, isComplete, error in
-            if let data = data, !data.isEmpty {
+            // Capture values BEFORE Task block
+            let capturedData = data
+            let capturedIsComplete = isComplete
+            let capturedError = error
+
+            if let data = capturedData, !data.isEmpty {
                 Task { [weak self] in
-                    await self?.processReceivedData(data, clientID: clientID)
+                    await self?.processReceivedData(data, clientID: capturedClientID)
                 }
             }
 
-            if let error = error {
+            if let error = capturedError {
                 print("CompanionService: Receive error - \(error)")
                 return
             }
 
-            if !isComplete {
-                self?.receiveMessage(from: connection, clientID: clientID)
+            if !capturedIsComplete {
+                // Use Task to safely call back into actor context
+                Task { [weak self] in
+                    self?.receiveMessage(from: capturedConnection, clientID: capturedClientID)
+                }
             }
         }
     }
@@ -189,6 +201,9 @@ actor CompanionService {
     }
 
     private nonisolated func send(data: Data, to connection: NWConnection, clientID: UUID) async {
+        // Capture values before closure to avoid actor isolation issues
+        let capturedClientID = clientID
+
         // Prefix with length for framing
         var length = UInt32(data.count).bigEndian
         var framedData = Data(bytes: &length, count: 4)
@@ -196,7 +211,7 @@ actor CompanionService {
 
         connection.send(content: framedData, completion: .contentProcessed { error in
             if let error = error {
-                print("CompanionService: Send error to \(clientID) - \(error)")
+                print("CompanionService: Send error to \(capturedClientID) - \(error)")
             }
         })
     }

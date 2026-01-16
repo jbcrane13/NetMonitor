@@ -52,10 +52,4 @@ struct DeviceRowView: View {
     }
 }
 
-// MARK: - LocalDevice Extension
-
-extension LocalDevice {
-    var displayName: String {
-        customName ?? hostname ?? ipAddress
-    }
-}
+// Note: displayName is now defined in LocalDevice.swift extension

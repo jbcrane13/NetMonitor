@@ -106,7 +106,12 @@ actor WakeOnLanService {
     /// Send the magic packet via UDP broadcast
     /// - Parameter packet: The magic packet data
     private func sendPacket(_ packet: Data, to hostAddress: String) async throws {
+        // Use Sendable wrapper for continuation management
+        let continuationHandler = ContinuationHandler()
+
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            continuationHandler.setContinuation(continuation)
+
             let host = NWEndpoint.Host(hostAddress)
             let port = NWEndpoint.Port(rawValue: wolPort)!
 
@@ -115,38 +120,25 @@ actor WakeOnLanService {
             parameters.allowLocalEndpointReuse = true
 
             let connection = NWConnection(host: host, port: port, using: parameters)
+            continuationHandler.setConnection(connection)
 
-            // Thread-safe state for continuation
-            let lock = NSLock()
-            var didResume = false
-
-            func resume(with result: Result<Void, Error>) {
-                lock.lock()
-                defer { lock.unlock() }
-                if !didResume {
-                    didResume = true
-                    connection.cancel()
-                    continuation.resume(with: result)
-                }
-            }
-
-            connection.stateUpdateHandler = { state in
+            connection.stateUpdateHandler = { [continuationHandler] state in
                 switch state {
                 case .ready:
                     // Send the magic packet
-                    connection.send(content: packet, completion: .contentProcessed { error in
+                    connection.send(content: packet, completion: .contentProcessed { [continuationHandler] error in
                         if let error = error {
-                            resume(with: .failure(WakeOnLanError.networkError(error.localizedDescription)))
+                            continuationHandler.resume(with: .failure(WakeOnLanError.networkError(error.localizedDescription)))
                         } else {
-                            resume(with: .success(()))
+                            continuationHandler.resume(with: .success(()))
                         }
                     })
 
                 case .failed(let error):
-                    resume(with: .failure(WakeOnLanError.networkError(error.localizedDescription)))
+                    continuationHandler.resume(with: .failure(WakeOnLanError.networkError(error.localizedDescription)))
 
                 case .cancelled:
-                    resume(with: .failure(WakeOnLanError.networkError("Connection cancelled")))
+                    continuationHandler.resume(with: .failure(WakeOnLanError.networkError("Connection cancelled")))
 
                 default:
                     break
@@ -156,9 +148,42 @@ actor WakeOnLanService {
             connection.start(queue: .global())
 
             // Set timeout
-            DispatchQueue.global().asyncAfter(deadline: .now() + 5) {
-                resume(with: .failure(WakeOnLanError.timeout))
+            DispatchQueue.global().asyncAfter(deadline: .now() + 5) { [continuationHandler] in
+                continuationHandler.resume(with: .failure(WakeOnLanError.timeout))
             }
         }
+    }
+}
+
+// MARK: - Thread-safe continuation wrapper
+
+/// Sendable class for managing continuation safely across thread boundaries
+private final class ContinuationHandler: @unchecked Sendable {
+    private let lock = NSLock()
+    private var didResume = false
+    private var continuation: CheckedContinuation<Void, Error>?
+    private var connection: NWConnection?
+
+    func setContinuation(_ continuation: CheckedContinuation<Void, Error>) {
+        lock.lock()
+        defer { lock.unlock() }
+        self.continuation = continuation
+    }
+
+    func setConnection(_ connection: NWConnection) {
+        lock.lock()
+        defer { lock.unlock() }
+        self.connection = connection
+    }
+
+    func resume(with result: Result<Void, Error>) {
+        lock.lock()
+        defer { lock.unlock() }
+
+        guard !didResume else { return }
+        didResume = true
+
+        connection?.cancel()
+        continuation?.resume(with: result)
     }
 }
