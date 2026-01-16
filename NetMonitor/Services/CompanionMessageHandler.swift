@@ -192,11 +192,19 @@ final class CompanionMessageHandler {
             ))
         }
 
-        // TODO: Implement Wake on LAN
-        return .toolResult(ToolResultPayload(
-            tool: "wakeOnLan",
-            success: false,
-            result: "Wake on LAN not yet implemented for MAC: \(mac)"
-        ))
+        do {
+            try await wakeOnLanService.wake(macAddress: mac)
+            return .toolResult(ToolResultPayload(
+                tool: "wakeOnLan",
+                success: true,
+                result: "Magic packet sent to \(mac)"
+            ))
+        } catch {
+            return .toolResult(ToolResultPayload(
+                tool: "wakeOnLan",
+                success: false,
+                result: "Failed to wake \(mac): \(error.localizedDescription)"
+            ))
+        }
     }
 }

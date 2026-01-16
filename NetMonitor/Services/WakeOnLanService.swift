@@ -37,11 +37,12 @@ actor WakeOnLanService {
 
     /// Send a Wake on LAN magic packet to the specified MAC address
     /// - Parameter macAddress: Target MAC address (supports formats: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF, AABBCCDDEEFF)
+    /// - Parameter targetHost: The target host or broadcast address (default: 255.255.255.255)
     /// - Returns: True if the packet was sent successfully
-    func wake(macAddress: String) async throws {
+    func wake(macAddress: String, targetHost: String = "255.255.255.255") async throws {
         let macBytes = try parseMACAddress(macAddress)
         let magicPacket = buildMagicPacket(macBytes: macBytes)
-        try await sendPacket(magicPacket)
+        try await sendPacket(magicPacket, to: targetHost)
     }
 
     /// Parse a MAC address string into bytes
@@ -104,9 +105,9 @@ actor WakeOnLanService {
 
     /// Send the magic packet via UDP broadcast
     /// - Parameter packet: The magic packet data
-    private func sendPacket(_ packet: Data) async throws {
+    private func sendPacket(_ packet: Data, to hostAddress: String) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            let host = NWEndpoint.Host(broadcastAddress)
+            let host = NWEndpoint.Host(hostAddress)
             let port = NWEndpoint.Port(rawValue: wolPort)!
 
             // Create UDP connection with broadcast enabled
@@ -115,36 +116,37 @@ actor WakeOnLanService {
 
             let connection = NWConnection(host: host, port: port, using: parameters)
 
+            // Thread-safe state for continuation
+            let lock = NSLock()
             var didResume = false
+
+            func resume(with result: Result<Void, Error>) {
+                lock.lock()
+                defer { lock.unlock() }
+                if !didResume {
+                    didResume = true
+                    connection.cancel()
+                    continuation.resume(with: result)
+                }
+            }
 
             connection.stateUpdateHandler = { state in
                 switch state {
                 case .ready:
                     // Send the magic packet
                     connection.send(content: packet, completion: .contentProcessed { error in
-                        connection.cancel()
-                        if !didResume {
-                            didResume = true
-                            if let error = error {
-                                continuation.resume(throwing: WakeOnLanError.networkError(error.localizedDescription))
-                            } else {
-                                continuation.resume()
-                            }
+                        if let error = error {
+                            resume(with: .failure(WakeOnLanError.networkError(error.localizedDescription)))
+                        } else {
+                            resume(with: .success(()))
                         }
                     })
 
                 case .failed(let error):
-                    connection.cancel()
-                    if !didResume {
-                        didResume = true
-                        continuation.resume(throwing: WakeOnLanError.networkError(error.localizedDescription))
-                    }
+                    resume(with: .failure(WakeOnLanError.networkError(error.localizedDescription)))
 
                 case .cancelled:
-                    if !didResume {
-                        didResume = true
-                        continuation.resume(throwing: WakeOnLanError.networkError("Connection cancelled"))
-                    }
+                    resume(with: .failure(WakeOnLanError.networkError("Connection cancelled")))
 
                 default:
                     break
@@ -155,11 +157,7 @@ actor WakeOnLanService {
 
             // Set timeout
             DispatchQueue.global().asyncAfter(deadline: .now() + 5) {
-                if !didResume {
-                    didResume = true
-                    connection.cancel()
-                    continuation.resume(throwing: WakeOnLanError.timeout)
-                }
+                resume(with: .failure(WakeOnLanError.timeout))
             }
         }
     }

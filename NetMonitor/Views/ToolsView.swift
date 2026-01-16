@@ -851,70 +851,16 @@ struct WakeOnLANToolView: View {
     }
 
     private func sendWakePacket() {
-        guard let macBytes = parseMACAddress(macAddress) else {
-            status = "Error: Invalid MAC address format"
-            return
-        }
-
-        // Build magic packet: 6 bytes of 0xFF followed by MAC address repeated 16 times
-        var packet = Data(repeating: 0xFF, count: 6)
-        for _ in 0..<16 {
-            packet.append(contentsOf: macBytes)
-        }
-
-        // Send UDP packet
+        status = "Sending..."
         Task {
             do {
-                let sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
-                guard sock >= 0 else {
-                    throw NSError(domain: "WOL", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to create socket"])
-                }
-                defer { close(sock) }
-
-                // Enable broadcast
-                var broadcast: Int32 = 1
-                setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &broadcast, socklen_t(MemoryLayout<Int32>.size))
-
-                // Set destination
-                var addr = sockaddr_in()
-                addr.sin_family = sa_family_t(AF_INET)
-                addr.sin_port = UInt16(9).bigEndian
-                inet_pton(AF_INET, broadcastAddress, &addr.sin_addr)
-
-                // Send packet
-                let sent = packet.withUnsafeBytes { ptr in
-                    withUnsafePointer(to: &addr) { addrPtr in
-                        addrPtr.withMemoryRebound(to: sockaddr.self, capacity: 1) { sockaddrPtr in
-                            sendto(sock, ptr.baseAddress, packet.count, 0, sockaddrPtr, socklen_t(MemoryLayout<sockaddr_in>.size))
-                        }
-                    }
-                }
-
-                if sent > 0 {
-                    status = "Magic packet sent to \(macAddress)"
-                } else {
-                    status = "Error: Failed to send packet"
-                }
+                let service = WakeOnLanService()
+                try await service.wake(macAddress: macAddress, targetHost: broadcastAddress)
+                status = "Magic packet sent to \(macAddress)"
             } catch {
                 status = "Error: \(error.localizedDescription)"
             }
         }
-    }
-
-    private func parseMACAddress(_ mac: String) -> [UInt8]? {
-        let cleaned = mac.replacingOccurrences(of: ":", with: "")
-                        .replacingOccurrences(of: "-", with: "")
-        guard cleaned.count == 12 else { return nil }
-
-        var bytes: [UInt8] = []
-        var index = cleaned.startIndex
-        for _ in 0..<6 {
-            let nextIndex = cleaned.index(index, offsetBy: 2)
-            guard let byte = UInt8(cleaned[index..<nextIndex], radix: 16) else { return nil }
-            bytes.append(byte)
-            index = nextIndex
-        }
-        return bytes
     }
 }
 
