@@ -33,27 +33,6 @@ struct BonjourService: Sendable, Identifiable {
     }
 }
 
-/// Thread-safe resume tracker for continuation safety
-private final class ResumeTracker: @unchecked Sendable {
-    private let lock = NSLock()
-    private var _hasResumed = false
-
-    var hasResumed: Bool {
-        lock.lock()
-        defer { lock.unlock() }
-        return _hasResumed
-    }
-
-    /// Attempts to mark as resumed. Returns true if this call set the flag, false if already resumed.
-    func tryResume() -> Bool {
-        lock.lock()
-        defer { lock.unlock() }
-        if _hasResumed { return false }
-        _hasResumed = true
-        return true
-    }
-}
-
 /// Actor-based Bonjour/mDNS discovery service for finding advertised services on the local network
 actor BonjourDiscoveryService: DeviceDiscoveryService {
 
@@ -324,7 +303,7 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
         let parameters = NWParameters.tcp
         let connection = NWConnection(to: result.endpoint, using: parameters)
 
-        let tracker = ResumeTracker()
+        let tracker = ContinuationTracker()
 
         // Use continuation to get resolved endpoint info
         let resolvedInfo: (hostname: String?, port: Int?, ipAddress: String?) = await withCheckedContinuation { continuation in

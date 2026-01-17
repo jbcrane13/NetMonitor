@@ -42,3 +42,11 @@ final class LocalDevice {
         self.isOnline = isOnline
     }
 }
+
+// MARK: - Computed Properties
+
+extension LocalDevice {
+    var displayName: String {
+        customName ?? hostname ?? ipAddress
+    }
+}

@@ -10,9 +10,7 @@ struct DeviceDetailView: View {
     @State private var editedName: String = ""
     @State private var editedNotes: String = ""
     @State private var selectedDeviceType: DeviceType = .unknown
-    @State private var wolService = WakeOnLanService()
-    @State private var wolAlertMessage: String?
-    @State private var showWolAlert: Bool = false
+    @State private var wolAction = WakeOnLanAction()
 
     var body: some View {
         ScrollView {
@@ -38,11 +36,7 @@ struct DeviceDetailView: View {
                 }
             }
         }
-        .alert("Wake on LAN", isPresented: $showWolAlert) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(wolAlertMessage ?? "")
-        }
+        .wakeOnLanAlert(wolAction)
     }
 
     // MARK: - Header Card
@@ -213,7 +207,7 @@ struct DeviceDetailView: View {
                         systemImage: "power",
                         action: {
                             Task {
-                                await sendWakeOnLan()
+                                await wolAction.wake(device: device)
                             }
                         }
                     )
@@ -289,15 +283,5 @@ struct DeviceDetailView: View {
         )
         modelContext.insert(target)
         try? modelContext.save()
-    }
-
-    private func sendWakeOnLan() async {
-        do {
-            try await wolService.wake(macAddress: device.macAddress)
-            wolAlertMessage = "Magic packet sent to \(device.displayName)"
-        } catch {
-            wolAlertMessage = "Failed to wake \(device.displayName): \(error.localizedDescription)"
-        }
-        showWolAlert = true
     }
 }

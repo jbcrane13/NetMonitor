@@ -260,28 +260,7 @@ actor ARPScannerService: DeviceDiscoveryService {
 
         let connection = NWConnection(host: host, port: port, using: .tcp)
 
-        // Use an actor-isolated class to safely track resumption state
-        final class ResumeTracker: @unchecked Sendable {
-            private let lock = NSLock()
-            private var _hasResumed = false
-
-            var hasResumed: Bool {
-                lock.lock()
-                defer { lock.unlock() }
-                return _hasResumed
-            }
-
-            /// Attempts to mark as resumed. Returns true if this call set the flag, false if already resumed.
-            func tryResume() -> Bool {
-                lock.lock()
-                defer { lock.unlock() }
-                if _hasResumed { return false }
-                _hasResumed = true
-                return true
-            }
-        }
-
-        let tracker = ResumeTracker()
+        let tracker = ContinuationTracker()
         let probeTimeout = self.timeout
 
         return await withCheckedContinuation { continuation in

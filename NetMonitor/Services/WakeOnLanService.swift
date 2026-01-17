@@ -105,6 +105,8 @@ actor WakeOnLanService {
     /// Send the magic packet via UDP broadcast
     /// - Parameter packet: The magic packet data
     private func sendPacket(_ packet: Data) async throws {
+        let tracker = ContinuationTracker()
+
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             let host = NWEndpoint.Host(broadcastAddress)
             let port = NWEndpoint.Port(rawValue: wolPort)!
@@ -115,16 +117,13 @@ actor WakeOnLanService {
 
             let connection = NWConnection(host: host, port: port, using: parameters)
 
-            var didResume = false
-
-            connection.stateUpdateHandler = { state in
+            connection.stateUpdateHandler = { [tracker] state in
                 switch state {
                 case .ready:
                     // Send the magic packet
                     connection.send(content: packet, completion: .contentProcessed { error in
                         connection.cancel()
-                        if !didResume {
-                            didResume = true
+                        if tracker.tryResume() {
                             if let error = error {
                                 continuation.resume(throwing: WakeOnLanError.networkError(error.localizedDescription))
                             } else {
@@ -135,14 +134,12 @@ actor WakeOnLanService {
 
                 case .failed(let error):
                     connection.cancel()
-                    if !didResume {
-                        didResume = true
+                    if tracker.tryResume() {
                         continuation.resume(throwing: WakeOnLanError.networkError(error.localizedDescription))
                     }
 
                 case .cancelled:
-                    if !didResume {
-                        didResume = true
+                    if tracker.tryResume() {
                         continuation.resume(throwing: WakeOnLanError.networkError("Connection cancelled"))
                     }
 
@@ -154,9 +151,8 @@ actor WakeOnLanService {
             connection.start(queue: .global())
 
             // Set timeout
-            DispatchQueue.global().asyncAfter(deadline: .now() + 5) {
-                if !didResume {
-                    didResume = true
+            DispatchQueue.global().asyncAfter(deadline: .now() + 5) { [tracker] in
+                if tracker.tryResume() {
                     connection.cancel()
                     continuation.resume(throwing: WakeOnLanError.timeout)
                 }

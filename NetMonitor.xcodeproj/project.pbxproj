@@ -55,6 +55,9 @@
 		CSVC0001000000000000001A /* CompanionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0002000000000000001A /* CompanionService.swift */; };
 		CSVC0003000000000000001A /* CompanionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0004000000000000001A /* CompanionServiceTests.swift */; };
 		CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMHD0002000000000000001A /* CompanionMessageHandler.swift */; };
+		WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLS0002000000000000001A /* WakeOnLanService.swift */; };
+		CTRK0001000000000000001A /* ContinuationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CTRK0002000000000000001A /* ContinuationTracker.swift */; };
+		WOLA0001000000000000001A /* WakeOnLanAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLA0002000000000000001A /* WakeOnLanAction.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,6 +129,9 @@
 		CSVC0002000000000000001A /* CompanionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionService.swift; path = NetMonitor/Services/CompanionService.swift; sourceTree = "<group>"; };
 		CSVC0004000000000000001A /* CompanionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionServiceTests.swift; path = NetMonitorTests/Services/CompanionServiceTests.swift; sourceTree = "<group>"; };
 		CMHD0002000000000000001A /* CompanionMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionMessageHandler.swift; path = NetMonitor/Services/CompanionMessageHandler.swift; sourceTree = "<group>"; };
+		WOLS0002000000000000001A /* WakeOnLanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeOnLanService.swift; path = NetMonitor/Services/WakeOnLanService.swift; sourceTree = "<group>"; };
+		CTRK0002000000000000001A /* ContinuationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContinuationTracker.swift; path = ContinuationTracker.swift; sourceTree = "<group>"; };
+		WOLA0002000000000000001A /* WakeOnLanAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeOnLanAction.swift; path = WakeOnLanAction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +182,7 @@
 				2A000002000000000000000A /* NetMonitorApp.swift */,
 				2A000004000000000000000A /* ContentView.swift */,
 				2510D9AC2F13025400C8C91B /* Views */,
+				UTIL0001000000000000001A /* Utilities */,
 				MBGR0001000000000000001A /* MenuBar */,
 				2A000006000000000000000A /* Assets.xcassets */,
 				2A000014000000000000000A /* NetMonitor.entitlements */,
@@ -261,6 +268,7 @@
 				MACV0002000000000000001A /* MACVendorLookupService.swift */,
 				CSVC0002000000000000001A /* CompanionService.swift */,
 				CMHD0002000000000000001A /* CompanionMessageHandler.swift */,
+				WOLS0002000000000000001A /* WakeOnLanService.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -288,6 +296,16 @@
 				MBCM0002000000000000001A /* MenuBarCommands.swift */,
 			);
 			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		UTIL0001000000000000001A /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				CTRK0002000000000000001A /* ContinuationTracker.swift */,
+				WOLA0002000000000000001A /* WakeOnLanAction.swift */,
+			);
+			name = Utilities;
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -464,6 +482,9 @@
 								MBCM0001000000000000001A /* MenuBarCommands.swift in Sources */,
 								CSVC0001000000000000001A /* CompanionService.swift in Sources */,
 								CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */,
+				WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */,
+				CTRK0001000000000000001A /* ContinuationTracker.swift in Sources */,
+				WOLA0001000000000000001A /* WakeOnLanAction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

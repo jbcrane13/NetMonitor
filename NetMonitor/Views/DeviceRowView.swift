@@ -51,11 +51,3 @@ struct DeviceRowView: View {
         .padding(.vertical, 4)
     }
 }
-
-// MARK: - LocalDevice Extension
-
-extension LocalDevice {
-    var displayName: String {
-        customName ?? hostname ?? ipAddress
-    }
-}
