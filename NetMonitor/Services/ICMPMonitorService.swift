@@ -1,16 +1,12 @@
 import Foundation
 
 /// Actor-based ICMP ping monitoring service
+///
+/// Uses ProcessPingService internally to execute /sbin/ping, which works
+/// within App Sandbox constraints where raw ICMP sockets are blocked.
 actor ICMPMonitorService: NetworkMonitorService {
 
-    private let socket: ICMPSocket
-    private var sequenceNumber: UInt16 = 0
-    private let identifier: UInt16
-
-    init() {
-        self.identifier = UInt16.random(in: 1...65535)
-        self.socket = ICMPSocket()
-    }
+    private let pingService = ProcessPingService()
 
     func check(target: NetworkTarget) async throws -> TargetMeasurement {
         // Validate target protocol
@@ -18,27 +14,24 @@ actor ICMPMonitorService: NetworkMonitorService {
             throw NetworkMonitorError.invalidHost("Target protocol must be ICMP")
         }
 
-        // Increment sequence number
-        sequenceNumber = sequenceNumber &+ 1
-
         do {
-            // Send ICMP echo request
-            let latency = try await socket.sendEchoRequest(
-                to: target.host,
-                identifier: identifier,
-                sequenceNumber: sequenceNumber
+            let result = try await pingService.ping(
+                host: target.host,
+                count: 1,
+                timeout: TimeInterval(target.timeout)
             )
 
             return TargetMeasurement(
-                latency: latency,
-                isReachable: true
+                latency: result.isReachable ? result.avgLatency : nil,
+                isReachable: result.isReachable,
+                errorMessage: result.isReachable ? nil : "Host unreachable (100% packet loss)"
             )
 
-        } catch let error as NetworkMonitorError {
+        } catch let error as ToolError {
             return TargetMeasurement(
                 latency: nil,
                 isReachable: false,
-                errorMessage: error.description
+                errorMessage: error.localizedDescription
             )
         } catch {
             return TargetMeasurement(

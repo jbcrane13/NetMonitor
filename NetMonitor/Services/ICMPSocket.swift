@@ -63,6 +63,11 @@ struct ICMPPacket {
 }
 
 /// Low-level ICMP socket wrapper using CFSocket
+///
+/// - Note: This implementation is unavailable because raw ICMP sockets require
+///   elevated privileges that conflict with App Sandbox. Use `ProcessPingService`
+///   instead, which wraps `/sbin/ping` and works within sandbox constraints.
+@available(*, unavailable, message: "Use ProcessPingService - raw sockets require elevated privileges")
 actor ICMPSocket {
 
     nonisolated(unsafe) private var socket: CFSocket?

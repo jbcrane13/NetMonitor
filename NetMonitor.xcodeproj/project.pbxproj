@@ -58,6 +58,8 @@
 		WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLS0002000000000000001A /* WakeOnLanService.swift */; };
 		CTRK0001000000000000001A /* ContinuationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CTRK0002000000000000001A /* ContinuationTracker.swift */; };
 		WOLA0001000000000000001A /* WakeOnLanAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLA0002000000000000001A /* WakeOnLanAction.swift */; };
+		SHCR0001000000000000001A /* ShellCommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHCR0002000000000000001A /* ShellCommandRunner.swift */; };
+		PPNG0001000000000000001A /* ProcessPingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = PPNG0002000000000000001A /* ProcessPingService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,6 +134,8 @@
 		WOLS0002000000000000001A /* WakeOnLanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeOnLanService.swift; path = NetMonitor/Services/WakeOnLanService.swift; sourceTree = "<group>"; };
 		CTRK0002000000000000001A /* ContinuationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContinuationTracker.swift; path = ContinuationTracker.swift; sourceTree = "<group>"; };
 		WOLA0002000000000000001A /* WakeOnLanAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeOnLanAction.swift; path = WakeOnLanAction.swift; sourceTree = "<group>"; };
+		SHCR0002000000000000001A /* ShellCommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShellCommandRunner.swift; path = NetMonitor/Services/ShellCommandRunner.swift; sourceTree = "<group>"; };
+		PPNG0002000000000000001A /* ProcessPingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProcessPingService.swift; path = NetMonitor/Services/ProcessPingService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -269,6 +273,8 @@
 				CSVC0002000000000000001A /* CompanionService.swift */,
 				CMHD0002000000000000001A /* CompanionMessageHandler.swift */,
 				WOLS0002000000000000001A /* WakeOnLanService.swift */,
+				SHCR0002000000000000001A /* ShellCommandRunner.swift */,
+				PPNG0002000000000000001A /* ProcessPingService.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -483,6 +489,8 @@
 								CSVC0001000000000000001A /* CompanionService.swift in Sources */,
 								CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */,
 				WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */,
+				SHCR0001000000000000001A /* ShellCommandRunner.swift in Sources */,
+				PPNG0001000000000000001A /* ProcessPingService.swift in Sources */,
 				CTRK0001000000000000001A /* ContinuationTracker.swift in Sources */,
 				WOLA0001000000000000001A /* WakeOnLanAction.swift in Sources */,
 			);
