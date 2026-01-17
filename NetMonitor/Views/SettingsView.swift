@@ -28,7 +28,7 @@ struct SettingsView: View {
                     Label("Data", systemImage: "externaldrive")
                 }
         }
-        .frame(width: 500, height: 400)
+        .frame(minWidth: 500, minHeight: 400)
     }
 }
 
@@ -41,24 +41,29 @@ struct GeneralSettingsView: View {
     @AppStorage("defaultCheckInterval") private var defaultCheckInterval = 10
 
     var body: some View {
-        Form {
-            Toggle("Launch at Login", isOn: $launchAtLogin)
-            Toggle("Show Menu Bar Icon", isOn: $showMenuBarIcon)
-            Toggle("Auto-start Monitoring on Launch", isOn: $autoStartMonitoring)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Toggle("Launch at Login", isOn: $launchAtLogin)
+                        Toggle("Show Menu Bar Icon", isOn: $showMenuBarIcon)
+                        Toggle("Auto-start Monitoring on Launch", isOn: $autoStartMonitoring)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
-            Divider()
-
-            Text("Default Target Settings")
-                .font(.headline)
-
-            Picker("Default Check Interval", selection: $defaultCheckInterval) {
-                Text("5 seconds").tag(5)
-                Text("10 seconds").tag(10)
-                Text("30 seconds").tag(30)
-                Text("60 seconds").tag(60)
+                GroupBox("Default Target Settings") {
+                    Picker("Default Check Interval", selection: $defaultCheckInterval) {
+                        Text("5 seconds").tag(5)
+                        Text("10 seconds").tag(10)
+                        Text("30 seconds").tag(30)
+                        Text("60 seconds").tag(60)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
+            .padding()
         }
-        .padding()
     }
 }
 
@@ -72,38 +77,38 @@ struct NotificationSettingsView: View {
     @AppStorage("criticalLatencyThreshold") private var criticalLatencyThreshold = 500
 
     var body: some View {
-        Form {
-            Text("Target Alerts")
-                .font(.headline)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                GroupBox("Target Alerts") {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Toggle("Notify when target goes offline", isOn: $notifyOnTargetDown)
+                        Toggle("Notify when target recovers", isOn: $notifyOnTargetRecovery)
 
-            Toggle("Notify when target goes offline", isOn: $notifyOnTargetDown)
-            Toggle("Notify when target recovers", isOn: $notifyOnTargetRecovery)
+                        HStack {
+                            Text("High latency threshold")
+                            Spacer()
+                            TextField("ms", value: $criticalLatencyThreshold, format: .number)
+                                .frame(width: 80)
+                                .textFieldStyle(.roundedBorder)
+                            Text("ms")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
-            HStack {
-                Text("High latency threshold")
-                Spacer()
-                TextField("ms", value: $criticalLatencyThreshold, format: .number)
-                    .frame(width: 80)
-                    .textFieldStyle(.roundedBorder)
-                Text("ms")
-                    .foregroundStyle(.secondary)
+                GroupBox("Device Discovery") {
+                    Toggle("Notify when new device discovered", isOn: $notifyOnNewDevice)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                GroupBox("Sound") {
+                    Toggle("Play notification sounds", isOn: $notifySoundEnabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
-
-            Divider()
-
-            Text("Device Discovery")
-                .font(.headline)
-
-            Toggle("Notify when new device discovered", isOn: $notifyOnNewDevice)
-
-            Divider()
-
-            Text("Sound")
-                .font(.headline)
-
-            Toggle("Play notification sounds", isOn: $notifySoundEnabled)
+            .padding()
         }
-        .padding()
     }
 }
 
@@ -116,61 +121,48 @@ struct NetworkSettingsView: View {
     @AppStorage("preferIPv4") private var preferIPv4 = true
 
     var body: some View {
-        Form {
-            Text("Timeouts")
-                .font(.headline)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                GroupBox("Timeouts") {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Picker("ICMP Ping Timeout", selection: $pingTimeout) {
+                            Text("1s").tag(1)
+                            Text("3s").tag(3)
+                            Text("5s").tag(5)
+                            Text("10s").tag(10)
+                        }
 
-            HStack {
-                Text("ICMP Ping Timeout")
-                Spacer()
-                Picker("", selection: $pingTimeout) {
-                    Text("1s").tag(1)
-                    Text("3s").tag(3)
-                    Text("5s").tag(5)
-                    Text("10s").tag(10)
+                        Picker("HTTP/HTTPS Timeout", selection: $httpTimeout) {
+                            Text("5s").tag(5)
+                            Text("10s").tag(10)
+                            Text("30s").tag(30)
+                            Text("60s").tag(60)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(width: 100)
-            }
 
-            HStack {
-                Text("HTTP/HTTPS Timeout")
-                Spacer()
-                Picker("", selection: $httpTimeout) {
-                    Text("5s").tag(5)
-                    Text("10s").tag(10)
-                    Text("30s").tag(30)
-                    Text("60s").tag(60)
+                GroupBox("Device Discovery") {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Picker("Scan Concurrency", selection: $scanConcurrency) {
+                            Text("25 concurrent").tag(25)
+                            Text("50 concurrent").tag(50)
+                            Text("100 concurrent").tag(100)
+                        }
+                        Text("Higher values scan faster but may stress your network")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(width: 100)
-            }
 
-            Divider()
-
-            Text("Device Discovery")
-                .font(.headline)
-
-            HStack {
-                Text("Scan Concurrency")
-                Spacer()
-                Picker("", selection: $scanConcurrency) {
-                    Text("25 concurrent").tag(25)
-                    Text("50 concurrent").tag(50)
-                    Text("100 concurrent").tag(100)
+                GroupBox("Protocol") {
+                    Toggle("Prefer IPv4 over IPv6", isOn: $preferIPv4)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(width: 150)
             }
-            Text("Higher values scan faster but may stress your network")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Divider()
-
-            Text("Protocol")
-                .font(.headline)
-
-            Toggle("Prefer IPv4 over IPv6", isOn: $preferIPv4)
+            .padding()
         }
-        .padding()
     }
 }
 
@@ -182,43 +174,51 @@ struct CompanionSettingsView: View {
     @AppStorage("companionAutoAccept") private var companionAutoAccept = false
 
     var body: some View {
-        Form {
-            Toggle("Enable Companion App Service", isOn: $companionEnabled)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Toggle("Enable Companion App Service", isOn: $companionEnabled)
 
-            HStack {
-                Text("Service Port")
-                Spacer()
-                TextField("Port", value: $companionPort, format: .number)
-                    .frame(width: 80)
-                    .textFieldStyle(.roundedBorder)
+                        HStack {
+                            Text("Service Port")
+                            Spacer()
+                            TextField("Port", value: $companionPort, format: .number)
+                                .frame(width: 80)
+                                .textFieldStyle(.roundedBorder)
+                        }
+
+                        Toggle("Auto-accept companion connections", isOn: $companionAutoAccept)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                GroupBox("Status") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Circle()
+                                .fill(companionEnabled ? .green : .gray)
+                                .frame(width: 10, height: 10)
+                            Text(companionEnabled ? "Advertising on local network" : "Service disabled")
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Text("Service Type: _netmon._tcp")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                GroupBox {
+                    Text("The companion app allows you to monitor your network from your iOS device. Both devices must be on the same local network.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
-
-            Toggle("Auto-accept companion connections", isOn: $companionAutoAccept)
-
-            Divider()
-
-            Text("Status")
-                .font(.headline)
-
-            HStack {
-                Circle()
-                    .fill(companionEnabled ? .green : .gray)
-                    .frame(width: 10, height: 10)
-                Text(companionEnabled ? "Advertising on local network" : "Service disabled")
-                    .foregroundStyle(.secondary)
-            }
-
-            Text("Service Type: _netmon._tcp")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Divider()
-
-            Text("The companion app allows you to monitor your network from your iOS device. Both devices must be on the same local network.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            .padding()
         }
-        .padding()
     }
 }
 
@@ -232,45 +232,47 @@ struct DataManagementView: View {
     @State private var dataSize = "Calculating..."
 
     var body: some View {
-        Form {
-            Text("Data Retention")
-                .font(.headline)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                GroupBox("Data Retention") {
+                    Picker("Keep measurement history for", selection: $retentionDays) {
+                        Text("7 days").tag(7)
+                        Text("14 days").tag(14)
+                        Text("30 days").tag(30)
+                        Text("90 days").tag(90)
+                        Text("Forever").tag(-1)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
-            Picker("Keep measurement history for", selection: $retentionDays) {
-                Text("7 days").tag(7)
-                Text("14 days").tag(14)
-                Text("30 days").tag(30)
-                Text("90 days").tag(90)
-                Text("Forever").tag(-1)
+                GroupBox("iCloud Sync") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Toggle("Sync targets and settings to iCloud", isOn: $cloudSyncEnabled)
+                        Text("Sync target configurations and custom device names across your Mac devices")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                GroupBox("Storage") {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("Database Size")
+                            Spacer()
+                            Text(dataSize)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Button("Clear All Measurement Data", role: .destructive) {
+                            showingClearAlert = true
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
-
-            Divider()
-
-            Text("iCloud Sync")
-                .font(.headline)
-
-            Toggle("Sync targets and settings to iCloud", isOn: $cloudSyncEnabled)
-            Text("Sync target configurations and custom device names across your Mac devices")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Divider()
-
-            Text("Storage")
-                .font(.headline)
-
-            HStack {
-                Text("Database Size")
-                Spacer()
-                Text(dataSize)
-                    .foregroundStyle(.secondary)
-            }
-
-            Button("Clear All Measurement Data", role: .destructive) {
-                showingClearAlert = true
-            }
+            .padding()
         }
-        .padding()
         .onAppear {
             calculateDataSize()
         }

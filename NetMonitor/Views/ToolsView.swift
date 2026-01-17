@@ -1,4 +1,5 @@
 import SwiftUI
+import Network
 
 // MARK: - Tool Definition
 
@@ -45,36 +46,48 @@ enum NetworkTool: String, CaseIterable, Identifiable {
 
 struct ToolsView: View {
     @State private var selectedTool: NetworkTool?
+    @State private var sharedHost: String = ""
 
     private let columns = [
         GridItem(.adaptive(minimum: 150, maximum: 200), spacing: 16)
     ]
 
     var body: some View {
-        NavigationSplitView {
+        HStack(spacing: 0) {
+            // Tool grid sidebar
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 16) {
                     ForEach(NetworkTool.allCases) { tool in
-                        ToolCard(tool: tool, isSelected: selectedTool == tool)
-                            .onTapGesture {
-                                selectedTool = tool
-                            }
+                        Button {
+                            selectedTool = tool
+                        } label: {
+                            ToolCard(tool: tool, isSelected: selectedTool == tool)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding()
             }
-            .navigationTitle("Tools")
-        } detail: {
-            if let tool = selectedTool {
-                ToolDetailView(tool: tool)
-            } else {
-                ContentUnavailableView(
-                    "Select a Tool",
-                    systemImage: "wrench.and.screwdriver",
-                    description: Text("Choose a network tool from the sidebar")
-                )
+            .frame(width: 220)
+            .background(Color(nsColor: .windowBackgroundColor))
+
+            Divider()
+
+            // Tool detail view
+            Group {
+                if let tool = selectedTool {
+                    ToolDetailView(tool: tool, sharedHost: $sharedHost)
+                } else {
+                    ContentUnavailableView(
+                        "Select a Tool",
+                        systemImage: "wrench.and.screwdriver",
+                        description: Text("Choose a network tool from the sidebar")
+                    )
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .navigationTitle("Tools")
     }
 }
 
@@ -106,6 +119,7 @@ struct ToolCard: View {
                 .fill(isSelected ? Color.cyan : Color.white.opacity(0.05))
                 .stroke(Color.white.opacity(0.1), lineWidth: 1)
         )
+        .contentShape(Rectangle())
     }
 }
 
@@ -113,19 +127,20 @@ struct ToolCard: View {
 
 struct ToolDetailView: View {
     let tool: NetworkTool
+    @Binding var sharedHost: String
 
     var body: some View {
         switch tool {
         case .ping:
-            PingToolView()
+            PingToolView(sharedHost: $sharedHost)
         case .traceroute:
-            TracerouteToolView()
+            TracerouteToolView(sharedHost: $sharedHost)
         case .portScanner:
-            PortScannerToolView()
+            PortScannerToolView(sharedHost: $sharedHost)
         case .dnsLookup:
-            DNSLookupToolView()
+            DNSLookupToolView(sharedHost: $sharedHost)
         case .whois:
-            WHOISToolView()
+            WHOISToolView(sharedHost: $sharedHost)
         case .speedTest:
             SpeedTestToolView()
         case .wakeOnLan:
@@ -139,7 +154,7 @@ struct ToolDetailView: View {
 // MARK: - Ping Tool
 
 struct PingToolView: View {
-    @State private var host = ""
+    @Binding var sharedHost: String
     @State private var count = 5
     @State private var isRunning = false
     @State private var results: [PingResult] = []
@@ -148,7 +163,7 @@ struct PingToolView: View {
         VStack(alignment: .leading, spacing: 16) {
             // Input section
             HStack {
-                TextField("Host or IP address", text: $host)
+                TextField("Host or IP address", text: $sharedHost)
                     .textFieldStyle(.roundedBorder)
 
                 Stepper("Count: \(count)", value: $count, in: 1...100)
@@ -162,7 +177,7 @@ struct PingToolView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(host.isEmpty)
+                .disabled(sharedHost.isEmpty)
             }
 
             // Results
@@ -204,7 +219,8 @@ struct PingToolView: View {
     }
 
     private func runPing() {
-        guard !host.isEmpty else { return }
+        guard !sharedHost.isEmpty else { return }
+        let targetHost = sharedHost
         results = []
         isRunning = true
 
@@ -213,7 +229,7 @@ struct PingToolView: View {
             for seq in 1...count {
                 guard isRunning else { break }
 
-                let result = await executePing(sequence: seq)
+                let result = await executePing(host: targetHost, sequence: seq)
                 results.append(result)
 
                 if seq < count && isRunning {
@@ -224,7 +240,7 @@ struct PingToolView: View {
         }
     }
 
-    private func executePing(sequence: Int) async -> PingResult {
+    private func executePing(host: String, sequence: Int) async -> PingResult {
         let process = Process()
         let pipe = Pipe()
 
@@ -320,73 +336,122 @@ struct StatItem: View {
 // MARK: - Traceroute Tool
 
 struct TracerouteToolView: View {
-    @State private var host = ""
+    @Binding var sharedHost: String
     @State private var isRunning = false
     @State private var output = ""
+    @State private var currentProcess: Process?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                TextField("Host or IP address", text: $host)
+                TextField("Host or IP address", text: $sharedHost)
                     .textFieldStyle(.roundedBorder)
+                    .onSubmit {
+                        if !sharedHost.isEmpty && !isRunning {
+                            runTraceroute()
+                        }
+                    }
+                    .accessibilityIdentifier("traceroute_textfield_host")
 
                 Button(isRunning ? "Stop" : "Trace") {
                     if isRunning {
-                        isRunning = false
+                        stopTraceroute()
                     } else {
                         runTraceroute()
                     }
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(host.isEmpty)
+                .disabled(sharedHost.isEmpty && !isRunning)
+                .accessibilityIdentifier("traceroute_button_trace")
             }
 
-            if !output.isEmpty {
-                ScrollView {
+            ScrollView {
+                if output.isEmpty {
+                    Text("Enter a host and press Trace to begin")
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding()
+                } else {
                     Text(output)
                         .font(.system(.body, design: .monospaced))
                         .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
                 }
             }
-
-            Spacer()
+            .frame(minHeight: 200)
+            .background(Color.black.opacity(0.2))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         .padding()
         .navigationTitle("Traceroute")
     }
 
+    private func stopTraceroute() {
+        currentProcess?.terminate()
+        currentProcess = nil
+        isRunning = false
+        output += "\n--- Traceroute stopped ---\n"
+    }
+
     private func runTraceroute() {
-        guard !host.isEmpty else { return }
-        let targetHost = host
-        output = "Tracing route to \(targetHost)...\n"
+        guard !sharedHost.isEmpty else { return }
+        let targetHost = sharedHost
+        output = "Tracing route to \(targetHost)...\n\n"
         isRunning = true
 
-        // Use regular Task - views are already @MainActor
-        Task {
+        // Run traceroute in a background task
+        Task.detached { [self] in
             let process = Process()
             let pipe = Pipe()
 
             process.executableURL = URL(fileURLWithPath: "/usr/sbin/traceroute")
-            process.arguments = ["-m", "30", targetHost]
+            process.arguments = ["-m", "30", "-w", "3", targetHost]
             process.standardOutput = pipe
             process.standardError = pipe
+
+            await MainActor.run {
+                self.currentProcess = process
+            }
 
             do {
                 try process.run()
 
-                // Read output incrementally
-                let handle = pipe.fileHandleForReading
-                for try await line in handle.bytes.lines {
-                    output += line + "\n"
+                // Read output in chunks while process is running
+                let fileHandle = pipe.fileHandleForReading
+
+                while process.isRunning {
+                    let data = fileHandle.availableData
+                    if !data.isEmpty, let str = String(data: data, encoding: .utf8) {
+                        await MainActor.run {
+                            self.output += str
+                        }
+                    }
+                    try? await Task.sleep(for: .milliseconds(100))
                 }
 
-                process.waitUntilExit()
-            } catch {
-                output += "Error: \(error.localizedDescription)\n"
-            }
+                // Read any remaining output
+                let remainingData = fileHandle.readDataToEndOfFile()
+                if !remainingData.isEmpty, let str = String(data: remainingData, encoding: .utf8) {
+                    await MainActor.run {
+                        self.output += str
+                    }
+                }
 
-            isRunning = false
+                await MainActor.run {
+                    self.currentProcess = nil
+                    self.isRunning = false
+                    if !self.output.contains("stopped") {
+                        self.output += "\n--- Traceroute complete ---\n"
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    self.output += "Error: \(error.localizedDescription)\n"
+                    self.isRunning = false
+                    self.currentProcess = nil
+                }
+            }
         }
     }
 }
@@ -394,7 +459,7 @@ struct TracerouteToolView: View {
 // MARK: - Port Scanner Tool
 
 struct PortScannerToolView: View {
-    @State private var host = ""
+    @Binding var sharedHost: String
     @State private var portRange = "1-1024"
     @State private var isRunning = false
     @State private var openPorts: [Int] = []
@@ -404,7 +469,7 @@ struct PortScannerToolView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                TextField("Host or IP address", text: $host)
+                TextField("Host or IP address", text: $sharedHost)
                     .textFieldStyle(.roundedBorder)
 
                 TextField("Port range (e.g., 1-1024)", text: $portRange)
@@ -419,7 +484,7 @@ struct PortScannerToolView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(host.isEmpty)
+                .disabled(sharedHost.isEmpty)
             }
 
             if isRunning {
@@ -470,8 +535,8 @@ struct PortScannerToolView: View {
     ]
 
     private func runScan() {
-        guard !host.isEmpty else { return }
-
+        guard !sharedHost.isEmpty else { return }
+        let targetHost = sharedHost
         let parts = portRange.split(separator: "-")
         guard parts.count == 2,
               let start = Int(parts[0]),
@@ -484,82 +549,112 @@ struct PortScannerToolView: View {
         isRunning = true
         progress = 0
 
-        // Views are @MainActor - no need for MainActor.run
         Task {
             let total = end - start + 1
+            let ports = Array(start...end)
+
+            // Scan in batches of 50 for parallelism and UI responsiveness
+            let batchSize = 50
             var scanned = 0
 
-            for port in start...end {
+            for batchStart in stride(from: 0, to: ports.count, by: batchSize) {
                 guard isRunning else { break }
 
-                currentPort = port
+                let batchEnd = min(batchStart + batchSize, ports.count)
+                let batch = Array(ports[batchStart..<batchEnd])
 
-                if await isPortOpen(host: host, port: port) {
-                    openPorts.append(port)
+                currentPort = batch.first ?? 0
+
+                // Scan batch in parallel
+                await withTaskGroup(of: (Int, Bool).self) { group in
+                    for port in batch {
+                        group.addTask {
+                            let isOpen = await self.isPortOpen(host: targetHost, port: port)
+                            return (port, isOpen)
+                        }
+                    }
+
+                    for await (port, isOpen) in group {
+                        if isOpen {
+                            openPorts.append(port)
+                        }
+                        scanned += 1
+                        progress = Double(scanned) / Double(total)
+                    }
                 }
 
-                scanned += 1
-                progress = Double(scanned) / Double(total)
+                // Yield to allow UI updates
+                await Task.yield()
             }
 
+            openPorts.sort()
             isRunning = false
         }
     }
 
     private func isPortOpen(host: String, port: Int) async -> Bool {
         await withCheckedContinuation { continuation in
-            var hints = addrinfo()
-            hints.ai_family = AF_INET
-            hints.ai_socktype = SOCK_STREAM
+            let endpoint = NWEndpoint.hostPort(
+                host: NWEndpoint.Host(host),
+                port: NWEndpoint.Port(integerLiteral: UInt16(port))
+            )
 
-            var result: UnsafeMutablePointer<addrinfo>?
-            guard getaddrinfo(host, String(port), &hints, &result) == 0,
-                  let info = result else {
-                continuation.resume(returning: false)
-                return
-            }
-            defer { freeaddrinfo(result) }
+            let connection = NWConnection(to: endpoint, using: .tcp)
+            let resumed = PortScanResumeFlag()
 
-            let sock = socket(info.pointee.ai_family, info.pointee.ai_socktype, info.pointee.ai_protocol)
-            guard sock >= 0 else {
-                continuation.resume(returning: false)
-                return
-            }
-            defer { close(sock) }
+            connection.stateUpdateHandler = { [resumed] state in
+                guard resumed.tryResume() else { return }
 
-            // Set non-blocking
-            let flags = fcntl(sock, F_GETFL, 0)
-            _ = fcntl(sock, F_SETFL, flags | O_NONBLOCK)
-
-            let connectResult = connect(sock, info.pointee.ai_addr, info.pointee.ai_addrlen)
-            if connectResult == 0 {
-                continuation.resume(returning: true)
-                return
-            }
-
-            if errno == EINPROGRESS {
-                // Use poll instead of select for simplicity
-                var pfd = pollfd(fd: sock, events: Int16(POLLOUT), revents: 0)
-                let pollResult = poll(&pfd, 1, 100) // 100ms timeout
-
-                if pollResult > 0 && (pfd.revents & Int16(POLLOUT)) != 0 {
-                    var error: Int32 = 0
-                    var len = socklen_t(MemoryLayout<Int32>.size)
-                    getsockopt(sock, SOL_SOCKET, SO_ERROR, &error, &len)
-                    continuation.resume(returning: error == 0)
-                    return
+                switch state {
+                case .ready:
+                    connection.cancel()
+                    continuation.resume(returning: true)
+                case .failed, .cancelled:
+                    continuation.resume(returning: false)
+                case .waiting:
+                    connection.cancel()
+                    continuation.resume(returning: false)
+                default:
+                    resumed.reset()
                 }
             }
 
-            continuation.resume(returning: false)
+            connection.start(queue: .global(qos: .userInitiated))
+
+            // Timeout after 500ms
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) { [resumed] in
+                guard resumed.tryResume() else { return }
+                connection.cancel()
+                continuation.resume(returning: false)
+            }
         }
+    }
+}
+
+/// Thread-safe flag for port scan continuation
+private final class PortScanResumeFlag: @unchecked Sendable {
+    private var _resumed = false
+    private let lock = NSLock()
+
+    func tryResume() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        if _resumed { return false }
+        _resumed = true
+        return true
+    }
+
+    func reset() {
+        lock.lock()
+        defer { lock.unlock() }
+        _resumed = false
     }
 }
 
 // MARK: - DNS Lookup Tool
 
 struct DNSLookupToolView: View {
-    @State private var domain = ""
+    @Binding var sharedHost: String
     @State private var recordType = "A"
     @State private var isRunning = false
     @State private var results: [String] = []
@@ -569,7 +664,7 @@ struct DNSLookupToolView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                TextField("Domain name", text: $domain)
+                TextField("Domain or host", text: $sharedHost)
                     .textFieldStyle(.roundedBorder)
 
                 Picker("Type", selection: $recordType) {
@@ -583,7 +678,7 @@ struct DNSLookupToolView: View {
                     runLookup()
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(domain.isEmpty || isRunning)
+                .disabled(sharedHost.isEmpty || isRunning)
             }
 
             if !results.isEmpty {
@@ -606,8 +701,8 @@ struct DNSLookupToolView: View {
     }
 
     private func runLookup() {
-        guard !domain.isEmpty else { return }
-        let targetDomain = domain
+        guard !sharedHost.isEmpty else { return }
+        let targetDomain = sharedHost
         let targetRecordType = recordType
         results = []
         isRunning = true
@@ -645,21 +740,21 @@ struct DNSLookupToolView: View {
 // MARK: - WHOIS Tool
 
 struct WHOISToolView: View {
-    @State private var domain = ""
+    @Binding var sharedHost: String
     @State private var isRunning = false
     @State private var output = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                TextField("Domain name", text: $domain)
+                TextField("Domain or host", text: $sharedHost)
                     .textFieldStyle(.roundedBorder)
 
                 Button("Lookup") {
                     runWhois()
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(domain.isEmpty || isRunning)
+                .disabled(sharedHost.isEmpty || isRunning)
             }
 
             if !output.isEmpty {
@@ -678,8 +773,8 @@ struct WHOISToolView: View {
     }
 
     private func runWhois() {
-        guard !domain.isEmpty else { return }
-        let targetDomain = domain
+        guard !sharedHost.isEmpty else { return }
+        let targetDomain = sharedHost
         output = "Looking up \(targetDomain)...\n"
         isRunning = true
 

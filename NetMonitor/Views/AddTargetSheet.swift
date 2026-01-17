@@ -78,7 +78,7 @@ struct AddTargetSheet: View {
                 }
             }
         }
-        .frame(width: 500, height: 500)
+        .frame(minWidth: 400, minHeight: 400)
     }
 
     private var isValid: Bool {

@@ -137,7 +137,7 @@ struct TargetStatusCard: View {
                     }
                 }
             } else {
-                Text("Waiting for data...")
+                Text("Click 'Start Monitoring' to check status")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

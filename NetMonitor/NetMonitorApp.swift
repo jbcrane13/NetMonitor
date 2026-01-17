@@ -16,6 +16,8 @@ struct NetMonitorApp: App {
     @State private var companionHandler: CompanionMessageHandler?
     @State private var menuBarController: MenuBarController?
 
+    @AppStorage("autoStartMonitoring") private var autoStartMonitoring = false
+
     /// Check if running in UI test mode
     private var isUITesting: Bool {
         ProcessInfo.processInfo.arguments.contains("--uitesting")
@@ -118,6 +120,11 @@ struct NetMonitorApp: App {
         if let session = monitoringSession, menuBarController == nil {
             menuBarController = MenuBarController(monitoringSession: session)
             menuBarController?.setup()
+        }
+
+        // 5. Auto-start monitoring if enabled in settings
+        if autoStartMonitoring, let session = monitoringSession, !session.isMonitoring {
+            session.startMonitoring()
         }
     }
 }
