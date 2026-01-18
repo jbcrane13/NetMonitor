@@ -60,6 +60,7 @@
 		WOLA0001000000000000001A /* WakeOnLanAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLA0002000000000000001A /* WakeOnLanAction.swift */; };
 		SHCR0001000000000000001A /* ShellCommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHCR0002000000000000001A /* ShellCommandRunner.swift */; };
 		PPNG0001000000000000001A /* ProcessPingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = PPNG0002000000000000001A /* ProcessPingService.swift */; };
+		TCPM0002000000000000001A /* TCPMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = TCPM0001000000000000001A /* TCPMonitorService.swift */; };
 		PNGT0002000000000000001A /* PingToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PNGT0001000000000000001A /* PingToolView.swift */; };
 		DNST0002000000000000001A /* DNSLookupToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DNST0001000000000000001A /* DNSLookupToolView.swift */; };
 		WHST0002000000000000001A /* WHOISToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = WHST0001000000000000001A /* WHOISToolView.swift */; };
@@ -150,6 +151,7 @@
 		WOLA0002000000000000001A /* WakeOnLanAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeOnLanAction.swift; path = WakeOnLanAction.swift; sourceTree = "<group>"; };
 		SHCR0002000000000000001A /* ShellCommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShellCommandRunner.swift; path = NetMonitor/Services/ShellCommandRunner.swift; sourceTree = "<group>"; };
 		PPNG0002000000000000001A /* ProcessPingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProcessPingService.swift; path = NetMonitor/Services/ProcessPingService.swift; sourceTree = "<group>"; };
+		TCPM0001000000000000001A /* TCPMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TCPMonitorService.swift; path = NetMonitor/Services/TCPMonitorService.swift; sourceTree = "<group>"; };
 		PNGT0001000000000000001A /* PingToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingToolView.swift; sourceTree = "<group>"; };
 		DNST0001000000000000001A /* DNSLookupToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DNSLookupToolView.swift; sourceTree = "<group>"; };
 		WHST0001000000000000001A /* WHOISToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WHOISToolView.swift; sourceTree = "<group>"; };
@@ -333,6 +335,7 @@
 				WOLS0002000000000000001A /* WakeOnLanService.swift */,
 				SHCR0002000000000000001A /* ShellCommandRunner.swift */,
 				PPNG0002000000000000001A /* ProcessPingService.swift */,
+				TCPM0001000000000000001A /* TCPMonitorService.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -549,6 +552,7 @@
 				WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */,
 				SHCR0001000000000000001A /* ShellCommandRunner.swift in Sources */,
 				PPNG0001000000000000001A /* ProcessPingService.swift in Sources */,
+				TCPM0002000000000000001A /* TCPMonitorService.swift in Sources */,
 				CTRK0001000000000000001A /* ContinuationTracker.swift in Sources */,
 				WOLA0001000000000000001A /* WakeOnLanAction.swift in Sources */,
 				PNGT0002000000000000001A /* PingToolView.swift in Sources */,
