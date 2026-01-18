@@ -10,11 +10,7 @@ struct DeviceDetailView: View {
     @State private var editedName: String = ""
     @State private var editedNotes: String = ""
     @State private var selectedDeviceType: DeviceType = .unknown
-
-    // Sheet presentation state
-    @State private var showingPingSheet = false
-    @State private var showingPortScanSheet = false
-    @State private var showingWOLSheet = false
+    @State private var wolAction = WakeOnLanAction()
 
     var body: some View {
         ScrollView {
@@ -40,15 +36,7 @@ struct DeviceDetailView: View {
                 }
             }
         }
-        .sheet(isPresented: $showingPingSheet) {
-            DevicePingSheet(ipAddress: device.ipAddress)
-        }
-        .sheet(isPresented: $showingPortScanSheet) {
-            DevicePortScanSheet(ipAddress: device.ipAddress)
-        }
-        .sheet(isPresented: $showingWOLSheet) {
-            DeviceWOLSheet(macAddress: device.macAddress, deviceName: device.displayName)
-        }
+        .wakeOnLanAlert(wolAction)
     }
 
     // MARK: - Header Card
@@ -204,20 +192,24 @@ struct DeviceDetailView: View {
                 actionButton(
                     title: "Ping",
                     systemImage: "waveform.path",
-                    action: { showingPingSheet = true }
+                    action: { /* TODO: Implement ping action */ }
                 )
 
                 actionButton(
                     title: "Port Scan",
                     systemImage: "network",
-                    action: { showingPortScanSheet = true }
+                    action: { /* TODO: Implement port scan action */ }
                 )
 
                 if !device.macAddress.isEmpty {
                     actionButton(
                         title: "Wake",
                         systemImage: "power",
-                        action: { showingWOLSheet = true }
+                        action: {
+                            Task {
+                                await wolAction.wake(device: device)
+                            }
+                        }
                     )
                 }
 

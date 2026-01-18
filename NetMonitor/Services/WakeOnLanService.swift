@@ -37,12 +37,11 @@ actor WakeOnLanService {
 
     /// Send a Wake on LAN magic packet to the specified MAC address
     /// - Parameter macAddress: Target MAC address (supports formats: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF, AABBCCDDEEFF)
-    /// - Parameter targetHost: The target host or broadcast address (default: 255.255.255.255)
     /// - Returns: True if the packet was sent successfully
-    func wake(macAddress: String, targetHost: String = "255.255.255.255") async throws {
+    func wake(macAddress: String) async throws {
         let macBytes = try parseMACAddress(macAddress)
         let magicPacket = buildMagicPacket(macBytes: macBytes)
-        try await sendPacket(magicPacket, to: targetHost)
+        try await sendPacket(magicPacket)
     }
 
     /// Parse a MAC address string into bytes
@@ -105,14 +104,11 @@ actor WakeOnLanService {
 
     /// Send the magic packet via UDP broadcast
     /// - Parameter packet: The magic packet data
-    private func sendPacket(_ packet: Data, to hostAddress: String) async throws {
-        // Use Sendable wrapper for continuation management
-        let continuationHandler = ContinuationHandler()
+    private func sendPacket(_ packet: Data) async throws {
+        let tracker = ContinuationTracker()
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            continuationHandler.setContinuation(continuation)
-
-            let host = NWEndpoint.Host(hostAddress)
+            let host = NWEndpoint.Host(broadcastAddress)
             let port = NWEndpoint.Port(rawValue: wolPort)!
 
             // Create UDP connection with broadcast enabled
@@ -120,25 +116,32 @@ actor WakeOnLanService {
             parameters.allowLocalEndpointReuse = true
 
             let connection = NWConnection(host: host, port: port, using: parameters)
-            continuationHandler.setConnection(connection)
 
-            connection.stateUpdateHandler = { [continuationHandler] state in
+            connection.stateUpdateHandler = { [tracker] state in
                 switch state {
                 case .ready:
                     // Send the magic packet
-                    connection.send(content: packet, completion: .contentProcessed { [continuationHandler] error in
-                        if let error = error {
-                            continuationHandler.resume(with: .failure(WakeOnLanError.networkError(error.localizedDescription)))
-                        } else {
-                            continuationHandler.resume(with: .success(()))
+                    connection.send(content: packet, completion: .contentProcessed { error in
+                        connection.cancel()
+                        if tracker.tryResume() {
+                            if let error = error {
+                                continuation.resume(throwing: WakeOnLanError.networkError(error.localizedDescription))
+                            } else {
+                                continuation.resume()
+                            }
                         }
                     })
 
                 case .failed(let error):
-                    continuationHandler.resume(with: .failure(WakeOnLanError.networkError(error.localizedDescription)))
+                    connection.cancel()
+                    if tracker.tryResume() {
+                        continuation.resume(throwing: WakeOnLanError.networkError(error.localizedDescription))
+                    }
 
                 case .cancelled:
-                    continuationHandler.resume(with: .failure(WakeOnLanError.networkError("Connection cancelled")))
+                    if tracker.tryResume() {
+                        continuation.resume(throwing: WakeOnLanError.networkError("Connection cancelled"))
+                    }
 
                 default:
                     break
@@ -148,42 +151,12 @@ actor WakeOnLanService {
             connection.start(queue: .global())
 
             // Set timeout
-            DispatchQueue.global().asyncAfter(deadline: .now() + 5) { [continuationHandler] in
-                continuationHandler.resume(with: .failure(WakeOnLanError.timeout))
+            DispatchQueue.global().asyncAfter(deadline: .now() + 5) { [tracker] in
+                if tracker.tryResume() {
+                    connection.cancel()
+                    continuation.resume(throwing: WakeOnLanError.timeout)
+                }
             }
         }
-    }
-}
-
-// MARK: - Thread-safe continuation wrapper
-
-/// Sendable class for managing continuation safely across thread boundaries
-private final class ContinuationHandler: @unchecked Sendable {
-    private let lock = NSLock()
-    private var didResume = false
-    private var continuation: CheckedContinuation<Void, Error>?
-    private var connection: NWConnection?
-
-    func setContinuation(_ continuation: CheckedContinuation<Void, Error>) {
-        lock.lock()
-        defer { lock.unlock() }
-        self.continuation = continuation
-    }
-
-    func setConnection(_ connection: NWConnection) {
-        lock.lock()
-        defer { lock.unlock() }
-        self.connection = connection
-    }
-
-    func resume(with result: Result<Void, Error>) {
-        lock.lock()
-        defer { lock.unlock() }
-
-        guard !didResume else { return }
-        didResume = true
-
-        connection?.cancel()
-        continuation?.resume(with: result)
     }
 }

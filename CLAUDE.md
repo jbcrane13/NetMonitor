@@ -8,7 +8,66 @@ NetMonitor is a professional network monitoring application for macOS that provi
 
 **Target Platform**: macOS 15.0+ (Sequoia and later)
 **Architecture**: MVVM with SwiftUI
-**Language**: Swift with async/await and Actors
+**Language**: Swift 6 with async/await and Actors
+
+## Project Structure
+
+```
+NetMonitor/
+├── NetMonitor/                          # Main macOS app
+│   ├── Models/                          # SwiftData data models
+│   │   ├── NetworkTarget.swift          # Monitoring target definition
+│   │   ├── TargetMeasurement.swift      # Individual measurement results
+│   │   ├── LocalDevice.swift            # Discovered network devices
+│   │   ├── SessionRecord.swift          # Monitoring session tracking
+│   │   └── Section.swift                # Navigation enum
+│   ├── Services/                        # Business logic and networking
+│   │   ├── MonitoringSession.swift      # Main monitoring coordinator
+│   │   ├── NetworkMonitorService.swift  # Protocol for monitors
+│   │   ├── HTTPMonitorService.swift     # HTTP/HTTPS monitoring
+│   │   ├── ICMPMonitorService.swift     # ICMP ping (pending)
+│   │   ├── ICMPSocket.swift             # Low-level ICMP wrapper
+│   │   ├── ARPScannerService.swift      # ARP-based device discovery
+│   │   ├── BonjourDiscoveryService.swift # mDNS service discovery
+│   │   ├── DeviceDiscoveryService.swift # Discovery protocol
+│   │   ├── DeviceDiscoveryCoordinator.swift # Unified discovery coordinator
+│   │   ├── MACVendorLookupService.swift # MAC address vendor lookup
+│   │   ├── CompanionService.swift       # Bonjour service for companion app
+│   │   ├── CompanionMessageHandler.swift # Companion command processor
+│   │   └── WakeOnLanService.swift       # Magic packet sender
+│   ├── Views/                           # SwiftUI views
+│   │   ├── ContentView.swift            # Main navigation container
+│   │   ├── SidebarView.swift            # Navigation sidebar
+│   │   ├── DashboardView.swift          # Monitoring overview
+│   │   ├── TargetsView.swift            # Target management
+│   │   ├── AddTargetSheet.swift         # Target creation form
+│   │   ├── DevicesView.swift            # Device discovery & management
+│   │   ├── DeviceDetailView.swift       # Device information & actions
+│   │   ├── DeviceRowView.swift          # Device list item
+│   │   ├── ToolsView.swift              # Network tools (placeholder)
+│   │   └── SettingsView.swift           # App settings (placeholder)
+│   ├── MenuBar/                         # Menu bar integration
+│   │   ├── MenuBarController.swift      # NSStatusItem management
+│   │   ├── MenuBarPopoverView.swift     # Quick stats popover
+│   │   └── MenuBarCommands.swift        # Keyboard shortcuts
+│   ├── Preview Content/                 # SwiftUI preview data
+│   ├── Assets.xcassets/                 # App assets and icons
+│   ├── NetMonitorApp.swift              # App entry point
+│   └── Info.plist                       # App configuration
+├── NetMonitorShared/                    # Swift Package for shared code
+│   └── Sources/NetMonitorShared/
+│       ├── Protocol/
+│       │   └── CompanionMessage.swift   # JSON message protocol
+│       └── Common/
+│           └── Enums.swift              # Shared enums
+├── NetMonitorTests/                     # Unit tests
+│   ├── Services/                        # Service tests
+│   └── Protocol/                        # Message protocol tests
+├── NetMonitorUITests/                   # UI tests
+└── docs/                                # Documentation
+    ├── Companion-Protocol-API.md        # API reference
+    └── plans/                           # Design documents
+```
 
 ## Development Commands
 
@@ -23,10 +82,10 @@ xcodebuild -project NetMonitor.xcodeproj -scheme NetMonitor clean
 
 ### Running
 ```bash
-# Run from command line
-xcodebuild -project NetMonitor.xcodeproj -scheme NetMonitor -configuration Debug
+# Build and run from command line
+xcodebuild -project NetMonitor.xcodeproj -scheme NetMonitor -configuration Debug build && open ./build/Debug/NetMonitor.app
 
-# Or use Xcode: ⌘+R
+# Or use Xcode: Cmd+R
 ```
 
 ### Testing
@@ -34,7 +93,7 @@ xcodebuild -project NetMonitor.xcodeproj -scheme NetMonitor -configuration Debug
 # Run all tests
 xcodebuild -project NetMonitor.xcodeproj -scheme NetMonitor test
 
-# Or use Xcode: ⌘+U
+# Or use Xcode: Cmd+U
 ```
 
 ### Code Quality
@@ -44,95 +103,239 @@ xcodebuild -project NetMonitor.xcodeproj -scheme NetMonitor test
 
 ## Architecture & Key Patterns
 
-### MVVM Architecture
-- **Views**: SwiftUI views with AppKit integration where needed for advanced macOS features
-- **ViewModels**: Handle business logic, expose published properties to views
-- **Models**: SwiftData/Core Data entities for persistence
-- **Services**: Protocol-oriented network services (monitoring, discovery, tools)
+### MVVM with @Observable
+- **Views**: SwiftUI views with AppKit integration for menu bar
+- **ViewModels**: @Observable classes (MonitoringSession, DeviceDiscoveryCoordinator)
+- **Models**: SwiftData `@Model` entities for persistence
+- **Services**: Actor-based network services
 
 ### Concurrency Model
-- Use Swift async/await for asynchronous operations
-- Use Actors for thread-safe state management
-- Combine publishers for reactive data flow between layers
+- **Actors**: All services (HTTPMonitorService, ARPScannerService, etc.) are actors for thread safety
+- **@MainActor**: UI coordinators (MonitoringSession, DeviceDiscoveryCoordinator) run on main thread
+- **async/await**: All asynchronous operations use structured concurrency
+- **Continuation-based**: Low-level async (network callbacks) use `withCheckedContinuation`
 
 ### Dependency Injection
-Design services with protocol abstraction for testability:
+Services initialized in `NetMonitorApp.swift` and passed via SwiftUI environment:
 ```swift
-protocol NetworkMonitorService {
-    func startMonitoring(target: NetworkTarget) async throws
-    func stopMonitoring(target: NetworkTarget)
-}
+@Environment(MonitoringSession.self) private var session
+@Environment(DeviceDiscoveryCoordinator.self) private var discoveryCoordinator
 ```
 
 ### Core Frameworks
-- **Network.framework** + **NWPathMonitor**: Primary networking and path monitoring
-- **MultipeerConnectivity**: Local device discovery and companion app communication
-- **Bonjour/mDNS**: Service discovery and advertising (`_netmon._tcp` on port 8849)
-- **SwiftData**: Data persistence (preferred) or Core Data as fallback
-- **Swift Charts**: Data visualizations (latency graphs, packet loss charts)
-- **CloudKit**: Optional remote sync for configurations and historical data
+- **Network.framework**: NWConnection, NWListener, NWBrowser for networking
+- **SwiftData**: Primary persistence with @Model and @Query
+- **SwiftUI**: UI framework with NavigationSplitView
+- **AppKit**: Menu bar integration (NSStatusItem, NSPopover)
 
-## Key Data Models
-
-All models should use SwiftData `@Model` macro or Core Data for persistence:
-
-### MonitoringSession
-- Session tracking with start/stop times and running state
-- Single active session model with historical archives
+## Data Models (SwiftData)
 
 ### NetworkTarget
-- Configurable monitoring targets (ICMP, HTTP, HTTPS, TCP)
-- Properties: name, host, port, protocol, checkInterval, timeout, isEnabled
-- Default targets pre-configured: Gateway, Cloudflare DNS (1.1.1.1), Google DNS (8.8.8.8), major services
+Monitoring targets with configurable protocols and intervals.
+```swift
+@Model
+final class NetworkTarget {
+    var id: UUID
+    var name: String
+    var host: String
+    var port: Int?
+    var targetProtocol: TargetProtocol  // icmp, http, https, tcp
+    var checkInterval: Int              // seconds (1-60)
+    var timeout: Int                    // seconds (1-30)
+    var isEnabled: Bool
+    var createdAt: Date
+    @Relationship(deleteRule: .cascade) var measurements: [TargetMeasurement]
+}
+```
 
-### TargetStatistics
-- Time-series data: timestamp, latency, reachability, error messages
-- Aggregate stats at 2min/10min/all-time intervals (min/avg/max latency, jitter, packet loss)
+### TargetMeasurement
+Individual check results stored for historical analysis.
+```swift
+@Model
+final class TargetMeasurement {
+    var id: UUID
+    var timestamp: Date
+    var latency: Double?                // milliseconds
+    var isReachable: Bool
+    var errorMessage: String?
+    var target: NetworkTarget?
+}
+```
 
 ### LocalDevice
-- Discovered network devices via ARP scan and Bonjour
-- MAC address, IP address, hostname, vendor lookup, device type
-- Track firstSeen, lastSeen, online status
-- Support custom names and notes
+Discovered network devices with tracking metadata.
+```swift
+@Model
+final class LocalDevice {
+    var id: UUID
+    var ipAddress: String
+    var macAddress: String?
+    var hostname: String?
+    var vendor: String?
+    var deviceType: DeviceType
+    var customName: String?
+    var notes: String?
+    var firstSeen: Date
+    var lastSeen: Date
+    var isOnline: Bool
+}
+```
 
-### ConnectionInfo & ISPInfo
-- Current connection details (WiFi/Ethernet, SSID, signal strength)
-- Gateway info (IP, MAC, vendor, latency)
-- Public IP, ISP name, ASN, geolocation from external service
+### SessionRecord
+Monitoring session lifecycle tracking.
+```swift
+@Model
+final class SessionRecord {
+    var id: UUID
+    var startedAt: Date
+    var pausedAt: Date?
+    var stoppedAt: Date?
+    var isActive: Bool
+}
+```
+
+## Services Architecture
+
+### MonitoringSession (Main Coordinator)
+`@MainActor @Observable` class coordinating all monitoring:
+- Manages target monitoring lifecycle (start/stop)
+- Routes checks to appropriate service by protocol
+- Publishes `latestResults: [UUID: TargetMeasurement]` to UI
+- Persists measurements to SwiftData
+
+### NetworkMonitorService Protocol
+Actor protocol all monitors conform to:
+```swift
+protocol NetworkMonitorService: Actor {
+    func check(target: NetworkTarget) async throws -> TargetMeasurement
+}
+```
+
+### HTTPMonitorService
+- HEAD requests for minimal data transfer
+- HTTP 200-399 = reachable
+- Respects target timeout settings
+
+### ARPScannerService
+- Probes IP range using NWConnection TCP
+- Retrieves MAC addresses via `/usr/sbin/arp`
+- Supports /24 and larger subnets
+
+### BonjourDiscoveryService
+- Browses 15 service types (HTTP, SSH, SMB, AirPlay, etc.)
+- Resolves services to IP addresses
+- Parses TXT records
+
+### DeviceDiscoveryCoordinator
+`@MainActor @Observable` coordinator for device discovery:
+- Two-phase scan: ARP (60%) + Bonjour (30%) + merge (10%)
+- Merges results (ARP for MAC, Bonjour for hostname)
+- Marks devices offline when not seen in scan
+- Persists to SwiftData
+
+### MACVendorLookupService
+- Hardcoded OUI database with 50+ Apple entries
+- Supports Samsung, Google, Amazon, Microsoft, Intel, TP-Link, Netgear, Cisco, Raspberry Pi, Sonos
+
+### CompanionService
+- Advertises `_netmon._tcp` on port 8849
+- JSON message protocol with length-prefixed framing
+- Accepts connections from iOS companion app
+- Broadcasts state updates
+
+### CompanionMessageHandler
+`@MainActor` processor for companion commands:
+- Supported commands: startMonitoring, stopMonitoring, scanDevices, ping, wakeOnLan, refreshTargets, refreshDevices
+- Generates status updates, target lists, device lists
+
+### WakeOnLanService
+- Sends magic packets via UDP broadcast (port 9)
+- Supports MAC formats: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF, AABBCCDDEEFF
+
+## Companion Protocol (NetMonitorShared)
+
+### Message Types
+```swift
+enum CompanionMessage: Codable {
+    case statusUpdate(StatusUpdatePayload)
+    case targetList(TargetListPayload)
+    case deviceList(DeviceListPayload)
+    case command(CommandPayload)
+    case toolResult(ToolResultPayload)
+    case error(ErrorPayload)
+    case heartbeat
+}
+```
+
+### Payloads
+- **StatusUpdatePayload**: isMonitoring, onlineTargets, offlineTargets, averageLatency
+- **TargetListPayload**: Array of TargetInfo (name, host, protocol, status, latency)
+- **DeviceListPayload**: Array of DeviceInfo (name, ipAddress, macAddress, vendor, isOnline)
+- **CommandPayload**: action string + parameters dictionary
+- **ToolResultPayload**: tool, success, result
+
+See `docs/Companion-Protocol-API.md` for complete API reference.
+
+## Shared Enums
+
+### TargetProtocol
+```swift
+enum TargetProtocol: String, Codable, CaseIterable {
+    case icmp, http, https, tcp
+    var iconName: String  // SF Symbol names
+}
+```
+
+### DeviceType
+```swift
+enum DeviceType: String, Codable, CaseIterable {
+    case phone, laptop, tablet, tv, speaker, gaming, iot, router, printer, unknown
+    var iconName: String  // SF Symbol names
+}
+```
+
+### ConnectionType
+```swift
+enum ConnectionType: String, Codable {
+    case wifi, ethernet, cellular, unknown
+}
+```
 
 ## UI Architecture
 
-### Window Structure
-- **Sidebar Navigation** (220px): Dashboard, Targets, Devices, Tools, Settings
-- **Main Content Area**: Dynamic content based on navigation selection
-- **Split Views**: Used in Targets (list + detail) and Devices (list + map/detail)
+### Navigation Structure
+NavigationSplitView with sidebar (220px) + detail:
+1. **Dashboard**: Monitoring status, target cards, quick stats
+2. **Targets**: Target list with CRUD, add via sheet
+3. **Devices**: Split view with list + detail, scan button
+4. **Tools**: Placeholder for network tools
+5. **Settings**: Placeholder for preferences
+
+### Menu Bar Integration
+- **MenuBarController**: NSStatusItem with dynamic icon/color
+- **MenuBarPopoverView**: Quick stats, top 5 targets, start/stop button
+- Icon states: network (stopped), network (green=monitoring), network.slash (issues)
 
 ### Design System
-- **Colors**: Cyan accent (#06B6D4), dark gradient background (Slate 950 → Blue 950)
-- **Glass Effect**: Cards with 5% white opacity, 10% border opacity, blur effect
-- **Typography**: SF Pro Display (headings), SF Pro Text (body), SF Mono (IPs/MACs)
-- **Spacing**: Consistent 8px grid, 12-16px card corners
+- **Colors**: Cyan accent (#06B6D4), dark gradient background
+- **Glass Effect**: Cards with 5% white opacity, blur
+- **Typography**: SF Pro Display/Text, SF Mono for IPs/MACs
 
-### Navigation Sections
-1. **Dashboard**: Overview cards, session info, quick stats, target summary
-2. **Targets**: Split view with target list and detail graphs
-3. **Devices**: Device list + network map visualization with radial topology
-4. **Tools**: Grid of tools (Ping, Traceroute, Port Scanner, DNS Lookup, WHOIS, Speed Test, WOL, Bonjour Browser)
-5. **Settings**: General, Notifications, Network, Companion App, Data Management
+## Testing
 
-## Companion App Communication
+Tests use Swift Testing framework (`import Testing`):
 
-### Bonjour Service
-- Service type: `_netmon._tcp`
-- Port: 8849
-- JSON message protocol
-- Real-time push: connection info, gateway, ISP, targets, devices, tool results
-- Accept commands from companion to trigger actions
+### Service Tests
+- `MonitoringSessionTests`: Session lifecycle
+- `HTTPMonitorServiceTests`: HTTP request handling
+- `ARPScannerServiceTests`: IP range calculation, MAC lookup
+- `BonjourDiscoveryServiceTests`: Service discovery
+- `DeviceDiscoveryCoordinatorTests`: Merge logic
+- `MACVendorLookupServiceTests`: Vendor lookup
+- `CompanionServiceTests`: Message handling
 
-### CloudKit Sync
-- Sync target configurations, device custom names/notes
-- Store last 24 hours of historical statistics
-- Optional feature, toggle in settings
+### Protocol Tests
+- `CompanionMessageTests`: JSON encoding/decoding
 
 ## Performance Requirements
 
@@ -143,141 +346,82 @@ All models should use SwiftData `@Model` macro or Core Data for persistence:
 - CPU usage: < 5% during active monitoring
 - Startup time: < 2 seconds to launch
 
-## Network Tools Implementation Notes
+## macOS Permissions
 
-### Ping Tool
-Use `NWConnection` or raw ICMP sockets with proper permissions. Support packet count, size, and interval configuration.
+Required in Info.plist:
+```xml
+<key>NSLocalNetworkUsageDescription</key>
+<string>NetMonitor needs local network access to discover devices and monitor network targets on your local network.</string>
+```
 
-### Traceroute
-Implement with increasing TTL values, support ICMP/UDP protocols, display hop-by-hop latency with reverse DNS.
+## Implementation Status
 
-### Port Scanner
-Use TCP connect scanning with configurable concurrency limits. Support port ranges and common port presets.
+### Phase 1: Foundation (COMPLETE)
+- SwiftData models and relationships
+- UI shell with sidebar navigation
+- Basic view structure
 
-### DNS Lookup
-Support record types: A, AAAA, MX, TXT, CNAME, NS, SOA. Allow custom DNS server selection.
+### Phase 2: Core Monitoring Engine (COMPLETE)
+- MonitoringSession coordinator
+- HTTPMonitorService for HTTP/HTTPS
+- Dashboard with real-time target status
+- Target CRUD operations
+- Statistics persistence
 
-### Speed Test
-Implement download/upload measurement with server selection. Store historical results for comparison.
+### Phase 3: Discovery & Companion (COMPLETE)
+- ARPScannerService for local device discovery
+- BonjourDiscoveryService for mDNS
+- DeviceDiscoveryCoordinator (unified scanning)
+- MACVendorLookupService (50+ vendors)
+- DevicesView with search/filter
+- DeviceDetailView with actions
+- Menu bar integration
+- CompanionService (Bonjour advertising)
+- CompanionMessageHandler (command processing)
+- WakeOnLanService (magic packets)
 
-### Wake on LAN
-Send magic packets to discovered devices or manually entered MACs.
-
-### Bonjour Browser
-Enumerate available service types, resolve services to IP addresses, display TXT records.
+### Pending Implementation
+- **ICMP Monitoring**: Requires CFSocket C interop
+- **TCP Monitoring**: Not yet implemented
+- **Network Tools**:
+  - Ping tool UI
+  - Traceroute (TTL-based)
+  - Port Scanner
+  - DNS Lookup
+  - WHOIS
+  - Speed Test
+  - Bonjour Browser
+- **Settings UI**: Preferences, notifications
+- **Statistics Aggregation**: 2min/10min/all-time calculations
+- **Network Map**: Radial topology visualization
+- **CloudKit Sync**: Remote configuration sync
 
 ## Error Handling Strategy
 
 - Graceful degradation when network/permissions unavailable
-- Permission denied: Show user-friendly alerts with instructions to enable Local Network access
-- Network unreachable: Display connection status with retry options
-- External service failures: Use cached data when possible, show last-updated timestamps
-- Implement retry with exponential backoff for transient failures
-- Comprehensive logging for debugging without blocking UI
+- Permission denied: User-friendly alerts with instructions
+- Network unreachable: Connection status with retry options
+- External service failures: Cached data with timestamps
+- Retry with exponential backoff for transient failures
+- Comprehensive logging without blocking UI
 
-## Testing Considerations
+## Key Conventions
 
-- Mock network services with protocols for unit testing ViewModels
-- Test target monitoring with configurable success/failure scenarios
-- Validate statistics aggregation (2min/10min/all-time calculations)
-- Test device discovery with simulated network devices
-- Test companion app communication with mock Bonjour services
-- UI tests for critical flows: adding targets, running tools, viewing statistics
+### File Naming
+- Services: `*Service.swift` (actors)
+- Coordinators: `*Coordinator.swift` (@MainActor @Observable)
+- Views: `*View.swift`
+- Models: Singular noun (NetworkTarget, LocalDevice)
 
-## macOS Specific Considerations
+### Code Style
+- Actors for all service classes
+- @MainActor for UI-bound coordinators
+- async/await for all async operations
+- Protocol-first design for testability
+- SwiftData @Model for persistence
+- @Environment for dependency injection
 
-### Permissions
-Request Local Network access in Info.plist:
-```xml
-<key>NSLocalNetworkUsageDescription</key>
-<string>NetMonitor needs local network access to discover devices and monitor network targets.</string>
-```
-
-### Menu Bar Integration
-Create NSStatusItem for menu bar presence with mini stats display and quick actions (start/stop monitoring).
-
-### AppKit Integration
-Use `NSViewRepresentable` for advanced features not available in SwiftUI (e.g., custom network visualizations).
-
-## Development Priorities
-
-1. **Core Networking Layer**: Implement protocol-based monitoring services (ICMP, HTTP, TCP)
-2. **Data Persistence**: Set up SwiftData models and relationships
-3. **UI Shell**: Create sidebar navigation and basic view structure
-4. **Dashboard**: Implement session tracking and connection info display
-5. **Target Monitoring**: Build target management and statistics collection
-6. **Device Discovery**: Implement ARP scanning and Bonjour discovery
-7. **Network Tools**: Add individual tools one by one
-8. **Companion Communication**: Implement Bonjour service and JSON protocol
-9. **Settings & Polish**: Complete settings, notifications, theme support
-
-## Phase 2: Core Monitoring Engine (COMPLETE)
-
-Phase 2 adds real-time network monitoring capabilities.
-
-### Monitoring Services
-
-**NetworkMonitorService Protocol:**
-- Actor-based protocol for thread-safe monitoring
-- All implementations must be actors
-- Returns TargetMeasurement with latency and reachability
-
-**HTTPMonitorService:**
-- Uses URLSession for HTTP/HTTPS checks
-- HEAD requests for minimal data transfer
-- Respects timeout settings
-- Maps HTTP status codes (200-399 = reachable)
-
-**ICMPMonitorService:**
-- ICMP Echo Request/Reply (ping)
-- CFSocket wrapper for low-level access
-- Sequence number tracking
-- Note: Full CFSocket implementation pending
-
-### MonitoringSession
-
-**@MainActor @Observable State Holder:**
-```swift
-@MainActor
-@Observable
-final class MonitoringSession {
-    var isMonitoring: Bool
-    var latestResults: [UUID: TargetMeasurement]
-}
-```
-
-**Key Features:**
-- Coordinates monitoring of all enabled targets
-- Routes checks to appropriate service by protocol
-- Publishes results to UI via @Observable
-- Manages task lifecycle (start/stop/cancel)
-- Background SwiftData saves for persistence
-
-### Dashboard
-
-**Live Monitoring UI:**
-- Real-time target status cards
-- Start/Stop monitoring button
-- Latency display per target
-- Status indicators (green/red/gray)
-- Grid layout for multiple targets
-
-**Statistics:**
-- Average, min, max latency
-- Uptime percentage
-- Line charts with recent measurements
-- @Query with predicates for efficient data access
-
-### Targets Management
-
-**CRUD Operations:**
-- Add new targets via sheet
-- Edit target settings
-- Enable/disable individual targets
-- Delete targets
-
-**Target Configuration:**
-- Name, host, optional port
-- Protocol selection (HTTP/HTTPS/ICMP/TCP)
-- Check interval (1-60 seconds)
-- Timeout (1-30 seconds)
+### Git Workflow
+- Feature branches: `claude/<feature-name>-<id>`
+- Conventional commits: `feat:`, `fix:`, `docs:`, `refactor:`
+- PR required for main branch

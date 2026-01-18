@@ -51,5 +51,3 @@ struct DeviceRowView: View {
         .padding(.vertical, 4)
     }
 }
-
-// Note: displayName is now defined in LocalDevice.swift extension

@@ -33,7 +33,6 @@
 	89E04559593A462CAAA86ACE /* HTTPMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41601A9807D142ABB7181D76 /* HTTPMonitorService.swift */; };
 		EA0BF39708E4C575FEB755C7 /* ICMPSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726CC13E0EB775E7C7C19BD1 /* ICMPSocket.swift */; };
 		797B8A019436F78CCC11BFA9 /* ICMPMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD048F216895C502521CE659 /* ICMPMonitorService.swift */; };
-		TCPM0001000000000000001A /* TCPMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = TCPM0002000000000000001A /* TCPMonitorService.swift */; };
 	469702AB229FA4BA93AF5983 /* MonitoringSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE7F7F545EA38B3B8F9DE02 /* MonitoringSession.swift */; };
 	DF61159D6D01427DAA18BFCE /* HTTPMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719663BC734C4A16BC0AB480 /* HTTPMonitorServiceTests.swift */; };
 		EAD61DA40AAA0D4676EA0906 /* AddTargetSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF0D348F4FB6B490148030A /* AddTargetSheet.swift */; };
@@ -57,6 +56,24 @@
 		CSVC0003000000000000001A /* CompanionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0004000000000000001A /* CompanionServiceTests.swift */; };
 		CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMHD0002000000000000001A /* CompanionMessageHandler.swift */; };
 		WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLS0002000000000000001A /* WakeOnLanService.swift */; };
+		CTRK0001000000000000001A /* ContinuationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CTRK0002000000000000001A /* ContinuationTracker.swift */; };
+		WOLA0001000000000000001A /* WakeOnLanAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLA0002000000000000001A /* WakeOnLanAction.swift */; };
+		SHCR0001000000000000001A /* ShellCommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHCR0002000000000000001A /* ShellCommandRunner.swift */; };
+		PPNG0001000000000000001A /* ProcessPingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = PPNG0002000000000000001A /* ProcessPingService.swift */; };
+		PNGT0002000000000000001A /* PingToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PNGT0001000000000000001A /* PingToolView.swift */; };
+		DNST0002000000000000001A /* DNSLookupToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DNST0001000000000000001A /* DNSLookupToolView.swift */; };
+		WHST0002000000000000001A /* WHOISToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = WHST0001000000000000001A /* WHOISToolView.swift */; };
+		TRRT0002000000000000001A /* TracerouteToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRRT0001000000000000001A /* TracerouteToolView.swift */; };
+		PRST0002000000000000001A /* PortScannerToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PRST0001000000000000001A /* PortScannerToolView.swift */; };
+		SPDT0002000000000000001A /* SpeedTestToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SPDT0001000000000000001A /* SpeedTestToolView.swift */; };
+		BNJT0002000000000000001A /* BonjourBrowserToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BNJT0001000000000000001A /* BonjourBrowserToolView.swift */; };
+		GNSV0002000000000000001A /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GNSV0001000000000000001A /* GeneralSettingsView.swift */; };
+		MNSV0002000000000000001A /* MonitoringSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MNSV0001000000000000001A /* MonitoringSettingsView.swift */; };
+		NTSV0002000000000000001A /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = NTSV0001000000000000001A /* NotificationSettingsView.swift */; };
+		NWSV0002000000000000001A /* NetworkSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = NWSV0001000000000000001A /* NetworkSettingsView.swift */; };
+		DTSV0002000000000000001A /* DataSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DTSV0001000000000000001A /* DataSettingsView.swift */; };
+		APSV0002000000000000001A /* AppearanceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = APSV0001000000000000001A /* AppearanceSettingsView.swift */; };
+		CPSV0002000000000000001A /* CompanionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CPSV0001000000000000001A /* CompanionSettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,7 +123,6 @@
 	41601A9807D142ABB7181D76 /* HTTPMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTTPMonitorService.swift; path = NetMonitor/Services/HTTPMonitorService.swift; sourceTree = "<group>"; };
 		726CC13E0EB775E7C7C19BD1 /* ICMPSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ICMPSocket.swift; path = NetMonitor/Services/ICMPSocket.swift; sourceTree = "<group>"; };
 		BD048F216895C502521CE659 /* ICMPMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ICMPMonitorService.swift; path = NetMonitor/Services/ICMPMonitorService.swift; sourceTree = "<group>"; };
-		TCPM0002000000000000001A /* TCPMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TCPMonitorService.swift; path = NetMonitor/Services/TCPMonitorService.swift; sourceTree = "<group>"; };
 	1FE7F7F545EA38B3B8F9DE02 /* MonitoringSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NetMonitor/Services/MonitoringSession.swift"; sourceTree = "<group>"; };
 	719663BC734C4A16BC0AB480 /* HTTPMonitorServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTTPMonitorServiceTests.swift; path = NetMonitorTests/Services/HTTPMonitorServiceTests.swift; sourceTree = "<group>"; };
 		8AF0D348F4FB6B490148030A /* AddTargetSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTargetSheet.swift; sourceTree = "<group>"; };
@@ -130,6 +146,24 @@
 		CSVC0004000000000000001A /* CompanionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionServiceTests.swift; path = NetMonitorTests/Services/CompanionServiceTests.swift; sourceTree = "<group>"; };
 		CMHD0002000000000000001A /* CompanionMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionMessageHandler.swift; path = NetMonitor/Services/CompanionMessageHandler.swift; sourceTree = "<group>"; };
 		WOLS0002000000000000001A /* WakeOnLanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeOnLanService.swift; path = NetMonitor/Services/WakeOnLanService.swift; sourceTree = "<group>"; };
+		CTRK0002000000000000001A /* ContinuationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContinuationTracker.swift; path = ContinuationTracker.swift; sourceTree = "<group>"; };
+		WOLA0002000000000000001A /* WakeOnLanAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeOnLanAction.swift; path = WakeOnLanAction.swift; sourceTree = "<group>"; };
+		SHCR0002000000000000001A /* ShellCommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShellCommandRunner.swift; path = NetMonitor/Services/ShellCommandRunner.swift; sourceTree = "<group>"; };
+		PPNG0002000000000000001A /* ProcessPingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProcessPingService.swift; path = NetMonitor/Services/ProcessPingService.swift; sourceTree = "<group>"; };
+		PNGT0001000000000000001A /* PingToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingToolView.swift; sourceTree = "<group>"; };
+		DNST0001000000000000001A /* DNSLookupToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DNSLookupToolView.swift; sourceTree = "<group>"; };
+		WHST0001000000000000001A /* WHOISToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WHOISToolView.swift; sourceTree = "<group>"; };
+		TRRT0001000000000000001A /* TracerouteToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracerouteToolView.swift; sourceTree = "<group>"; };
+		PRST0001000000000000001A /* PortScannerToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortScannerToolView.swift; sourceTree = "<group>"; };
+		SPDT0001000000000000001A /* SpeedTestToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedTestToolView.swift; sourceTree = "<group>"; };
+		BNJT0001000000000000001A /* BonjourBrowserToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourBrowserToolView.swift; sourceTree = "<group>"; };
+		GNSV0001000000000000001A /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
+		MNSV0001000000000000001A /* MonitoringSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitoringSettingsView.swift; sourceTree = "<group>"; };
+		NTSV0001000000000000001A /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
+		NWSV0001000000000000001A /* NetworkSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSettingsView.swift; sourceTree = "<group>"; };
+		DTSV0001000000000000001A /* DataSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSettingsView.swift; sourceTree = "<group>"; };
+		APSV0001000000000000001A /* AppearanceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSettingsView.swift; sourceTree = "<group>"; };
+		CPSV0001000000000000001A /* CompanionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionSettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,6 +214,7 @@
 				2A000002000000000000000A /* NetMonitorApp.swift */,
 				2A000004000000000000000A /* ContentView.swift */,
 				2510D9AC2F13025400C8C91B /* Views */,
+				UTIL0001000000000000001A /* Utilities */,
 				MBGR0001000000000000001A /* MenuBar */,
 				2A000006000000000000000A /* Assets.xcassets */,
 				2A000014000000000000000A /* NetMonitor.entitlements */,
@@ -233,6 +268,34 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		STNG0001000000000000001A /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				GNSV0001000000000000001A /* GeneralSettingsView.swift */,
+				MNSV0001000000000000001A /* MonitoringSettingsView.swift */,
+				NTSV0001000000000000001A /* NotificationSettingsView.swift */,
+				NWSV0001000000000000001A /* NetworkSettingsView.swift */,
+				DTSV0001000000000000001A /* DataSettingsView.swift */,
+				APSV0001000000000000001A /* AppearanceSettingsView.swift */,
+				CPSV0001000000000000001A /* CompanionSettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		TLSG0001000000000000001A /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				PNGT0001000000000000001A /* PingToolView.swift */,
+				DNST0001000000000000001A /* DNSLookupToolView.swift */,
+				WHST0001000000000000001A /* WHOISToolView.swift */,
+				TRRT0001000000000000001A /* TracerouteToolView.swift */,
+				PRST0001000000000000001A /* PortScannerToolView.swift */,
+				SPDT0001000000000000001A /* SpeedTestToolView.swift */,
+				BNJT0001000000000000001A /* BonjourBrowserToolView.swift */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
 		2510D9AC2F13025400C8C91B /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -246,6 +309,8 @@
 				DVDT0002000000000000001A /* DeviceDetailView.swift */,
 				2510D9B82F13035000C8C91B /* ToolsView.swift */,
 				97DE539B230545DD8B5355D0 /* TargetStatisticsView.swift */,
+				TLSG0001000000000000001A /* Tools */,
+				STNG0001000000000000001A /* Settings */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -257,7 +322,6 @@
 				41601A9807D142ABB7181D76 /* HTTPMonitorService.swift */,
 				726CC13E0EB775E7C7C19BD1 /* ICMPSocket.swift */,
 				BD048F216895C502521CE659 /* ICMPMonitorService.swift */,
-				TCPM0002000000000000001A /* TCPMonitorService.swift */,
 				1FE7F7F545EA38B3B8F9DE02 /* MonitoringSession.swift */,
 				DDSC0002000000000000001A /* DeviceDiscoveryService.swift */,
 				ARPS0002000000000000001A /* ARPScannerService.swift */,
@@ -267,6 +331,8 @@
 				CSVC0002000000000000001A /* CompanionService.swift */,
 				CMHD0002000000000000001A /* CompanionMessageHandler.swift */,
 				WOLS0002000000000000001A /* WakeOnLanService.swift */,
+				SHCR0002000000000000001A /* ShellCommandRunner.swift */,
+				PPNG0002000000000000001A /* ProcessPingService.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -294,6 +360,16 @@
 				MBCM0002000000000000001A /* MenuBarCommands.swift */,
 			);
 			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		UTIL0001000000000000001A /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				CTRK0002000000000000001A /* ContinuationTracker.swift */,
+				WOLA0002000000000000001A /* WakeOnLanAction.swift */,
+			);
+			name = Utilities;
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -458,7 +534,6 @@
 								469702AB229FA4BA93AF5983 /* MonitoringSession.swift in Sources */,
 								EA0BF39708E4C575FEB755C7 /* ICMPSocket.swift in Sources */,
 								797B8A019436F78CCC11BFA9 /* ICMPMonitorService.swift in Sources */,
-								TCPM0001000000000000001A /* TCPMonitorService.swift in Sources */,
 								DDSC0001000000000000001A /* DeviceDiscoveryService.swift in Sources */,
 								ARPS0001000000000000001A /* ARPScannerService.swift in Sources */,
 								BNJR0001000000000000001A /* BonjourDiscoveryService.swift in Sources */,
@@ -471,7 +546,25 @@
 								MBCM0001000000000000001A /* MenuBarCommands.swift in Sources */,
 								CSVC0001000000000000001A /* CompanionService.swift in Sources */,
 								CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */,
-								WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */,
+				WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */,
+				SHCR0001000000000000001A /* ShellCommandRunner.swift in Sources */,
+				PPNG0001000000000000001A /* ProcessPingService.swift in Sources */,
+				CTRK0001000000000000001A /* ContinuationTracker.swift in Sources */,
+				WOLA0001000000000000001A /* WakeOnLanAction.swift in Sources */,
+				PNGT0002000000000000001A /* PingToolView.swift in Sources */,
+				DNST0002000000000000001A /* DNSLookupToolView.swift in Sources */,
+				WHST0002000000000000001A /* WHOISToolView.swift in Sources */,
+				TRRT0002000000000000001A /* TracerouteToolView.swift in Sources */,
+				PRST0002000000000000001A /* PortScannerToolView.swift in Sources */,
+				SPDT0002000000000000001A /* SpeedTestToolView.swift in Sources */,
+				BNJT0002000000000000001A /* BonjourBrowserToolView.swift in Sources */,
+				GNSV0002000000000000001A /* GeneralSettingsView.swift in Sources */,
+				MNSV0002000000000000001A /* MonitoringSettingsView.swift in Sources */,
+				NTSV0002000000000000001A /* NotificationSettingsView.swift in Sources */,
+				NWSV0002000000000000001A /* NetworkSettingsView.swift in Sources */,
+				DTSV0002000000000000001A /* DataSettingsView.swift in Sources */,
+				APSV0002000000000000001A /* AppearanceSettingsView.swift in Sources */,
+				CPSV0002000000000000001A /* CompanionSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
