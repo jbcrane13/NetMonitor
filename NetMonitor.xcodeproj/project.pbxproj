@@ -54,6 +54,8 @@
 		CMPT0001000000000000001A /* CompanionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMPT0002000000000000001A /* CompanionMessageTests.swift */; };
 		CSVC0001000000000000001A /* CompanionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0002000000000000001A /* CompanionService.swift */; };
 		CSVC0003000000000000001A /* CompanionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0004000000000000001A /* CompanionServiceTests.swift */; };
+		SCRT0002000000000000001A /* ShellCommandRunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCRT0001000000000000001A /* ShellCommandRunnerTests.swift */; };
+		PPST0002000000000000001A /* ProcessPingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PPST0001000000000000001A /* ProcessPingServiceTests.swift */; };
 		CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMHD0002000000000000001A /* CompanionMessageHandler.swift */; };
 		WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLS0002000000000000001A /* WakeOnLanService.swift */; };
 		CTRK0001000000000000001A /* ContinuationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CTRK0002000000000000001A /* ContinuationTracker.swift */; };
@@ -145,6 +147,8 @@
 		CMPT0002000000000000001A /* CompanionMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionMessageTests.swift; sourceTree = "<group>"; };
 		CSVC0002000000000000001A /* CompanionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionService.swift; path = NetMonitor/Services/CompanionService.swift; sourceTree = "<group>"; };
 		CSVC0004000000000000001A /* CompanionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionServiceTests.swift; path = NetMonitorTests/Services/CompanionServiceTests.swift; sourceTree = "<group>"; };
+		SCRT0001000000000000001A /* ShellCommandRunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShellCommandRunnerTests.swift; path = NetMonitorTests/Services/ShellCommandRunnerTests.swift; sourceTree = "<group>"; };
+		PPST0001000000000000001A /* ProcessPingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProcessPingServiceTests.swift; path = NetMonitorTests/Services/ProcessPingServiceTests.swift; sourceTree = "<group>"; };
 		CMHD0002000000000000001A /* CompanionMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionMessageHandler.swift; path = NetMonitor/Services/CompanionMessageHandler.swift; sourceTree = "<group>"; };
 		WOLS0002000000000000001A /* WakeOnLanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeOnLanService.swift; path = NetMonitor/Services/WakeOnLanService.swift; sourceTree = "<group>"; };
 		CTRK0002000000000000001A /* ContinuationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContinuationTracker.swift; path = ContinuationTracker.swift; sourceTree = "<group>"; };
@@ -351,6 +355,8 @@
 				DDCC0004000000000000001A /* DeviceDiscoveryCoordinatorTests.swift */,
 				MACV0004000000000000001A /* MACVendorLookupServiceTests.swift */,
 				CSVC0004000000000000001A /* CompanionServiceTests.swift */,
+				SCRT0001000000000000001A /* ShellCommandRunnerTests.swift */,
+				PPST0001000000000000001A /* ProcessPingServiceTests.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -586,6 +592,8 @@
 				MACV0003000000000000001A /* MACVendorLookupServiceTests.swift in Sources */,
 				CMPT0001000000000000001A /* CompanionMessageTests.swift in Sources */,
 				CSVC0003000000000000001A /* CompanionServiceTests.swift in Sources */,
+				SCRT0002000000000000001A /* ShellCommandRunnerTests.swift in Sources */,
+				PPST0002000000000000001A /* ProcessPingServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

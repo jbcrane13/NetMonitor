@@ -25,8 +25,11 @@ NetMonitor/
 │   │   ├── MonitoringSession.swift      # Main monitoring coordinator
 │   │   ├── NetworkMonitorService.swift  # Protocol for monitors
 │   │   ├── HTTPMonitorService.swift     # HTTP/HTTPS monitoring
-│   │   ├── ICMPMonitorService.swift     # ICMP ping (pending)
+│   │   ├── TCPMonitorService.swift      # TCP port monitoring
+│   │   ├── ICMPMonitorService.swift     # ICMP ping monitoring
 │   │   ├── ICMPSocket.swift             # Low-level ICMP wrapper
+│   │   ├── ProcessPingService.swift     # Shell-based ping utility
+│   │   ├── ShellCommandRunner.swift     # Generic shell command executor
 │   │   ├── ARPScannerService.swift      # ARP-based device discovery
 │   │   ├── BonjourDiscoveryService.swift # mDNS service discovery
 │   │   ├── DeviceDiscoveryService.swift # Discovery protocol
@@ -44,8 +47,24 @@ NetMonitor/
 │   │   ├── DevicesView.swift            # Device discovery & management
 │   │   ├── DeviceDetailView.swift       # Device information & actions
 │   │   ├── DeviceRowView.swift          # Device list item
-│   │   ├── ToolsView.swift              # Network tools (placeholder)
-│   │   └── SettingsView.swift           # App settings (placeholder)
+│   │   ├── ToolsView.swift              # Network tools container
+│   │   ├── Tools/                       # Network diagnostic tools
+│   │   │   ├── PingToolView.swift       # Interactive ping utility
+│   │   │   ├── TracerouteToolView.swift # Network path tracing
+│   │   │   ├── PortScannerToolView.swift # TCP port scanning
+│   │   │   ├── DNSLookupToolView.swift  # DNS query tool
+│   │   │   ├── WHOISToolView.swift      # Domain WHOIS lookup
+│   │   │   ├── BonjourBrowserToolView.swift # mDNS service browser
+│   │   │   └── WakeOnLanToolView.swift  # WOL magic packet sender
+│   │   ├── SettingsView.swift           # Settings container with tabs
+│   │   └── Settings/                    # Settings tab views
+│   │       ├── GeneralSettingsView.swift # Launch at login, appearance
+│   │       ├── MonitoringSettingsView.swift # Check intervals, retries
+│   │       ├── NotificationSettingsView.swift # Alerts, thresholds
+│   │       ├── NetworkSettingsView.swift # Interface, proxy settings
+│   │       ├── DataSettingsView.swift   # History retention, export
+│   │       ├── AppearanceSettingsView.swift # Theme, colors, compact mode
+│   │       └── CompanionSettingsView.swift # Companion app service
 │   ├── MenuBar/                         # Menu bar integration
 │   │   ├── MenuBarController.swift      # NSStatusItem management
 │   │   ├── MenuBarPopoverView.swift     # Quick stats popover
@@ -216,6 +235,25 @@ protocol NetworkMonitorService: Actor {
 - HTTP 200-399 = reachable
 - Respects target timeout settings
 
+### TCPMonitorService
+- Network.framework NWConnection-based
+- Connects to specified host:port
+- Returns latency on successful connection
+
+### ShellCommandRunner
+Actor for executing shell commands safely:
+- `run()`: Execute command and return stdout/stderr/exitCode
+- `stream()`: Stream output line-by-line via AsyncThrowingStream
+- `cancel()`: Terminate running process
+- Supports configurable timeouts
+
+### ProcessPingService
+Shell-based ping service using `/sbin/ping`:
+- `ping()`: Execute ping and return aggregate PingResult
+- `pingStream()`: Stream individual PingLine responses
+- Works within App Sandbox (no raw socket access needed)
+- Parses macOS ping output format
+
 ### ARPScannerService
 - Probes IP range using NWConnection TCP
 - Retrieves MAC addresses via `/usr/sbin/arp`
@@ -308,8 +346,36 @@ NavigationSplitView with sidebar (220px) + detail:
 1. **Dashboard**: Monitoring status, target cards, quick stats
 2. **Targets**: Target list with CRUD, add via sheet
 3. **Devices**: Split view with list + detail, scan button
-4. **Tools**: Placeholder for network tools
-5. **Settings**: Placeholder for preferences
+4. **Tools**: Grid of network diagnostic tools
+5. **Settings**: Tabbed preferences interface
+
+### Network Tools (Views/Tools/)
+Seven diagnostic utilities with consistent UX:
+- **PingToolView**: Interactive ping with real-time latency display, streaming results
+- **TracerouteToolView**: Network path tracing with hop-by-hop visualization
+- **PortScannerToolView**: TCP port scanning with common port presets
+- **DNSLookupToolView**: DNS query tool for A, AAAA, MX, TXT, NS records
+- **WHOISToolView**: Domain registration lookup via whois command
+- **BonjourBrowserToolView**: Browse mDNS services on local network
+- **WakeOnLanToolView**: Send magic packets to wake devices
+
+All tools follow consistent patterns:
+- Input validation before execution
+- Cancel button for long-running operations
+- Error messages displayed inline
+- Accessibility identifiers on all interactive elements
+
+### Settings (Views/Settings/)
+Tabbed interface with six setting categories:
+- **GeneralSettingsView**: Launch at login (SMAppService), appearance mode
+- **MonitoringSettingsView**: Default intervals, timeouts, retry behavior
+- **NotificationSettingsView**: Alert sounds, latency thresholds
+- **NetworkSettingsView**: Interface preference, proxy settings
+- **DataSettingsView**: History retention, CSV export, clear data
+- **AppearanceSettingsView**: Accent colors, compact mode
+- **CompanionSettingsView**: Companion service enable/port, connected devices
+
+Settings use `@AppStorage` with `netmonitor.*` key prefix for persistence.
 
 ### Menu Bar Integration
 - **MenuBarController**: NSStatusItem with dynamic icon/color
@@ -333,6 +399,8 @@ Tests use Swift Testing framework (`import Testing`):
 - `DeviceDiscoveryCoordinatorTests`: Merge logic
 - `MACVendorLookupServiceTests`: Vendor lookup
 - `CompanionServiceTests`: Message handling
+- `ShellCommandRunnerTests`: Command execution, streaming, timeouts
+- `ProcessPingServiceTests`: Ping execution, streaming, cancellation
 
 ### Protocol Tests
 - `CompanionMessageTests`: JSON encoding/decoding
@@ -380,21 +448,37 @@ Required in Info.plist:
 - CompanionMessageHandler (command processing)
 - WakeOnLanService (magic packets)
 
+### Phase 4: Tools, Settings & Polish (COMPLETE)
+- **Infrastructure**:
+  - ShellCommandRunner actor for shell command execution
+  - ProcessPingService for shell-based ping operations
+  - TCPMonitorService for TCP port monitoring
+- **Network Tools UI** (7 tools):
+  - PingToolView with real-time streaming
+  - TracerouteToolView with hop visualization
+  - PortScannerToolView with common port presets
+  - DNSLookupToolView for multiple record types
+  - WHOISToolView for domain lookups
+  - BonjourBrowserToolView for mDNS browsing
+  - WakeOnLanToolView for magic packets
+- **Settings UI** (7 setting views):
+  - GeneralSettingsView (launch at login, appearance)
+  - MonitoringSettingsView (intervals, timeouts)
+  - NotificationSettingsView (alerts, thresholds)
+  - NetworkSettingsView (interface, proxy)
+  - DataSettingsView (retention, export)
+  - AppearanceSettingsView (theme, colors)
+  - CompanionSettingsView (service config)
+- **Polish**:
+  - Comprehensive error handling in all tool views
+  - 51 accessibility identifiers across new UI
+  - Unit tests for ShellCommandRunner and ProcessPingService
+
 ### Pending Implementation
-- **ICMP Monitoring**: Requires CFSocket C interop
-- **TCP Monitoring**: Not yet implemented
-- **Network Tools**:
-  - Ping tool UI
-  - Traceroute (TTL-based)
-  - Port Scanner
-  - DNS Lookup
-  - WHOIS
-  - Speed Test
-  - Bonjour Browser
-- **Settings UI**: Preferences, notifications
 - **Statistics Aggregation**: 2min/10min/all-time calculations
 - **Network Map**: Radial topology visualization
 - **CloudKit Sync**: Remote configuration sync
+- **Speed Test Tool**: Bandwidth measurement
 
 ## Error Handling Strategy
 
