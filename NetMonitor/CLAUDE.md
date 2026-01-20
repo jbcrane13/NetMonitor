@@ -28,4 +28,20 @@
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
 | #398 | 1:54 AM | 🟣 | Enhanced ContentView NavigationSplitView with Column Visibility and Width Constraints | ~401 |
+
+### Jan 19, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #1479 | 6:43 PM | 🔄 | Dependency Injection Refactoring Committed | ~553 |
+| #1477 | " | 🔄 | Dependency Injection Refactoring Summary | ~636 |
+| #1465 | 6:36 PM | 🔄 | ContentView MonitoringSession Dependency Injection | ~475 |
+| #1464 | " | 🔵 | ContentView Creates MonitoringSession as Fallback | ~367 |
+| #1458 | 6:35 PM | 🔵 | ContentView MonitoringSession Initialization Pattern | ~470 |
+| #1453 | 6:34 PM | 🔄 | NetMonitorApp Centralized Service Instantiation and Injection | ~630 |
+| #1422 | 11:45 AM | 🔄 | ContentView MonitoringSession Dependency Injection | ~329 |
+| #1421 | " | 🔵 | ContentView MonitoringSession Initialization Pattern | ~347 |
+| #1404 | 11:40 AM | 🔄 | NetMonitorApp Centralized Service Instantiation | ~465 |
+| #1365 | 11:30 AM | 🔵 | NetMonitor Architecture Review Findings | ~812 |
+| #1356 | 11:29 AM | 🔵 | NetMonitorApp Dependency Initialization | ~570 |
 </claude-mem-context>

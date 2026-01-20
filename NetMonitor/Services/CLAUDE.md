@@ -34,4 +34,31 @@
 | #321 | 10:11 PM | ⚖️ | Modernization Audit Completed: 2 Legacy Classes Identified for Migration | ~710 |
 | #318 | 10:10 PM | 🔵 | BonjourDiscoveryService Implements Actor-Based Network Service Discovery | ~772 |
 | #289 | 10:07 PM | 🔵 | MonitoringSession Uses Modern @Observable Pattern | ~445 |
+
+### Jan 19, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #1479 | 6:43 PM | 🔄 | Dependency Injection Refactoring Committed | ~553 |
+| #1477 | " | 🔄 | Dependency Injection Refactoring Summary | ~636 |
+| #1451 | 6:33 PM | 🔄 | CompanionMessageHandler Error Handling Simplified | ~381 |
+| #1450 | " | 🔄 | DeviceDiscoveryCoordinator Dependency Injection Refactoring | ~498 |
+| #1449 | 6:32 PM | 🔄 | MonitoringSession Enhanced with TCP Service and Computed Properties | ~551 |
+| #1448 | 6:06 PM | 🔵 | MonitoringSession Current State with Internal Service Instantiation | ~458 |
+| #1447 | " | 🔵 | CompanionMessageHandler Still Creates Services Internally | ~393 |
+| #1446 | 6:04 PM | 🟣 | TCPMonitorService Integration into MonitoringSession | ~336 |
+| #1408 | 11:42 AM | 🔄 | CompanionMessageHandler Dependency Injection Refactoring | ~385 |
+| #1407 | " | 🔄 | DeviceDiscoveryCoordinator Dependency Injection Fix | ~459 |
+| #1398 | 11:36 AM | 🔄 | MonitoringSession Dependency Injection Refactoring | ~470 |
+| #1365 | 11:30 AM | 🔵 | NetMonitor Architecture Review Findings | ~812 |
+| #1358 | 11:29 AM | 🔵 | DeviceDiscoveryService Protocol and Models | ~499 |
+| #1350 | 11:28 AM | 🔵 | ICMPMonitorService Sandboxed Ping Implementation | ~464 |
+| #1348 | " | 🔵 | ARPScannerService Network Discovery Implementation | ~601 |
+| #1338 | 11:27 AM | 🔵 | WakeOnLanService Magic Packet Implementation | ~498 |
+| #1336 | " | 🔵 | MonitoringSession Coordinator Architecture | ~545 |
+| #1334 | " | 🔵 | HTTPMonitorService Implementation | ~429 |
+| #1332 | 11:26 AM | 🔵 | CompanionService Bonjour Network Communication | ~498 |
+| #1331 | " | 🔵 | DeviceDiscoveryCoordinator Multi-Source Scanning | ~472 |
+| #1328 | " | 🔵 | CompanionMessageHandler Command Processing | ~435 |
+| #1327 | " | 🔵 | NetworkMonitorService Protocol Definition | ~309 |
 </claude-mem-context>

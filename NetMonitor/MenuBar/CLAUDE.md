@@ -17,4 +17,16 @@
 | #345 | 10:54 PM | 🔄 | Migrated MenuBarController from ObservableObject to @Observable Macro | ~503 |
 | #321 | 10:11 PM | ⚖️ | Modernization Audit Completed: 2 Legacy Classes Identified for Migration | ~710 |
 | #315 | 10:10 PM | 🔵 | MenuBarController Manages macOS Status Item with Legacy ObservableObject | ~618 |
+
+### Jan 19, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #1479 | 6:43 PM | 🔄 | Dependency Injection Refactoring Committed | ~553 |
+| #1477 | " | 🔄 | Dependency Injection Refactoring Summary | ~636 |
+| #1463 | 6:36 PM | 🔄 | MenuBarPopoverView Refactored with Delegated Statistics | ~437 |
+| #1456 | 6:35 PM | 🔵 | MenuBarPopoverView Statistics Delegation Pattern | ~477 |
+| #1412 | 11:43 AM | 🔴 | MenuBarPopoverView Preview Fixed for Dependency Injection | ~301 |
+| #1365 | 11:30 AM | 🔵 | NetMonitor Architecture Review Findings | ~812 |
+| #1352 | 11:29 AM | 🔵 | MenuBarController System Tray Integration | ~509 |
 </claude-mem-context>
