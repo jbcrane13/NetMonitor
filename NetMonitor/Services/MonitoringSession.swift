@@ -30,11 +30,16 @@ final class MonitoringSession {
 
     // MARK: - Initialization
 
-    init(modelContext: ModelContext) {
+    init(
+        modelContext: ModelContext,
+        httpService: HTTPMonitorService,
+        icmpService: ICMPMonitorService,
+        tcpService: TCPMonitorService
+    ) {
         self.modelContext = modelContext
-        self.httpService = HTTPMonitorService()
-        self.icmpService = ICMPMonitorService()
-        self.tcpService = TCPMonitorService()
+        self.httpService = httpService
+        self.icmpService = icmpService
+        self.tcpService = tcpService
     }
 
     // MARK: - Public API

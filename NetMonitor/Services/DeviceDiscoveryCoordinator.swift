@@ -19,8 +19,8 @@ final class DeviceDiscoveryCoordinator {
 
     init(
         modelContext: ModelContext,
-        arpScanner: ARPScannerService = ARPScannerService(),
-        bonjourScanner: BonjourDiscoveryService = BonjourDiscoveryService()
+        arpScanner: ARPScannerService,
+        bonjourScanner: BonjourDiscoveryService
     ) {
         self.modelContext = modelContext
         self.arpScanner = arpScanner

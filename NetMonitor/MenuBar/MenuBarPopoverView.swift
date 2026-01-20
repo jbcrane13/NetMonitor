@@ -195,13 +195,20 @@ struct MenuBarPopoverView: View {
 // MARK: - Preview
 
 #Preview {
-    MenuBarPopoverView(
-        session: MonitoringSession(
-            modelContext: try! ModelContainer(
-                for: NetworkTarget.self, TargetMeasurement.self,
-                configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-            ).mainContext
-        ),
-        onClose: {}
+    let container = try! ModelContainer(
+        for: NetworkTarget.self, TargetMeasurement.self,
+        configurations: ModelConfiguration(isStoredInMemoryOnly: true)
     )
+    let context = container.mainContext
+    let httpService = HTTPMonitorService()
+    let icmpService = ICMPMonitorService()
+    let tcpService = TCPMonitorService()
+    let session = MonitoringSession(
+        modelContext: context,
+        httpService: httpService,
+        icmpService: icmpService,
+        tcpService: tcpService
+    )
+    
+    return MenuBarPopoverView(session: session, onClose: {})
 }

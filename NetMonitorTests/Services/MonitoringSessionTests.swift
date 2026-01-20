@@ -13,7 +13,16 @@ struct MonitoringSessionTests {
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
 
-        let session = MonitoringSession(modelContext: container.mainContext)
+        let httpService = HTTPMonitorService()
+        let icmpService = ICMPMonitorService()
+        let tcpService = TCPMonitorService()
+
+        let session = MonitoringSession(
+            modelContext: container.mainContext,
+            httpService: httpService,
+            icmpService: icmpService,
+            tcpService: tcpService
+        )
 
         #expect(session.isMonitoring == false)
         #expect(session.startTime == nil)
@@ -27,7 +36,16 @@ struct MonitoringSessionTests {
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
 
-        let session = MonitoringSession(modelContext: container.mainContext)
+        let httpService = HTTPMonitorService()
+        let icmpService = ICMPMonitorService()
+        let tcpService = TCPMonitorService()
+
+        let session = MonitoringSession(
+            modelContext: container.mainContext,
+            httpService: httpService,
+            icmpService: icmpService,
+            tcpService: tcpService
+        )
 
         session.startMonitoring()
         #expect(session.isMonitoring == true)

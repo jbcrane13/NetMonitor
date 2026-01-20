@@ -18,16 +18,20 @@ final class CompanionMessageHandler {
     private let monitoringSession: MonitoringSession
     private let deviceDiscovery: DeviceDiscoveryCoordinator
     private let wakeOnLanService: WakeOnLanService
+    private let icmpService: ICMPMonitorService
 
     init(
         modelContext: ModelContext,
         monitoringSession: MonitoringSession,
-        deviceDiscovery: DeviceDiscoveryCoordinator
+        deviceDiscovery: DeviceDiscoveryCoordinator,
+        wakeOnLanService: WakeOnLanService,
+        icmpService: ICMPMonitorService
     ) {
         self.modelContext = modelContext
         self.monitoringSession = monitoringSession
         self.deviceDiscovery = deviceDiscovery
-        self.wakeOnLanService = WakeOnLanService()
+        self.wakeOnLanService = wakeOnLanService
+        self.icmpService = icmpService
     }
 
     /// Process an incoming message and return an optional response
@@ -158,10 +162,8 @@ final class CompanionMessageHandler {
             isEnabled: true
         )
 
-        let service = ICMPMonitorService()
-
         do {
-            let measurement = try await service.check(target: target)
+            let measurement = try await icmpService.check(target: target)
             if measurement.isReachable, let latency = measurement.latency {
                 return .toolResult(ToolResultPayload(
                     tool: "ping",

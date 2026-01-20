@@ -4,9 +4,9 @@ import AppKit
 
 struct DevicesView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(DeviceDiscoveryCoordinator.self) private var coordinator: DeviceDiscoveryCoordinator?
     @Query(sort: \LocalDevice.lastSeen, order: .reverse) private var devices: [LocalDevice]
 
-    @State private var coordinator: DeviceDiscoveryCoordinator?
     @State private var selectedDevice: LocalDevice?
     @State private var searchText: String = ""
     @State private var filterOnlineOnly: Bool = false
@@ -50,11 +50,6 @@ struct DevicesView: View {
             toolbarContent
         }
         .searchable(text: $searchText, prompt: "Search devices...")
-        .onAppear {
-            if coordinator == nil {
-                coordinator = DeviceDiscoveryCoordinator(modelContext: modelContext)
-            }
-        }
         .wakeOnLanAlert(wolAction)
     }
 

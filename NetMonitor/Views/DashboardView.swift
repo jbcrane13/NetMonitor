@@ -41,6 +41,7 @@ struct DashboardView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(session.isMonitoring ? .red : .green)
+                    .accessibilityIdentifier("dashboard_button_monitoring_toggle")
                 }
                 .padding(.horizontal)
 
@@ -158,9 +159,19 @@ struct TargetStatusCard: View {
 // MARK: - Preview
 
 #Preview {
-    DashboardView()
-        .modelContainer(PreviewContainer().container)
-        .environment(MonitoringSession(
-            modelContext: PreviewContainer().container.mainContext
-        ))
+    let container = PreviewContainer().container
+    let context = container.mainContext
+    let httpService = HTTPMonitorService()
+    let icmpService = ICMPMonitorService()
+    let tcpService = TCPMonitorService()
+    let session = MonitoringSession(
+        modelContext: context,
+        httpService: httpService,
+        icmpService: icmpService,
+        tcpService: tcpService
+    )
+    
+    return DashboardView()
+        .modelContainer(container)
+        .environment(session)
 }

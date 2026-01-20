@@ -52,7 +52,15 @@ struct ContentView: View {
         .task {
             // Create local session only if not provided via environment
             if session == nil && localSession == nil {
-                localSession = MonitoringSession(modelContext: modelContext)
+                let httpService = HTTPMonitorService()
+                let icmpService = ICMPMonitorService()
+                let tcpService = TCPMonitorService()
+                localSession = MonitoringSession(
+                    modelContext: modelContext,
+                    httpService: httpService,
+                    icmpService: icmpService,
+                    tcpService: tcpService
+                )
             }
         }
     }

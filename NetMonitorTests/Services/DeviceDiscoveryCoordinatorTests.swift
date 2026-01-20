@@ -12,7 +12,13 @@ struct DeviceDiscoveryCoordinatorTests {
             for: LocalDevice.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
-        let coordinator = DeviceDiscoveryCoordinator(modelContext: container.mainContext)
+        let arpScanner = ARPScannerService()
+        let bonjourScanner = BonjourDiscoveryService()
+        let coordinator = DeviceDiscoveryCoordinator(
+            modelContext: container.mainContext,
+            arpScanner: arpScanner,
+            bonjourScanner: bonjourScanner
+        )
 
         #expect(coordinator.isScanning == false)
         #expect(coordinator.discoveredDevices.isEmpty)
@@ -37,7 +43,13 @@ struct DeviceDiscoveryCoordinatorTests {
         )
         context.insert(existing)
 
-        let coordinator = DeviceDiscoveryCoordinator(modelContext: context)
+        let arpScanner = ARPScannerService()
+        let bonjourScanner = BonjourDiscoveryService()
+        let coordinator = DeviceDiscoveryCoordinator(
+            modelContext: context,
+            arpScanner: arpScanner,
+            bonjourScanner: bonjourScanner
+        )
 
         // Simulate discovery with new hostname
         let discovered = DiscoveredDevice(
@@ -63,7 +75,13 @@ struct DeviceDiscoveryCoordinatorTests {
         )
         let context = container.mainContext
 
-        let coordinator = DeviceDiscoveryCoordinator(modelContext: context)
+        let arpScanner = ARPScannerService()
+        let bonjourScanner = BonjourDiscoveryService()
+        let coordinator = DeviceDiscoveryCoordinator(
+            modelContext: context,
+            arpScanner: arpScanner,
+            bonjourScanner: bonjourScanner
+        )
 
         // Simulate discovery of a new device
         let discovered = DiscoveredDevice(
@@ -90,7 +108,13 @@ struct DeviceDiscoveryCoordinatorTests {
             for: LocalDevice.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
-        let coordinator = DeviceDiscoveryCoordinator(modelContext: container.mainContext)
+        let arpScanner = ARPScannerService()
+        let bonjourScanner = BonjourDiscoveryService()
+        let coordinator = DeviceDiscoveryCoordinator(
+            modelContext: container.mainContext,
+            arpScanner: arpScanner,
+            bonjourScanner: bonjourScanner
+        )
 
         #expect(coordinator.scanProgress == 0.0)
         #expect(coordinator.lastScanTime == nil)
@@ -103,7 +127,13 @@ struct DeviceDiscoveryCoordinatorTests {
             for: LocalDevice.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
-        let coordinator = DeviceDiscoveryCoordinator(modelContext: container.mainContext)
+        let arpScanner = ARPScannerService()
+        let bonjourScanner = BonjourDiscoveryService()
+        let coordinator = DeviceDiscoveryCoordinator(
+            modelContext: container.mainContext,
+            arpScanner: arpScanner,
+            bonjourScanner: bonjourScanner
+        )
 
         // Start and immediately stop
         coordinator.startScan()
@@ -142,7 +172,13 @@ struct DeviceDiscoveryCoordinatorTests {
         context.insert(device2)
         try context.save()
 
-        let coordinator = DeviceDiscoveryCoordinator(modelContext: context)
+        let arpScanner = ARPScannerService()
+        let bonjourScanner = BonjourDiscoveryService()
+        let coordinator = DeviceDiscoveryCoordinator(
+            modelContext: context,
+            arpScanner: arpScanner,
+            bonjourScanner: bonjourScanner
+        )
 
         // Mark device1's IP as still seen, device2 should go offline
         coordinator.markOfflineDevices(currentIPs: Set(["192.168.1.100"]))

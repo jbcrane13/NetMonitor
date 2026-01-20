@@ -78,14 +78,31 @@ struct NetMonitorApp: App {
 
         let context = sharedModelContainer.mainContext
 
-        // 1. Set up monitoring session
+        // Create all services first (centralized service instantiation)
+        let httpService = HTTPMonitorService()
+        let icmpService = ICMPMonitorService()
+        let tcpService = TCPMonitorService()
+        let arpScanner = ARPScannerService()
+        let bonjourScanner = BonjourDiscoveryService()
+        let wakeOnLanService = WakeOnLanService()
+
+        // 1. Set up monitoring session with injected services
         if monitoringSession == nil {
-            monitoringSession = MonitoringSession(modelContext: context)
+            monitoringSession = MonitoringSession(
+                modelContext: context,
+                httpService: httpService,
+                icmpService: icmpService,
+                tcpService: tcpService
+            )
         }
 
-        // 2. Set up device discovery
+        // 2. Set up device discovery with injected services
         if deviceDiscovery == nil {
-            deviceDiscovery = DeviceDiscoveryCoordinator(modelContext: context)
+            deviceDiscovery = DeviceDiscoveryCoordinator(
+                modelContext: context,
+                arpScanner: arpScanner,
+                bonjourScanner: bonjourScanner
+            )
         }
 
         // 3. Set up companion service
@@ -95,7 +112,9 @@ struct NetMonitorApp: App {
             companionHandler = CompanionMessageHandler(
                 modelContext: context,
                 monitoringSession: session,
-                deviceDiscovery: discovery
+                deviceDiscovery: discovery,
+                wakeOnLanService: wakeOnLanService,
+                icmpService: icmpService
             )
 
             companionService = CompanionService()
