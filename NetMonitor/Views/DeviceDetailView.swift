@@ -34,6 +34,7 @@ struct DeviceDetailView: View {
                     }
                     isEditing.toggle()
                 }
+                .accessibilityIdentifier("device_detail_button_edit")
             }
         }
         .wakeOnLanAlert(wolAction)
@@ -57,6 +58,7 @@ struct DeviceDetailView: View {
                 if isEditing {
                     TextField("Device Name", text: $editedName)
                         .textFieldStyle(.roundedBorder)
+                        .accessibilityIdentifier("device_detail_field_name")
                 } else {
                     Text(device.displayName)
                         .font(.title2)
@@ -91,6 +93,7 @@ struct DeviceDetailView: View {
                 }
                 .labelsHidden()
                 .frame(width: 150)
+                .accessibilityIdentifier("device_detail_picker_type")
             }
         }
         .padding()
@@ -161,6 +164,7 @@ struct DeviceDetailView: View {
                     .scrollContentBackground(.hidden)
                     .background(Color.gray.opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .accessibilityIdentifier("device_detail_field_notes")
             } else {
                 if let notes = device.notes, !notes.isEmpty {
                     Text(notes)
@@ -194,12 +198,14 @@ struct DeviceDetailView: View {
                     systemImage: "waveform.path",
                     action: { /* TODO: Implement ping action */ }
                 )
+                .accessibilityIdentifier("device_detail_button_ping")
 
                 actionButton(
                     title: "Port Scan",
                     systemImage: "network",
                     action: { /* TODO: Implement port scan action */ }
                 )
+                .accessibilityIdentifier("device_detail_button_portScan")
 
                 if !device.macAddress.isEmpty {
                     actionButton(
@@ -211,6 +217,7 @@ struct DeviceDetailView: View {
                             }
                         }
                     )
+                    .accessibilityIdentifier("device_detail_button_wake")
                 }
 
                 actionButton(
@@ -218,6 +225,7 @@ struct DeviceDetailView: View {
                     systemImage: "plus.circle",
                     action: { addToTargets() }
                 )
+                .accessibilityIdentifier("device_detail_button_addToTargets")
             }
         }
         .padding()

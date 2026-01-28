@@ -50,6 +50,7 @@ struct DevicesView: View {
             toolbarContent
         }
         .searchable(text: $searchText, prompt: "Search devices...")
+        .accessibilityIdentifier("devices_search_field")
         .wakeOnLanAlert(wolAction)
     }
 
@@ -101,6 +102,7 @@ struct DevicesView: View {
                 coordinator?.stopScan()
             }
             .buttonStyle(.bordered)
+            .accessibilityIdentifier("devices_button_stopScan")
         }
         .padding(24)
         .background(.ultraThinMaterial)
@@ -118,6 +120,7 @@ struct DevicesView: View {
                 Label("Scan", systemImage: "antenna.radiowaves.left.and.right")
             }
             .disabled(coordinator?.isScanning == true)
+            .accessibilityIdentifier("devices_button_scan")
         }
 
         ToolbarItem(placement: .automatic) {
@@ -125,6 +128,7 @@ struct DevicesView: View {
                 Label("Online Only", systemImage: "circle.fill")
             }
             .toggleStyle(.button)
+            .accessibilityIdentifier("devices_toggle_onlineOnly")
         }
 
         ToolbarItem(placement: .status) {
@@ -154,6 +158,7 @@ struct DevicesView: View {
         } label: {
             Label("Copy IP Address", systemImage: "doc.on.doc")
         }
+        .accessibilityIdentifier("devices_menu_copyIP")
 
         if !device.macAddress.isEmpty {
             Button {
@@ -162,6 +167,7 @@ struct DevicesView: View {
             } label: {
                 Label("Copy MAC Address", systemImage: "doc.on.doc")
             }
+            .accessibilityIdentifier("devices_menu_copyMAC")
         }
 
         Divider()
@@ -171,12 +177,14 @@ struct DevicesView: View {
         } label: {
             Label("Ping Device", systemImage: "waveform.path")
         }
+        .accessibilityIdentifier("devices_menu_ping")
 
         Button {
             // TODO: Implement port scan
         } label: {
             Label("Scan Ports", systemImage: "network")
         }
+        .accessibilityIdentifier("devices_menu_portScan")
 
         if !device.macAddress.isEmpty {
             Button {
@@ -186,6 +194,7 @@ struct DevicesView: View {
             } label: {
                 Label("Wake on LAN", systemImage: "power")
             }
+            .accessibilityIdentifier("devices_menu_wake")
         }
 
         Divider()
@@ -195,6 +204,7 @@ struct DevicesView: View {
         } label: {
             Label("Remove Device", systemImage: "trash")
         }
+        .accessibilityIdentifier("devices_menu_remove")
     }
 }
 

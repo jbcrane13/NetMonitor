@@ -54,7 +54,17 @@
 		CMPT0001000000000000001A /* CompanionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMPT0002000000000000001A /* CompanionMessageTests.swift */; };
 		CSVC0001000000000000001A /* CompanionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0002000000000000001A /* CompanionService.swift */; };
 		CSVC0003000000000000001A /* CompanionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0004000000000000001A /* CompanionServiceTests.swift */; };
-		SCRT0002000000000000001A /* ShellCommandRunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCRT0001000000000000001A /* ShellCommandRunnerTests.swift */; };
+		SCRT0002000000000000001A /* ShellCommandRunnerTests.swift in Sources */ = {isa = PBXBuildFile;
+		SCRT-00003072558989684779645 /* TCPMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCRT-00005974070841990001634 /* TCPMonitorServiceTests.swift */; };
+		SCRT-00008637475560693238271 /* ICMPMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCRT000006958071107418854610 /* ICMPMonitorServiceTests.swift */; };
+		SCRT-00008303957783835320296 /* WakeOnLanServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCRT000002748660215113041392 /* WakeOnLanServiceTests.swift */; };
+		SCRT-00002034811960642223842 /* NotificationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCRT-00001608006460163725521 /* NotificationServiceTests.swift */; };
+		SCRT-00007418570625998133156 /* DefaultTargetsProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCRT000006681799204163761225 /* DefaultTargetsProviderTests.swift */; }; fileRef = SCRT0001000000000000001A /* ShellCommandRunnerTests.swift */;
+		SCRT-00005974070841990001634 /* TCPMonitorServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TCPMonitorServiceTests.swift; path = NetMonitorTests/Services/TCPMonitorServiceTests.swift; sourceTree = "<group>"; };
+		SCRT000006958071107418854610 /* ICMPMonitorServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ICMPMonitorServiceTests.swift; path = NetMonitorTests/Services/ICMPMonitorServiceTests.swift; sourceTree = "<group>"; };
+		SCRT000002748660215113041392 /* WakeOnLanServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeOnLanServiceTests.swift; path = NetMonitorTests/Services/WakeOnLanServiceTests.swift; sourceTree = "<group>"; };
+		SCRT-00001608006460163725521 /* NotificationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationServiceTests.swift; path = NetMonitorTests/Services/NotificationServiceTests.swift; sourceTree = "<group>"; };
+		SCRT000006681799204163761225 /* DefaultTargetsProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DefaultTargetsProviderTests.swift; path = NetMonitorTests/Services/DefaultTargetsProviderTests.swift; sourceTree = "<group>"; }; };
 		PPST0002000000000000001A /* ProcessPingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PPST0001000000000000001A /* ProcessPingServiceTests.swift */; };
 		CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMHD0002000000000000001A /* CompanionMessageHandler.swift */; };
 		WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLS0002000000000000001A /* WakeOnLanService.swift */; };
@@ -389,6 +399,11 @@
 				MACV0004000000000000001A /* MACVendorLookupServiceTests.swift */,
 				CSVC0004000000000000001A /* CompanionServiceTests.swift */,
 				SCRT0001000000000000001A /* ShellCommandRunnerTests.swift */,
+				SCRT-00005974070841990001634 /* TCPMonitorServiceTests.swift */,
+				SCRT000006958071107418854610 /* ICMPMonitorServiceTests.swift */,
+				SCRT000002748660215113041392 /* WakeOnLanServiceTests.swift */,
+				SCRT-00001608006460163725521 /* NotificationServiceTests.swift */,
+				SCRT000006681799204163761225 /* DefaultTargetsProviderTests.swift */,
 				PPST0001000000000000001A /* ProcessPingServiceTests.swift */,
 			);
 			name = Services;
@@ -637,6 +652,11 @@
 				CMPT0001000000000000001A /* CompanionMessageTests.swift in Sources */,
 				CSVC0003000000000000001A /* CompanionServiceTests.swift in Sources */,
 				SCRT0002000000000000001A /* ShellCommandRunnerTests.swift in Sources */,
+				SCRT-00003072558989684779645 /* TCPMonitorServiceTests.swift in Sources */,
+				SCRT-00008637475560693238271 /* ICMPMonitorServiceTests.swift in Sources */,
+				SCRT-00008303957783835320296 /* WakeOnLanServiceTests.swift in Sources */,
+				SCRT-00002034811960642223842 /* NotificationServiceTests.swift in Sources */,
+				SCRT-00007418570625998133156 /* DefaultTargetsProviderTests.swift in Sources */,
 				PPST0002000000000000001A /* ProcessPingServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
