@@ -1,0 +1,4 @@
+module NetMonitorShared {
+header "NetMonitorShared-Swift.h"
+export *
+}

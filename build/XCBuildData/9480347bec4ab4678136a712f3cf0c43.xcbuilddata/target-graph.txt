@@ -1,0 +1,8 @@
+Target dependency graph (4 targets)
+Target 'NetMonitorTests' in project 'NetMonitor'
+➜ Explicit dependency on target 'NetMonitor' in project 'NetMonitor'
+Target 'NetMonitor' in project 'NetMonitor'
+➜ Explicit dependency on target 'NetMonitorShared' in project 'NetMonitorShared'
+Target 'NetMonitorShared' in project 'NetMonitorShared'
+➜ Explicit dependency on target 'NetMonitorShared' in project 'NetMonitorShared'
+Target 'NetMonitorShared' in project 'NetMonitorShared' (no dependencies)
