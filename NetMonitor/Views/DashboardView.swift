@@ -45,6 +45,13 @@ struct DashboardView: View {
                 }
                 .padding(.horizontal)
 
+                // Network Info Cards
+                HStack(spacing: 16) {
+                    ConnectionInfoCard()
+                    GatewayInfoCard()
+                }
+                .padding(.horizontal)
+
                 // Monitoring Status
                 if targets.isEmpty {
                     ContentUnavailableView(

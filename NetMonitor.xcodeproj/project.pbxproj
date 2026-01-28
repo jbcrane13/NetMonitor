@@ -58,6 +58,8 @@
 		PPST0002000000000000001A /* ProcessPingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = PPST0001000000000000001A /* ProcessPingServiceTests.swift */; };
 		CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMHD0002000000000000001A /* CompanionMessageHandler.swift */; };
 		WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLS0002000000000000001A /* WakeOnLanService.swift */; };
+				NTFS0001000000000000001A /* NotificationService.swift in Sources */,
+		NTFS0001000000000000001A /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = NTFS0002000000000000001A /* NotificationService.swift */; };
 		CTRK0001000000000000001A /* ContinuationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CTRK0002000000000000001A /* ContinuationTracker.swift */; };
 		WOLA0001000000000000001A /* WakeOnLanAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLA0002000000000000001A /* WakeOnLanAction.swift */; };
 		SHCR0001000000000000001A /* ShellCommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHCR0002000000000000001A /* ShellCommandRunner.swift */; };
@@ -77,6 +79,10 @@
 		DTSV0002000000000000001A /* DataSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DTSV0001000000000000001A /* DataSettingsView.swift */; };
 		APSV0002000000000000001A /* AppearanceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = APSV0001000000000000001A /* AppearanceSettingsView.swift */; };
 		CPSV0002000000000000001A /* CompanionSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CPSV0001000000000000001A /* CompanionSettingsView.swift */; };
+		GTIC0002000000000000001A /* GatewayInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = GTIC0001000000000000001A /* GatewayInfoCard.swift */; };
+		NWIS0001000000000000001A /* NetworkInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = NWIS0002000000000000001A /* NetworkInfoService.swift */; };
+		CNIC0001000000000000001A /* ConnectionInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CNIC0002000000000000001A /* ConnectionInfoCard.swift */; };
+		DFTP0001000000000000001A /* DefaultTargetsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFTP0002000000000000001A /* DefaultTargetsProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,6 +157,7 @@
 		PPST0001000000000000001A /* ProcessPingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProcessPingServiceTests.swift; path = NetMonitorTests/Services/ProcessPingServiceTests.swift; sourceTree = "<group>"; };
 		CMHD0002000000000000001A /* CompanionMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionMessageHandler.swift; path = NetMonitor/Services/CompanionMessageHandler.swift; sourceTree = "<group>"; };
 		WOLS0002000000000000001A /* WakeOnLanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeOnLanService.swift; path = NetMonitor/Services/WakeOnLanService.swift; sourceTree = "<group>"; };
+		NTFS0002000000000000001A /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationService.swift; path = NetMonitor/Services/NotificationService.swift; sourceTree = "<group>"; };
 		CTRK0002000000000000001A /* ContinuationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContinuationTracker.swift; path = ContinuationTracker.swift; sourceTree = "<group>"; };
 		WOLA0002000000000000001A /* WakeOnLanAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeOnLanAction.swift; path = WakeOnLanAction.swift; sourceTree = "<group>"; };
 		SHCR0002000000000000001A /* ShellCommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShellCommandRunner.swift; path = NetMonitor/Services/ShellCommandRunner.swift; sourceTree = "<group>"; };
@@ -170,6 +177,10 @@
 		DTSV0001000000000000001A /* DataSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSettingsView.swift; sourceTree = "<group>"; };
 		APSV0001000000000000001A /* AppearanceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSettingsView.swift; sourceTree = "<group>"; };
 		CPSV0001000000000000001A /* CompanionSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionSettingsView.swift; sourceTree = "<group>"; };
+		GTIC0001000000000000001A /* GatewayInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatewayInfoCard.swift; sourceTree = "<group>"; };
+		NWIS0002000000000000001A /* NetworkInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInfoService.swift; sourceTree = "<group>"; };
+		CNIC0002000000000000001A /* ConnectionInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionInfoCard.swift; sourceTree = "<group>"; };
+		DFTP0002000000000000001A /* DefaultTargetsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTargetsProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -315,6 +326,7 @@
 				DVDT0002000000000000001A /* DeviceDetailView.swift */,
 				2510D9B82F13035000C8C91B /* ToolsView.swift */,
 				97DE539B230545DD8B5355D0 /* TargetStatisticsView.swift */,
+				GTIC0001000000000000001A /* GatewayInfoCard.swift */,
 				TLSG0001000000000000001A /* Tools */,
 				STNG0001000000000000001A /* Settings */,
 			);
@@ -556,6 +568,7 @@
 								CSVC0001000000000000001A /* CompanionService.swift in Sources */,
 								CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */,
 				WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */,
+				NTFS0001000000000000001A /* NotificationService.swift in Sources */,
 				SHCR0001000000000000001A /* ShellCommandRunner.swift in Sources */,
 				PPNG0001000000000000001A /* ProcessPingService.swift in Sources */,
 				TCPM0002000000000000001A /* TCPMonitorService.swift in Sources */,
@@ -575,6 +588,10 @@
 				DTSV0002000000000000001A /* DataSettingsView.swift in Sources */,
 				APSV0002000000000000001A /* AppearanceSettingsView.swift in Sources */,
 				CPSV0002000000000000001A /* CompanionSettingsView.swift in Sources */,
+				GTIC0002000000000000001A /* GatewayInfoCard.swift in Sources */,
+				NWIS0001000000000000001A /* NetworkInfoService.swift in Sources */,
+				CNIC0001000000000000001A /* ConnectionInfoCard.swift in Sources */,
+				DFTP0001000000000000001A /* DefaultTargetsProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
