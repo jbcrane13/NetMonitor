@@ -16,6 +16,7 @@ enum NetworkTool: String, CaseIterable, Identifiable {
     case whois = "WHOIS"
     case speedTest = "Speed Test"
     case bonjourBrowser = "Bonjour Browser"
+    case wakeOnLan = "Wake on LAN"
 
     var id: String { rawValue }
 
@@ -28,6 +29,7 @@ enum NetworkTool: String, CaseIterable, Identifiable {
         case .whois: return "doc.text.magnifyingglass"
         case .speedTest: return "speedometer"
         case .bonjourBrowser: return "bonjour"
+        case .wakeOnLan: return "wake"
         }
     }
 
@@ -40,6 +42,7 @@ enum NetworkTool: String, CaseIterable, Identifiable {
         case .whois: return "Domain information"
         case .speedTest: return "Measure connection speed"
         case .bonjourBrowser: return "Discover local services"
+        case .wakeOnLan: return "Wake network devices"
         }
     }
 
@@ -103,6 +106,9 @@ struct ToolsView: View {
         case .bonjourBrowser:
             BonjourBrowserToolView()
                 .frame(minWidth: 600, minHeight: 500)
+        case .wakeOnLan:
+            WakeOnLanToolView()
+                .frame(minWidth: 500, minHeight: 400)
         }
     }
 }

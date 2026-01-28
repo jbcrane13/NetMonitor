@@ -14,10 +14,12 @@ struct SpeedTestToolView: View {
     @State private var phase: SpeedTestPhase = .idle
     @State private var pingLatency: Double?
     @State private var downloadSpeed: Double?
+    @State private var uploadSpeed: Double?
     @State private var progress: Double = 0
     @State private var errorMessage: String?
 
     private let testFileURL = URL(string: "https://speed.cloudflare.com/__down?bytes=25000000")! // 25MB test file
+    private let uploadURL = URL(string: "https://speed.cloudflare.com/__up")! // Upload endpoint
 
     var body: some View {
         VStack(spacing: 0) {
@@ -128,7 +130,13 @@ struct SpeedTestToolView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                if let speed = downloadSpeed {
+                if phase == .download, let speed = downloadSpeed {
+                    Text(formatSpeed(speed))
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                    Text("Mbps")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else if phase == .upload, let speed = uploadSpeed {
                     Text(formatSpeed(speed))
                         .font(.system(size: 36, weight: .bold, design: .rounded))
                     Text("Mbps")
@@ -195,6 +203,28 @@ struct SpeedTestToolView: View {
                 }
             }
 
+            // Upload
+            VStack(spacing: 4) {
+                Image(systemName: "arrow.up.circle")
+                    .font(.title2)
+                    .foregroundStyle(.blue)
+
+                if let speed = uploadSpeed {
+                    Text(formatSpeed(speed))
+                        .font(.title2.bold())
+                    Text("Mbps up")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("--")
+                        .font(.title2.bold())
+                        .foregroundStyle(.secondary)
+                    Text("Mbps up")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
+            }
+
             // Server
             VStack(spacing: 4) {
                 Image(systemName: "server.rack")
@@ -222,7 +252,7 @@ struct SpeedTestToolView: View {
             } else if isRunning {
                 Text(phase.description)
                     .foregroundStyle(.secondary)
-            } else if downloadSpeed != nil {
+            } else if downloadSpeed != nil || uploadSpeed != nil {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(.green)
                 Text("Test completed")
@@ -234,7 +264,7 @@ struct SpeedTestToolView: View {
 
             Spacer()
 
-            if downloadSpeed != nil && !isRunning {
+            if (downloadSpeed != nil || uploadSpeed != nil) && !isRunning {
                 Button("Reset") {
                     resetTest()
                 }
@@ -251,6 +281,7 @@ struct SpeedTestToolView: View {
         errorMessage = nil
         pingLatency = nil
         downloadSpeed = nil
+        uploadSpeed = nil
         progress = 0
 
         Task {
@@ -263,6 +294,12 @@ struct SpeedTestToolView: View {
             // Phase 2: Download test
             await MainActor.run { phase = .download }
             downloadSpeed = await measureDownload()
+
+            guard isRunning else { return }
+
+            // Phase 3: Upload test
+            await MainActor.run { phase = .upload }
+            uploadSpeed = await measureUpload()
 
             await MainActor.run {
                 phase = .complete
@@ -279,6 +316,7 @@ struct SpeedTestToolView: View {
     private func resetTest() {
         pingLatency = nil
         downloadSpeed = nil
+        uploadSpeed = nil
         progress = 0
         phase = .idle
         errorMessage = nil
@@ -367,6 +405,56 @@ struct SpeedTestToolView: View {
         }
     }
 
+    private func measureUpload() async -> Double? {
+        let startTime = Date()
+        let uploadSize: Int = 5 * 1024 * 1024 // 5MB
+
+        do {
+            // Generate random data payload
+            var data = Data(count: uploadSize)
+            data.withUnsafeMutableBytes { bytes in
+                guard let baseAddress = bytes.baseAddress else { return }
+                arc4random_buf(baseAddress, uploadSize)
+            }
+
+            var request = URLRequest(url: uploadURL)
+            request.httpMethod = "POST"
+            request.httpBody = data
+            request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+            request.timeoutInterval = 30
+
+            let totalBytes = Int64(uploadSize)
+
+            // Track upload progress manually since URLSession doesn't provide byte-level upload progress
+            await MainActor.run {
+                progress = 0
+            }
+
+            let (_, response) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode) else {
+                throw URLError(.badServerResponse)
+            }
+
+            let elapsed = Date().timeIntervalSince(startTime)
+            let bitsPerSecond = Double(totalBytes * 8) / elapsed
+            let speedMbps = bitsPerSecond / 1_000_000
+
+            await MainActor.run {
+                progress = 1.0
+            }
+
+            return speedMbps
+
+        } catch {
+            await MainActor.run {
+                errorMessage = "Upload failed: \(error.localizedDescription)"
+            }
+            return nil
+        }
+    }
+
     // MARK: - Helpers
 
     private func formatSpeed(_ speed: Double) -> String {
@@ -386,6 +474,7 @@ enum SpeedTestPhase {
     case idle
     case ping
     case download
+    case upload
     case complete
 
     var description: String {
@@ -393,6 +482,7 @@ enum SpeedTestPhase {
         case .idle: return "Ready"
         case .ping: return "Testing latency..."
         case .download: return "Testing download..."
+        case .upload: return "Testing upload..."
         case .complete: return "Complete"
         }
     }
