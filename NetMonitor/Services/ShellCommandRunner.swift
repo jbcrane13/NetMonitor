@@ -153,7 +153,7 @@ actor ShellCommandRunner {
                     return
                 }
 
-                await self.resetCancelled()
+                self.resetCancelled()
 
                 let process = Process()
                 process.executableURL = URL(fileURLWithPath: executable)
@@ -164,7 +164,7 @@ actor ShellCommandRunner {
                 process.standardOutput = stdoutPipe
                 process.standardError = stderrPipe
 
-                await self.setCurrentProcess(process)
+                self.setCurrentProcess(process)
 
                 // Set up line-by-line reading
                 let fileHandle = stdoutPipe.fileHandleForReading
@@ -207,7 +207,7 @@ actor ShellCommandRunner {
                 do {
                     try process.run()
                 } catch {
-                    await self.clearCurrentProcess()
+                    self.clearCurrentProcess()
                     continuation.finish(throwing: ToolError.executionFailed(exitCode: -1, stderr: error.localizedDescription))
                 }
             }

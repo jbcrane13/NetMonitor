@@ -4,9 +4,8 @@ import NetMonitorShared
 
 /// Network monitoring target configuration
 ///
-/// @unchecked Sendable: SwiftData @Model classes with @Relationship cannot safely
-/// conform to Sendable due to mutable state and relationship management.
-/// Access should be confined to MainActor or properly isolated actor contexts.
+/// Conforms to @unchecked Sendable to allow cross-actor access.
+/// SwiftData @Model types are accessed from main actor but passed to actor-isolated services.
 @Model
 final class NetworkTarget: @unchecked Sendable {
     var id: UUID

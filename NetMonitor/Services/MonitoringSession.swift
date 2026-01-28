@@ -136,13 +136,11 @@ final class MonitoringSession {
             do {
                 let measurement = try await service.check(target: target)
 
-                // Update latest results (back on main actor)
-                await MainActor.run {
-                    latestResults[target.id] = measurement
-                }
+                // Update latest results
+                latestResults[target.id] = measurement
 
-                // Save to SwiftData (background context)
-                await saveMeasurement(measurement, for: target)
+                // Save to SwiftData
+                saveMeasurement(measurement, for: target)
 
             } catch {
                 // Handle errors by creating failed measurement
@@ -152,11 +150,9 @@ final class MonitoringSession {
                     errorMessage: error.localizedDescription
                 )
 
-                await MainActor.run {
-                    latestResults[target.id] = failedMeasurement
-                }
+                latestResults[target.id] = failedMeasurement
 
-                await saveMeasurement(failedMeasurement, for: target)
+                saveMeasurement(failedMeasurement, for: target)
             }
 
             // Wait for check interval

@@ -387,7 +387,7 @@ struct PortScannerToolView: View {
         }
     }
 
-    private static func serviceName(for port: UInt16) -> String {
+    nonisolated private static func serviceName(for port: UInt16) -> String {
         switch port {
         case 21: return "FTP"
         case 22: return "SSH"

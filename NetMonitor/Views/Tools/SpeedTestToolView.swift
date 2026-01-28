@@ -361,7 +361,7 @@ struct SpeedTestToolView: View {
 
             let expectedLength = response.expectedContentLength
 
-            for try await byte in asyncBytes {
+            for try await _ in asyncBytes {
                 guard isRunning else { break }
 
                 totalBytes += 1

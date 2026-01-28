@@ -43,7 +43,7 @@ actor TCPMonitorService: NetworkMonitorService {
         // Set socket to non-blocking
         var flags = fcntl(sock, F_GETFL, 0)
         flags |= O_NONBLOCK
-        fcntl(sock, F_SETFL, flags)
+        _ = fcntl(sock, F_SETFL, flags)
 
         // Start timing
         let startTime = Date()

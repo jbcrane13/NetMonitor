@@ -143,13 +143,13 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
             try await Task.sleep(for: .seconds(5))
 
             // Stop all browsers
-            for browser in await self.browsers {
+            for browser in self.browsers {
                 browser.cancel()
             }
-            await self.clearBrowsers()
+            self.clearBrowsers()
 
             // Convert discovered services to devices
-            let currentServices = await self.discoveredServices
+            let currentServices = self.discoveredServices
             return self.convertServicesToDevices(currentServices)
         }
 

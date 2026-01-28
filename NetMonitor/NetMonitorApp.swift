@@ -46,14 +46,19 @@ struct NetMonitorApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(monitoringSession)
-                .environment(deviceDiscovery)
-                .onAppear {
-                    Task { @MainActor in
-                        await setupServices()
-                    }
+            Group {
+                if let monitoringSession, let deviceDiscovery {
+                    ContentView()
+                        .environment(monitoringSession)
+                        .environment(deviceDiscovery)
+                } else {
+                    ProgressView("Starting NetMonitor…")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
+            }
+            .task {
+                await setupServices()
+            }
         }
         .modelContainer(sharedModelContainer)
         .commands {
@@ -124,7 +129,7 @@ struct NetMonitorApp: App {
             let handler = companionHandler
             do {
                 try await companionService?.start { @Sendable message, clientID in
-                    await MainActor.run {
+                    _ = await MainActor.run {
                         Task {
                             _ = await handler?.handle(message, from: clientID)
                         }
