@@ -21,6 +21,8 @@ struct DashboardView: View {
                             Text("Monitoring since \(startTime, format: .dateTime.hour().minute())")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
+
+                            LiveDurationView(startTime: startTime, isMonitoring: session.isMonitoring)
                         }
                     }
 
@@ -51,6 +53,12 @@ struct DashboardView: View {
                     GatewayInfoCard()
                 }
                 .padding(.horizontal)
+
+                QuickStatsBar()
+                    .padding(.horizontal)
+
+                ISPInfoCard()
+                    .padding(.horizontal)
 
                 // Monitoring Status
                 if targets.isEmpty {

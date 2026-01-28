@@ -74,9 +74,7 @@ actor NetworkInfoService {
     // MARK: - WiFi Detection (CoreWLAN)
 
     private func getWiFiInfoViaCoreWLAN() async throws -> ConnectionInfo {
-        guard let client = CWWiFiClient.shared() else {
-            throw NetworkInfoError.permissionDenied
-        }
+        let client = CWWiFiClient.shared()
 
         // Try common interface names
         let interfaceNames = ["en0", "en1"]
@@ -91,7 +89,7 @@ actor NetworkInfoService {
                     bssid: interface.bssid(),
                     signalStrength: interface.rssiValue(),
                     channel: interface.wlanChannel()?.channelNumber,
-                    linkSpeed: interface.transmitRate() > 0 ? interface.transmitRate() : nil,
+                    linkSpeed: interface.transmitRate() > 0 ? Int(interface.transmitRate()) : nil,
                     interfaceName: name
                 )
             }

@@ -27,7 +27,7 @@ struct DefaultTargetsProvider {
 
     /// Seed default targets if this is the first launch
     /// - Parameter modelContext: SwiftData model context for persistence
-    static func seedIfNeeded(modelContext: ModelContext) async {
+    @MainActor static func seedIfNeeded(modelContext: ModelContext) async {
         // Check if we've already seeded
         guard !UserDefaults.standard.bool(forKey: userDefaultsKey) else {
             return

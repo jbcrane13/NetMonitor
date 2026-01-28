@@ -15,7 +15,6 @@ struct NetMonitorApp: App {
     @State private var companionService: CompanionService?
     @State private var companionHandler: CompanionMessageHandler?
     @State private var menuBarController: MenuBarController?
-    @State private var networkInfoService: NetworkInfoService?
     @State private var notificationService: NotificationService?
 
     @AppStorage("autoStartMonitoring") private var autoStartMonitoring = false
@@ -50,8 +49,6 @@ struct NetMonitorApp: App {
             ContentView()
                 .environment(monitoringSession)
                 .environment(deviceDiscovery)
-                .environment(networkInfoService)
-                .environment(notificationService)
                 .onAppear {
                     Task { @MainActor in
                         await setupServices()
@@ -145,12 +142,7 @@ struct NetMonitorApp: App {
             menuBarController?.setup()
         }
 
-        // 5. Set up network info service
-        if networkInfoService == nil {
-            networkInfoService = NetworkInfoService()
-        }
-
-        // 6. Set up notification service and request permission
+        // 5. Set up notification service and request permission
         if notificationService == nil {
             notificationService = NotificationService()
             Task {
