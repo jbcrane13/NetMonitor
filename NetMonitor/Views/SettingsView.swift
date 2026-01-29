@@ -36,20 +36,23 @@ struct SettingsView: View {
     @State private var selectedTab: SettingsTab = .general
 
     var body: some View {
-        NavigationSplitView {
+        HStack(spacing: 0) {
+            // Settings sidebar
             List(SettingsTab.allCases, selection: $selectedTab) { tab in
                 Label(tab.rawValue, systemImage: tab.iconName)
                     .tag(tab)
                     .accessibilityIdentifier("settings_tab_\(tab.rawValue.lowercased())")
             }
             .listStyle(.sidebar)
-            .frame(minWidth: 180)
-            .navigationTitle("Settings")
-        } detail: {
+            .frame(width: 200)
+
+            Divider()
+
+            // Settings detail
             settingsContent(for: selectedTab)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(width: 650, height: 450)
+        .navigationTitle("Settings")
     }
 
     @ViewBuilder

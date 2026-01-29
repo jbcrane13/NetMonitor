@@ -8,6 +8,7 @@
 import Foundation
 import CoreWLAN
 import NetMonitorShared
+import Darwin
 
 /// Error types for network info operations
 enum NetworkInfoError: Error, LocalizedError {
@@ -40,133 +41,78 @@ struct ConnectionInfo: Sendable {
 
 /// Actor for retrieving network connection details
 actor NetworkInfoService {
-    private let shellRunner = ShellCommandRunner()
-
     /// Get current network connection information
     func getCurrentConnection() async throws -> ConnectionInfo {
-        // Try CoreWLAN first for WiFi
-        if let wifiInfo = try? await getWiFiInfoViaCoreWLAN() {
-            return wifiInfo
-        }
-
-        // Fallback to networksetup command
-        if let wifiInfo = try? await getWiFiInfoViaShell() {
-            return wifiInfo
-        }
-
-        // Check for Ethernet connection
-        if let ethernetInfo = await getEthernetInfo() {
-            return ethernetInfo
-        }
-
-        // Unknown connection type
-        return ConnectionInfo(
-            connectionType: .unknown,
-            ssid: nil,
-            bssid: nil,
-            signalStrength: nil,
-            channel: nil,
-            linkSpeed: nil,
-            interfaceName: "unknown"
-        )
-    }
-
-    // MARK: - WiFi Detection (CoreWLAN)
-
-    private func getWiFiInfoViaCoreWLAN() async throws -> ConnectionInfo {
+        // Try CoreWLAN first for WiFi info
         let client = CWWiFiClient.shared()
-
-        // Try common interface names
-        let interfaceNames = ["en0", "en1"]
-
-        for name in interfaceNames {
-            if let interface = client.interface(withName: name),
-               let ssid = interface.ssid() {
-
+        if let interface = client.interface() {
+            // Check if WiFi interface is active (has power on)
+            if interface.powerOn() {
+                // SSID may be nil in sandbox without WiFi info entitlement
+                // That's okay - we'll show "WiFi Connected" instead of network name
                 return ConnectionInfo(
                     connectionType: .wifi,
-                    ssid: ssid,
+                    ssid: interface.ssid(),
                     bssid: interface.bssid(),
                     signalStrength: interface.rssiValue(),
                     channel: interface.wlanChannel()?.channelNumber,
                     linkSpeed: interface.transmitRate() > 0 ? Int(interface.transmitRate()) : nil,
-                    interfaceName: name
+                    interfaceName: interface.interfaceName ?? "en0"
                 )
             }
+        }
+
+        // Check for active network interfaces using ifaddrs
+        if let activeInterface = getActiveNetworkInterface() {
+            return activeInterface
         }
 
         throw NetworkInfoError.noActiveInterface
     }
 
-    // MARK: - WiFi Detection (Shell Fallback)
+    // MARK: - Active Interface Detection (ifaddrs)
 
-    private func getWiFiInfoViaShell() async throws -> ConnectionInfo {
-        let result = try await shellRunner.run(
-            "/usr/sbin/networksetup",
-            arguments: ["-getairportnetwork", "en0"],
-            timeout: 5
-        )
+    /// Get active network interface using getifaddrs
+    private func getActiveNetworkInterface() -> ConnectionInfo? {
+        var ifaddr: UnsafeMutablePointer<ifaddrs>?
+        guard getifaddrs(&ifaddr) == 0, let firstAddr = ifaddr else { return nil }
+        defer { freeifaddrs(ifaddr) }
 
-        guard result.exitCode == 0 else {
-            throw NetworkInfoError.parsingFailed("networksetup command failed")
-        }
+        for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
+            let flags = Int32(ptr.pointee.ifa_flags)
+            let isUp = (flags & (IFF_UP | IFF_RUNNING)) == (IFF_UP | IFF_RUNNING)
+            let isLoopback = (flags & IFF_LOOPBACK) != 0
 
-        // Parse output: "Current Wi-Fi Network: NetworkName"
-        let output = result.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard isUp, !isLoopback else { continue }
 
-        if output.contains("You are not associated with an AirPort network") {
-            throw NetworkInfoError.noActiveInterface
-        }
+            let addr = ptr.pointee.ifa_addr.pointee
+            guard addr.sa_family == UInt8(AF_INET) || addr.sa_family == UInt8(AF_INET6) else { continue }
 
-        if let ssid = output.components(separatedBy: ": ").last,
-           !ssid.isEmpty {
+            let name = String(cString: ptr.pointee.ifa_name)
+
+            // Skip non-physical interfaces
+            guard name.hasPrefix("en") else { continue }
+
+            // en0 is typically WiFi on Mac laptops, Ethernet on desktops
+            // en1+ are typically additional Ethernet/Thunderbolt interfaces
+            let isLikelyEthernet = name != "en0" || !isWiFiAvailable()
+
             return ConnectionInfo(
-                connectionType: .wifi,
-                ssid: ssid,
+                connectionType: isLikelyEthernet ? .ethernet : .wifi,
+                ssid: nil,
                 bssid: nil,
                 signalStrength: nil,
                 channel: nil,
                 linkSpeed: nil,
-                interfaceName: "en0"
+                interfaceName: name
             )
         }
 
-        throw NetworkInfoError.parsingFailed("Could not parse SSID from output")
+        return nil
     }
 
-    // MARK: - Ethernet Detection
-
-    private func getEthernetInfo() async -> ConnectionInfo? {
-        // Check for active Ethernet interfaces
-        let ethernetInterfaces = ["en0", "en1", "en2"]
-
-        for interface in ethernetInterfaces {
-            if let status = try? await shellRunner.run(
-                "/usr/sbin/networksetup",
-                arguments: ["-getinfo", interface],
-                timeout: 5
-            ), status.exitCode == 0 {
-
-                // Check if interface has an IP address
-                if status.stdout.contains("IP address:") &&
-                   !status.stdout.contains("There is no such hardware port") {
-
-                    // Try to determine if it's actually Ethernet (not WiFi)
-                    if !status.stdout.contains("Wi-Fi") {
-                        return ConnectionInfo(
-                            connectionType: .ethernet,
-                            ssid: nil,
-                            bssid: nil,
-                            signalStrength: nil,
-                            channel: nil,
-                            linkSpeed: nil,
-                            interfaceName: interface
-                        )
-                    }
-                }
-            }
-        }
-
-        return nil
+    /// Check if WiFi is available and powered on
+    private func isWiFiAvailable() -> Bool {
+        CWWiFiClient.shared().interface()?.powerOn() ?? false
     }
 }

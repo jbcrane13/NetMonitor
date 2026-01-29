@@ -3,7 +3,7 @@ import SwiftData
 
 struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(MonitoringSession.self) private var session
+    @Environment(MonitoringSession.self) private var session: MonitoringSession?
 
     @Query(sort: \NetworkTarget.name) private var targets: [NetworkTarget]
 
@@ -12,38 +12,26 @@ struct DashboardView: View {
             VStack(spacing: 20) {
                 // Header
                 HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Dashboard")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-
-                        if let startTime = session.startTime {
-                            Text("Monitoring since \(startTime, format: .dateTime.hour().minute())")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-
-                            LiveDurationView(startTime: startTime, isMonitoring: session.isMonitoring)
-                        }
-                    }
-
                     Spacer()
 
                     // Start/Stop Button
-                    Button(action: {
-                        if session.isMonitoring {
-                            session.stopMonitoring()
-                        } else {
-                            session.startMonitoring()
+                    if let session = session {
+                        Button(action: {
+                            if session.isMonitoring {
+                                session.stopMonitoring()
+                            } else {
+                                session.startMonitoring()
+                            }
+                        }) {
+                            Label(
+                                session.isMonitoring ? "Stop Monitoring" : "Start Monitoring",
+                                systemImage: session.isMonitoring ? "stop.circle.fill" : "play.circle.fill"
+                            )
                         }
-                    }) {
-                        Label(
-                            session.isMonitoring ? "Stop Monitoring" : "Start Monitoring",
-                            systemImage: session.isMonitoring ? "stop.circle.fill" : "play.circle.fill"
-                        )
+                        .buttonStyle(.borderedProminent)
+                        .tint(session.isMonitoring ? .red : .green)
+                        .accessibilityIdentifier("dashboard_button_monitoring_toggle")
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(session.isMonitoring ? .red : .green)
-                    .accessibilityIdentifier("dashboard_button_monitoring_toggle")
                 }
                 .padding(.horizontal)
 
@@ -76,7 +64,7 @@ struct DashboardView: View {
                         ForEach(targets) { target in
                             TargetStatusCard(
                                 target: target,
-                                measurement: session.latestMeasurement(for: target.id)
+                                measurement: session?.latestMeasurement(for: target.id)
                             )
                         }
                     }

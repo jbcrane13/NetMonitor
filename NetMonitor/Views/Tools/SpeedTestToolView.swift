@@ -349,50 +349,29 @@ struct SpeedTestToolView: View {
 
     private func measureDownload() async -> Double? {
         let startTime = Date()
-        var totalBytes: Int64 = 0
 
         do {
-            let (asyncBytes, response) = try await URLSession.shared.bytes(from: testFileURL)
+            var request = URLRequest(url: testFileURL)
+            request.timeoutInterval = 30
+
+            // Use buffered download for efficient transfer
+            let (data, response) = try await URLSession.shared.data(for: request)
 
             guard let httpResponse = response as? HTTPURLResponse,
                   httpResponse.statusCode == 200 else {
                 throw URLError(.badServerResponse)
             }
 
-            let expectedLength = response.expectedContentLength
+            guard isRunning else { return nil }
 
-            for try await _ in asyncBytes {
-                guard isRunning else { break }
-
-                totalBytes += 1
-
-                // Update progress every 100KB
-                if totalBytes % 102400 == 0 {
-                    let currentProgress = expectedLength > 0 ? Double(totalBytes) / Double(expectedLength) : 0
-                    await MainActor.run {
-                        progress = currentProgress
-
-                        // Calculate current speed
-                        let elapsed = Date().timeIntervalSince(startTime)
-                        if elapsed > 0 {
-                            let bitsPerSecond = Double(totalBytes * 8) / elapsed
-                            downloadSpeed = bitsPerSecond / 1_000_000 // Convert to Mbps
-                        }
-                    }
-                }
-
-                // Yield to prevent blocking
-                if totalBytes % 1048576 == 0 { // Every 1MB
-                    try? await Task.sleep(for: .milliseconds(1))
-                }
-            }
-
+            let totalBytes = data.count
             let elapsed = Date().timeIntervalSince(startTime)
             let bitsPerSecond = Double(totalBytes * 8) / elapsed
             let speedMbps = bitsPerSecond / 1_000_000
 
             await MainActor.run {
                 progress = 1.0
+                downloadSpeed = speedMbps
             }
 
             return speedMbps
@@ -432,9 +411,17 @@ struct SpeedTestToolView: View {
 
             let (_, response) = try await URLSession.shared.data(for: request)
 
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
+            guard let httpResponse = response as? HTTPURLResponse else {
                 throw URLError(.badServerResponse)
+            }
+
+            guard (200...299).contains(httpResponse.statusCode) else {
+                let statusError = NSError(
+                    domain: URLError.errorDomain,
+                    code: URLError.badServerResponse.rawValue,
+                    userInfo: [NSLocalizedDescriptionKey: "Server returned status code \(httpResponse.statusCode)"]
+                )
+                throw statusError
             }
 
             let elapsed = Date().timeIntervalSince(startTime)

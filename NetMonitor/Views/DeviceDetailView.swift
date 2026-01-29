@@ -23,7 +23,6 @@ struct DeviceDetailView: View {
             }
             .padding()
         }
-        .navigationTitle(device.displayName)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(isEditing ? "Done" : "Edit") {
@@ -239,10 +238,13 @@ struct DeviceDetailView: View {
         HStack {
             Text(label)
                 .foregroundStyle(.secondary)
-            Spacer()
+                .layoutPriority(1)
+            Spacer(minLength: 8)
             Text(value)
                 .fontDesign(monospace ? .monospaced : .default)
                 .textSelection(.enabled)
+                .lineLimit(1)
+                .truncationMode(.middle)
         }
     }
 

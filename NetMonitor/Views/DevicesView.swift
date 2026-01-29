@@ -32,17 +32,26 @@ struct DevicesView: View {
     }
 
     var body: some View {
-        NavigationSplitView {
-            deviceList
-        } detail: {
+        HStack(spacing: 0) {
+            // Device list
+            VStack(spacing: 0) {
+                deviceList
+            }
+            .frame(minWidth: 280, idealWidth: 350, maxWidth: 450)
+
+            Divider()
+
+            // Detail pane
             if let device = selectedDevice {
                 DeviceDetailView(device: device)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ContentUnavailableView(
                     "Select a Device",
                     systemImage: "desktopcomputer",
                     description: Text("Choose a device from the list to view details")
                 )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .navigationTitle("Devices")
@@ -75,7 +84,6 @@ struct DevicesView: View {
                 .listStyle(.inset)
             }
         }
-        .frame(minWidth: 300)
         .overlay {
             if coordinator?.isScanning == true {
                 scanningOverlay

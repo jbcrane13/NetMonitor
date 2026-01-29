@@ -3,7 +3,7 @@ import SwiftData
 
 struct TargetsView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(MonitoringSession.self) private var monitoringSession
+    @Environment(MonitoringSession.self) private var monitoringSession: MonitoringSession?
     @Query(sort: \NetworkTarget.name) private var targets: [NetworkTarget]
 
     @State private var showingAddSheet = false
@@ -16,8 +16,8 @@ struct TargetsView: View {
             return targets.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         case .status:
             return targets.sorted { lhs, rhs in
-                let lhsOnline = monitoringSession.latestMeasurement(for: lhs.id)?.isReachable ?? false
-                let rhsOnline = monitoringSession.latestMeasurement(for: rhs.id)?.isReachable ?? false
+                let lhsOnline = monitoringSession?.latestMeasurement(for: lhs.id)?.isReachable ?? false
+                let rhsOnline = monitoringSession?.latestMeasurement(for: rhs.id)?.isReachable ?? false
                 if lhsOnline != rhsOnline {
                     return lhsOnline  // Online first
                 }
@@ -113,10 +113,10 @@ enum TargetSortOption: String, CaseIterable, Identifiable {
 
 struct TargetRow: View {
     @Bindable var target: NetworkTarget
-    var monitoringSession: MonitoringSession
+    var monitoringSession: MonitoringSession?
 
     var statusColor: Color {
-        guard let measurement = monitoringSession.latestMeasurement(for: target.id) else {
+        guard let measurement = monitoringSession?.latestMeasurement(for: target.id) else {
             return .gray
         }
         return measurement.isReachable ? .green : .red

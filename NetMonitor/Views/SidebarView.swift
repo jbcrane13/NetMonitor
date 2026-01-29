@@ -3,7 +3,7 @@ import SwiftData
 
 struct SidebarView: View {
     @Binding var selection: Section?
-    @Environment(MonitoringSession.self) private var monitoringSession
+    @Environment(MonitoringSession.self) private var monitoringSession: MonitoringSession?
     @Query private var targets: [NetworkTarget]
 
     var body: some View {
@@ -34,6 +34,7 @@ struct SidebarView: View {
     private func badgeText(for section: Section) -> String? {
         switch section {
         case .dashboard, .targets:
+            guard let monitoringSession else { return nil }
             let online = monitoringSession.onlineTargetCount
             let offline = monitoringSession.offlineTargetCount
             let total = online + offline
@@ -47,6 +48,7 @@ struct SidebarView: View {
     private func badgeColor(for section: Section) -> Color {
         switch section {
         case .dashboard, .targets:
+            guard let monitoringSession else { return .gray }
             let online = monitoringSession.onlineTargetCount
             let total = online + monitoringSession.offlineTargetCount
             if total == 0 { return .gray }

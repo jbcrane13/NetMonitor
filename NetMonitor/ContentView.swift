@@ -22,32 +22,28 @@ struct ContentView: View {
         NavigationSplitView {
             SidebarView(selection: $selectedSection)
         } detail: {
-            if let activeSession = activeSession {
-                Group {
-                    switch selectedSection {
-                    case .dashboard:
-                        DashboardView()
-                            .accessibilityIdentifier("detail_dashboard")
-                    case .targets:
-                        TargetsView()
-                            .accessibilityIdentifier("detail_targets")
-                    case .devices:
-                        DevicesView()
-                            .accessibilityIdentifier("detail_devices")
-                    case .tools:
-                        ToolsView()
-                            .accessibilityIdentifier("detail_tools")
-                    case .settings:
-                        SettingsView()
-                            .accessibilityIdentifier("detail_settings")
-                    case nil:
-                        Text("Select a section")
-                            .accessibilityIdentifier("detail_empty")
-                    }
-                }
-                .environment(activeSession)
+            switch selectedSection {
+            case .dashboard:
+                DashboardView()
+                    .accessibilityIdentifier("detail_dashboard")
+            case .targets:
+                TargetsView()
+                    .accessibilityIdentifier("detail_targets")
+            case .devices:
+                DevicesView()
+                    .accessibilityIdentifier("detail_devices")
+            case .tools:
+                ToolsView()
+                    .accessibilityIdentifier("detail_tools")
+            case .settings:
+                SettingsView()
+                    .accessibilityIdentifier("detail_settings")
+            case nil:
+                Text("Select a section")
+                    .accessibilityIdentifier("detail_empty")
             }
         }
+        .environment(activeSession)
         .frame(minWidth: 1000, minHeight: 600)
         .task {
             // Create local session only if not provided via environment
