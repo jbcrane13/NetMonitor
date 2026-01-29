@@ -12,7 +12,7 @@ struct ConnectionInfoCard: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
 
-    private let networkService = NetworkInfoService()
+    @State private var networkService = NetworkInfoService()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -175,7 +175,7 @@ struct ConnectionInfoCard: View {
     @ViewBuilder
     private func signalBars(for rssi: Int) -> some View {
         HStack(spacing: 2) {
-            ForEach(0..<4) { index in
+            ForEach(0..<4, id: \.self) { index in
                 Rectangle()
                     .fill(barColor(for: rssi, bar: index))
                     .frame(width: 3, height: CGFloat((index + 1) * 3))

@@ -17,6 +17,7 @@ struct SpeedTestToolView: View {
     @State private var uploadSpeed: Double?
     @State private var progress: Double = 0
     @State private var errorMessage: String?
+    @State private var speedTestTask: Task<Void, Never>?
 
     private let testFileURL = URL(string: "https://speed.cloudflare.com/__down?bytes=25000000")! // 25MB test file
     private let uploadURL = URL(string: "https://speed.cloudflare.com/__up")! // Upload endpoint
@@ -284,7 +285,7 @@ struct SpeedTestToolView: View {
         uploadSpeed = nil
         progress = 0
 
-        Task {
+        speedTestTask = Task {
             // Phase 1: Ping test
             await MainActor.run { phase = .ping }
             pingLatency = await measurePing()
@@ -309,6 +310,8 @@ struct SpeedTestToolView: View {
     }
 
     private func stopSpeedTest() {
+        speedTestTask?.cancel()
+        speedTestTask = nil
         isRunning = false
         phase = .idle
     }

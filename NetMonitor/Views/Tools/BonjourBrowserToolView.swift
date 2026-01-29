@@ -15,7 +15,7 @@ struct BonjourBrowserToolView: View {
     @State private var selectedService: BonjourService?
     @State private var errorMessage: String?
 
-    private let discoveryService = BonjourDiscoveryService()
+    @State private var discoveryService = BonjourDiscoveryService()
 
     /// Group services by type for display
     private var groupedServices: [(type: String, services: [BonjourService])] {
@@ -33,11 +33,8 @@ struct BonjourBrowserToolView: View {
             footer
         }
         .frame(minWidth: 600, minHeight: 500)
-        .onAppear {
+        .task {
             startScan()
-        }
-        .onDisappear {
-            stopScan()
         }
     }
 

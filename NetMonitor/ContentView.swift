@@ -43,7 +43,6 @@ struct ContentView: View {
                     .accessibilityIdentifier("detail_empty")
             }
         }
-        .environment(activeSession)
         .frame(minWidth: 1000, minHeight: 600)
         .task {
             // Create local session only if not provided via environment

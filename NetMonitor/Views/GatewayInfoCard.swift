@@ -15,9 +15,9 @@ struct GatewayInfoCard: View {
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
 
-    private let shellRunner = ShellCommandRunner()
-    private let macVendorService = MACVendorLookupService()
-    private let pingService = ProcessPingService()
+    @State private var shellRunner = ShellCommandRunner()
+    @State private var macVendorService = MACVendorLookupService()
+    @State private var pingService = ProcessPingService()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

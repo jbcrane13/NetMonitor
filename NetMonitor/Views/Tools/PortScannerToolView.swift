@@ -233,7 +233,7 @@ struct PortScannerToolView: View {
 
     // MARK: - Actions
 
-    private var scanTask: Task<Void, Never>?
+    @State private var scanTask: Task<Void, Never>?
 
     private func runScan() {
         guard !host.isEmpty else { return }
@@ -250,15 +250,15 @@ struct PortScannerToolView: View {
         scannedCount = 0
         totalPorts = portsToScan.count
 
-        Task {
+        scanTask = Task {
             await scanPorts(host: host, ports: portsToScan)
-            await MainActor.run {
-                isRunning = false
-            }
+            isRunning = false
         }
     }
 
     private func stopScan() {
+        scanTask?.cancel()
+        scanTask = nil
         isRunning = false
     }
 

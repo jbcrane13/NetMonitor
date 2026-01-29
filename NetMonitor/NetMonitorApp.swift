@@ -75,14 +75,31 @@ struct NetMonitorApp: App {
         Settings {
             SettingsView()
         }
+        .modelContainer(sharedModelContainer)
     }
 
     @MainActor
     private func setupServices() async {
-        // Skip services setup in UI test mode for clean termination
-        guard !isUITesting else { return }
-
         let context = sharedModelContainer.mainContext
+
+        // In UI testing mode, create minimal services for rendering but skip heavy setup
+        if isUITesting {
+            let httpService = HTTPMonitorService()
+            let icmpService = ICMPMonitorService()
+            let tcpService = TCPMonitorService()
+            monitoringSession = MonitoringSession(
+                modelContext: context,
+                httpService: httpService,
+                icmpService: icmpService,
+                tcpService: tcpService
+            )
+            deviceDiscovery = DeviceDiscoveryCoordinator(
+                modelContext: context,
+                arpScanner: ARPScannerService(),
+                bonjourScanner: BonjourDiscoveryService()
+            )
+            return
+        }
 
         // Create all services first (centralized service instantiation)
         let httpService = HTTPMonitorService()

@@ -11,7 +11,7 @@ import AppKit
 /// Controls the menu bar status item and popover
 @MainActor
 @Observable
-final class MenuBarController {
+final class MenuBarController: NSObject {
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
 
