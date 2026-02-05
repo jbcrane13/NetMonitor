@@ -136,11 +136,8 @@ final class MonitoringSession {
             do {
                 let measurement = try await service.check(target: target)
 
-                // Update latest results
-                latestResults[target.id] = measurement
-
-                // Save to SwiftData
-                saveMeasurement(measurement, for: target)
+                // Update latest results and save to SwiftData on main actor
+                await updateMeasurement(measurement, for: target)
 
             } catch {
                 // Handle errors by creating failed measurement
@@ -150,9 +147,7 @@ final class MonitoringSession {
                     errorMessage: error.localizedDescription
                 )
 
-                latestResults[target.id] = failedMeasurement
-
-                saveMeasurement(failedMeasurement, for: target)
+                await updateMeasurement(failedMeasurement, for: target)
             }
 
             // Wait for check interval
@@ -161,8 +156,11 @@ final class MonitoringSession {
     }
 
     @MainActor
-    private func saveMeasurement(_ measurement: TargetMeasurement, for target: NetworkTarget) {
-        // Save on main context - optimization for background context can be added later
+    private func updateMeasurement(_ measurement: TargetMeasurement, for target: NetworkTarget) {
+        // Update latest results dictionary
+        latestResults[target.id] = measurement
+        
+        // Save to SwiftData on main context
         target.measurements.append(measurement)
         try? modelContext.save()
     }
