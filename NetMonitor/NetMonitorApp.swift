@@ -19,9 +19,38 @@ struct NetMonitorApp: App {
 
     @AppStorage("autoStartMonitoring") private var autoStartMonitoring = false
 
+    /// Check if monitoring should be disabled (for testing)
+    private var shouldDisableMonitoring: Bool {
+        isUITesting || ProcessInfo.processInfo.environment["DISABLE_MONITORING"] == "1"
+    }
+
     /// Check if running in UI test mode
     private var isUITesting: Bool {
-        ProcessInfo.processInfo.arguments.contains("--uitesting")
+        let arguments = ProcessInfo.processInfo.arguments
+        
+        // Check launch arguments
+        if arguments.contains("--uitesting") ||
+           arguments.contains("--disable-local-auth") ||
+           arguments.contains("--disable-keychain-access") {
+            return true
+        }
+        
+        // Check environment variables (used by CI/CD and test runners)
+        let environment = ProcessInfo.processInfo.environment
+        if environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" ||
+           environment["XCUITest"] == "1" ||
+           environment["UITEST_MODE"] == "1" ||
+           environment["DISABLE_AUTHENTICATION"] == "1" ||
+           environment["CI"] == "true" {
+            return true
+        }
+        
+        // Check if we're running under XCTest (unit tests or UI tests)
+        if NSClassFromString("XCTest") != nil {
+            return true
+        }
+        
+        return false
     }
 
     var sharedModelContainer: ModelContainer = {
@@ -81,6 +110,15 @@ struct NetMonitorApp: App {
     @MainActor
     private func setupServices() async {
         let context = sharedModelContainer.mainContext
+
+        // Add startup delay for UI tests to avoid auth race conditions
+        if isUITesting {
+            // Add a small delay to let any pending system authentication complete
+            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+            
+            // Configure other test-specific settings
+            UserDefaults.standard.set(false, forKey: "autoStartMonitoring")
+        }
 
         // In UI testing mode, create minimal services for rendering but skip heavy setup
         if isUITesting {
@@ -164,19 +202,24 @@ struct NetMonitorApp: App {
             menuBarController?.setup()
         }
 
-        // 5. Set up notification service and request permission
+        // 5. Set up notification service and request permission (skip in UI tests)
         if notificationService == nil {
             notificationService = NotificationService()
-            Task {
-                _ = await notificationService?.requestAuthorization()
+            
+            // Skip authorization request during UI tests to avoid auth prompts
+            if !isUITesting {
+                Task {
+                    _ = await notificationService?.requestAuthorization()
+                }
             }
         }
 
         // 7. Seed default targets on first launch
         await DefaultTargetsProvider.seedIfNeeded(modelContext: context)
 
-        // 8. Auto-start monitoring if enabled in settings
-        if autoStartMonitoring, let session = monitoringSession, !session.isMonitoring {
+        // 8. Auto-start monitoring if enabled in settings (skip during testing)
+        if autoStartMonitoring && !shouldDisableMonitoring, 
+           let session = monitoringSession, !session.isMonitoring {
             session.startMonitoring()
         }
     }

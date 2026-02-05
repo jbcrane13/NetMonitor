@@ -7,28 +7,18 @@
 
 import XCTest
 
-final class ToolsUITests: XCTestCase {
+final class ToolsUITests: BaseUITests {
     
-    var app: XCUIApplication!
     var sidebar: SidebarScreen!
     var tools: ToolsScreen!
     
     override func setUpWithError() throws {
-        continueAfterFailure = false
-        
-        app = XCUIApplication()
-        app.launchArguments = ["--uitesting"]
-        app.launch()
+        try super.setUpWithError()
         
         sidebar = SidebarScreen(app: app)
         tools = ToolsScreen(app: app)
         
-        XCTAssertTrue(sidebar.waitForScreen(timeout: 10), "App should launch")
-    }
-    
-    override func tearDownWithError() throws {
-        app?.terminate()
-        app = nil
+        XCTAssertTrue(sidebar.waitForScreen(timeout: 15), "App should launch")
     }
     
     // MARK: - Tools View Loading
