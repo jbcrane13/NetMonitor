@@ -198,29 +198,37 @@ struct PingToolView: View {
 
         Task {
             do {
+                var latencies: [Double] = []
+                var received = 0
+                
                 for try await line in await pingService.pingStream(host: host, count: count) {
                     await MainActor.run {
                         if let latency = line.latency {
                             output.append("\(line.bytes) bytes from \(line.host): icmp_seq=\(line.sequenceNumber) ttl=\(line.ttl ?? 0) time=\(String(format: "%.2f", latency)) ms")
+                            latencies.append(latency)
+                            received += 1
                         } else {
                             output.append("Request timeout for icmp_seq \(line.sequenceNumber)")
                         }
                     }
                 }
 
-                // Get final summary
-                let result = try await pingService.ping(host: host, count: 1, timeout: 1)
                 await MainActor.run {
-                    // Reconstruct summary from stream output
-                    let received = output.filter { $0.contains("bytes from") }.count
+                    // Calculate summary from actual stream data
+                    let packetLoss = Double(count - received) / Double(count) * 100
+                    let minLatency = latencies.isEmpty ? 0.0 : latencies.min()!
+                    let maxLatency = latencies.isEmpty ? 0.0 : latencies.max()!
+                    let avgLatency = latencies.isEmpty ? 0.0 : latencies.reduce(0, +) / Double(latencies.count)
+                    let stddevLatency = latencies.isEmpty ? 0.0 : calculateStddev(latencies, mean: avgLatency)
+                    
                     summary = PingResult(
                         transmitted: count,
                         received: received,
-                        packetLoss: Double(count - received) / Double(count) * 100,
-                        minLatency: result.minLatency,
-                        avgLatency: result.avgLatency,
-                        maxLatency: result.maxLatency,
-                        stddevLatency: result.stddevLatency
+                        packetLoss: packetLoss,
+                        minLatency: minLatency,
+                        avgLatency: avgLatency,
+                        maxLatency: maxLatency,
+                        stddevLatency: stddevLatency
                     )
                     isRunning = false
                 }
@@ -231,6 +239,14 @@ struct PingToolView: View {
                 }
             }
         }
+    }
+    
+    private func calculateStddev(_ values: [Double], mean: Double) -> Double {
+        guard values.count > 1 else { return 0.0 }
+        let variance = values.reduce(0) { sum, value in
+            sum + pow(value - mean, 2)
+        } / Double(values.count - 1)
+        return sqrt(variance)
     }
 
     private func stopPing() {

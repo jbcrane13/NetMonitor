@@ -282,9 +282,9 @@ struct TracerouteToolView: View {
                 if index > 1, let latency = Double(components[index - 1]) {
                     latencies.append(latency)
                 }
-            } else if hostname == nil && !component.contains(".") == false && Double(component) == nil && component != "*" {
-                // First non-numeric component is hostname
-                if component.contains(".") || component.contains("-") {
+            } else if hostname == nil && Double(component) == nil && component != "*" && !component.hasPrefix("(") {
+                // First non-numeric component is hostname - look for domain names or host identifiers
+                if component.contains(".") || component.contains("-") || component.count > 3 {
                     hostname = component
                 }
             }

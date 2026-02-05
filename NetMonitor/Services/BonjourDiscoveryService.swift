@@ -1,5 +1,6 @@
 import Foundation
 import Network
+import CoreFoundation
 
 /// Represents a discovered Bonjour/mDNS service on the local network
 struct BonjourService: Sendable, Identifiable {
@@ -299,75 +300,49 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
             txtRecord = parseTXTRecord(txtData)
         }
 
-        // Create a connection to resolve the endpoint
-        let parameters = NWParameters.tcp
-        let connection = NWConnection(to: result.endpoint, using: parameters)
+        // Extract basic info from result endpoint
+        var hostname: String?
+        var port: Int?
+        var ipAddress: String?
 
-        let tracker = ContinuationTracker()
-
-        // Use continuation to get resolved endpoint info
-        let resolvedInfo: (hostname: String?, port: Int?, ipAddress: String?) = await withCheckedContinuation { continuation in
-            connection.stateUpdateHandler = { [tracker] state in
-                switch state {
-                case .ready:
-                    if tracker.tryResume() {
-                        // Extract resolved endpoint info
-                        var hostname: String?
-                        var port: Int?
-                        var ipAddress: String?
-
-                        if let endpoint = connection.currentPath?.remoteEndpoint {
-                            switch endpoint {
-                            case .hostPort(let host, let resolvedPort):
-                                switch host {
-                                case .ipv4(let addr):
-                                    ipAddress = "\(addr)"
-                                case .ipv6(let addr):
-                                    ipAddress = "\(addr)"
-                                case .name(let hostname_, _):
-                                    hostname = hostname_
-                                @unknown default:
-                                    break
-                                }
-                                port = Int(resolvedPort.rawValue)
-                            default:
-                                break
-                            }
-                        }
-
-                        connection.cancel()
-                        continuation.resume(returning: (hostname, port, ipAddress))
-                    }
-
-                case .failed, .cancelled:
-                    if tracker.tryResume() {
-                        connection.cancel()
-                        continuation.resume(returning: (nil, nil, nil))
-                    }
-
-                case .waiting:
-                    // Give it a moment, but don't wait forever
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) { [tracker] in
-                        if tracker.tryResume() {
-                            connection.cancel()
-                            continuation.resume(returning: (nil, nil, nil))
-                        }
-                    }
-
-                default:
-                    break
+        // First try to extract info directly from the result endpoint
+        switch result.endpoint {
+        case .service(_, _, _, let interface):
+            // For Bonjour services, we can extract port from metadata
+            if case .bonjour(let txtData) = result.metadata {
+                // Check if port is in TXT record metadata
+                if let portValue = txtData.dictionary["port"] {
+                    port = Int(portValue)
                 }
             }
-
-            connection.start(queue: DispatchQueue(label: "com.netmonitor.bonjour.resolve.\(name)"))
-
-            // Timeout after 3 seconds
-            DispatchQueue.global().asyncAfter(deadline: .now() + 3.0) { [tracker] in
-                if tracker.tryResume() {
-                    connection.cancel()
-                    continuation.resume(returning: (nil, nil, nil))
-                }
+            
+        case .hostPort(let host, let resultPort):
+            port = Int(resultPort.rawValue)
+            switch host {
+            case .ipv4(let addr):
+                ipAddress = "\(addr)"
+            case .ipv6(let addr):
+                ipAddress = "\(addr)"
+            case .name(let hostName, _):
+                hostname = hostName
+            @unknown default:
+                break
             }
+            
+        default:
+            break
+        }
+
+        // If we couldn't get IP directly, try a lightweight resolution
+        if ipAddress == nil && hostname != nil {
+            // Use DNS resolution instead of creating a full connection
+            ipAddress = await resolveHostnameToIP(hostname!)
+        }
+
+        // Create a minimal test connection only if we need to verify connectivity
+        // This is much lighter than the previous approach
+        if ipAddress == nil {
+            ipAddress = await attemptLightweightResolution(result.endpoint)
         }
 
         // Update the service with resolved info
@@ -375,10 +350,10 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
             name: name,
             type: type,
             domain: domain,
-            hostname: resolvedInfo.hostname,
-            port: resolvedInfo.port,
+            hostname: hostname ?? name, // Use service name as fallback
+            port: port,
             txtRecord: txtRecord,
-            ipAddress: resolvedInfo.ipAddress
+            ipAddress: ipAddress
         )
 
         // Replace existing service with updated one
@@ -386,6 +361,111 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
             discoveredServices[index] = updatedService
         } else {
             discoveredServices.append(updatedService)
+        }
+    }
+    
+    /// Resolve hostname to IP using basic DNS lookup (simplified approach)
+    private func resolveHostnameToIP(_ hostname: String) async -> String? {
+        // Use a simpler approach with URLSession for DNS resolution
+        guard let url = URL(string: "http://\(hostname)") else { return nil }
+        
+        return await withCheckedContinuation { continuation in
+            let task = URLSession.shared.dataTask(with: url) { _, response, _ in
+                if let httpResponse = response as? HTTPURLResponse,
+                   let resolvedHost = httpResponse.url?.host {
+                    // Try to extract IP if it's available in the resolved URL
+                    continuation.resume(returning: resolvedHost)
+                } else {
+                    continuation.resume(returning: nil)
+                }
+            }
+            
+            task.resume()
+            
+            // Timeout after 2 seconds
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
+                task.cancel()
+                continuation.resume(returning: nil)
+            }
+        }
+    }
+    
+    /// Convert sockaddr data to string representation
+    private func sockaddrToString(_ data: Data) -> String? {
+        return data.withUnsafeBytes { bytes in
+            let sockaddr = bytes.bindMemory(to: sockaddr.self).first!
+            
+            switch Int32(sockaddr.sa_family) {
+            case AF_INET:
+                let sin = bytes.bindMemory(to: sockaddr_in.self).first!
+                return String(cString: inet_ntoa(sin.sin_addr))
+                
+            case AF_INET6:
+                var buffer = [CChar](repeating: 0, count: Int(INET6_ADDRSTRLEN))
+                let sin6 = bytes.bindMemory(to: sockaddr_in6.self).first!
+                var addr = sin6.sin6_addr
+                inet_ntop(AF_INET6, &addr, &buffer, socklen_t(INET6_ADDRSTRLEN))
+                return String(cString: buffer)
+                
+            default:
+                return nil
+            }
+        }
+    }
+
+    /// Lightweight resolution attempt using minimal NWConnection approach
+    private func attemptLightweightResolution(_ endpoint: NWEndpoint) async -> String? {
+        let tracker = ContinuationTracker()
+        
+        return await withCheckedContinuation { continuation in
+            let parameters = NWParameters()
+            parameters.requiredInterface = nil  // Use any interface
+            let connection = NWConnection(to: endpoint, using: parameters)
+            
+            connection.stateUpdateHandler = { [tracker] state in
+                switch state {
+                case .ready:
+                    if tracker.tryResume() {
+                        var resolvedIP: String?
+                        if let remoteEndpoint = connection.currentPath?.remoteEndpoint {
+                            switch remoteEndpoint {
+                            case .hostPort(let host, _):
+                                switch host {
+                                case .ipv4(let addr):
+                                    resolvedIP = "\(addr)"
+                                case .ipv6(let addr):
+                                    resolvedIP = "\(addr)"
+                                default:
+                                    break
+                                }
+                            default:
+                                break
+                            }
+                        }
+                        connection.cancel()
+                        continuation.resume(returning: resolvedIP)
+                    }
+                    
+                case .failed, .cancelled:
+                    if tracker.tryResume() {
+                        connection.cancel()
+                        continuation.resume(returning: nil)
+                    }
+                    
+                default:
+                    break
+                }
+            }
+            
+            connection.start(queue: .global())
+            
+            // Quick timeout - this is just for IP resolution, not actual connection
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) { [tracker] in
+                if tracker.tryResume() {
+                    connection.cancel()
+                    continuation.resume(returning: nil)
+                }
+            }
         }
     }
 
