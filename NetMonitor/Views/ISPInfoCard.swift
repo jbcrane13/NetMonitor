@@ -44,7 +44,7 @@ struct ISPInfoCard: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isLoading)
-                .accessibilityIdentifier("isp_button_refresh")
+                .accessibilityIdentifier("isp_card_button_refresh")
             }
 
             Divider()

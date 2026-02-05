@@ -42,7 +42,7 @@ struct GatewayInfoCard: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isLoading)
-                .accessibilityIdentifier("gateway_button_refresh")
+                .accessibilityIdentifier("gateway_card_button_refresh")
             }
 
             Divider()
