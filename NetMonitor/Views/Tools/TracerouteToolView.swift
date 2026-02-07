@@ -224,13 +224,23 @@ struct TracerouteToolView: View {
                     if case .executionFailed = error, !hops.isEmpty {
                         // We have some results, don't show error
                     } else {
-                        errorMessage = error.localizedDescription
+                        let message = error.localizedDescription
+                        if message.contains("not permitted") || message.contains("Operation not permitted") {
+                            errorMessage = "Traceroute requires elevated privileges that are not available in sandboxed apps. Try running 'traceroute \(host)' in Terminal instead."
+                        } else {
+                            errorMessage = message
+                        }
                     }
                     isRunning = false
                 }
             } catch {
                 await MainActor.run {
-                    errorMessage = error.localizedDescription
+                    let message = error.localizedDescription
+                    if message.contains("not permitted") || message.contains("Operation not permitted") {
+                        errorMessage = "Traceroute requires elevated privileges that are not available in sandboxed apps. Try running 'traceroute \(host)' in Terminal instead."
+                    } else {
+                        errorMessage = message
+                    }
                     isRunning = false
                 }
             }

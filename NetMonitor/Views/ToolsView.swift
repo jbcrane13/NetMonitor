@@ -77,8 +77,13 @@ struct ToolsView: View {
             .padding()
         }
         .navigationTitle("Network Tools")
-        .sheet(item: $selectedTool) { tool in
-            toolSheet(for: tool)
+        .sheet(isPresented: Binding(
+            get: { selectedTool != nil },
+            set: { if !$0 { selectedTool = nil } }
+        )) {
+            if let tool = selectedTool {
+                toolSheet(for: tool)
+            }
         }
     }
 
