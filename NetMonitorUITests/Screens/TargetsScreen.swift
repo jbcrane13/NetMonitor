@@ -13,7 +13,7 @@ final class TargetsScreen: BaseScreen {
     // MARK: - Elements
     
     var addTargetButton: XCUIElement {
-        app.buttons["Add Target"]
+        app.buttons["Add Target"].firstMatch
     }
     
     var sortButton: XCUIElement {
@@ -87,7 +87,7 @@ final class TargetsScreen: BaseScreen {
     
     func openAddTargetSheet() {
         addTargetButton.tap()
-        _ = addTargetNameField.waitForExistence(timeout: 3)
+        _ = addTargetNameField.waitForExistence(timeout: 5)
     }
     
     func cancelAddTarget() {

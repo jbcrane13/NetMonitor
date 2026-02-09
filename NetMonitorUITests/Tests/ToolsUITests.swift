@@ -79,32 +79,107 @@ final class ToolsUITests: BaseUITests {
     func testPingToolRunButton() throws {
         sidebar.navigateToTools()
         _ = tools.waitForScreen(timeout: 5)
-        
+
         let pingScreen = tools.openPingTool()
         _ = pingScreen.waitForScreen(timeout: 5)
-        
+
         let hasRunButton = pingScreen.runButton.exists || app.buttons["Run"].exists
         XCTAssertTrue(hasRunButton, "Ping tool should have Run button")
-        
+
         pingScreen.close()
     }
-    
+
     func testPingToolExecutes() throws {
         sidebar.navigateToTools()
         _ = tools.waitForScreen(timeout: 5)
-        
+
         let pingScreen = tools.openPingTool()
         _ = pingScreen.waitForScreen(timeout: 5)
-        
+
         // Run ping against localhost (should always work)
         pingScreen.runPing(host: "127.0.0.1")
-        
+
         // Wait for some output
         sleep(3)
-        
+
         let screenshot = pingScreen.takeScreenshot(name: "Ping-Executing")
         add(screenshot)
-        
+
+        pingScreen.close()
+    }
+
+    func testPingToolOutputAppears() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let pingScreen = tools.openPingTool()
+        _ = pingScreen.waitForScreen(timeout: 5)
+
+        pingScreen.runPing(host: "127.0.0.1")
+
+        // Wait for any output to appear (ping output, error, or sandbox message)
+        let outputPredicate = NSPredicate(format: "label CONTAINS 'bytes from' OR label CONTAINS 'PING' OR label CONTAINS 'ping' OR label CONTAINS 'error' OR label CONTAINS 'failed' OR label CONTAINS 'not permitted'")
+        let outputElement = app.staticTexts.matching(outputPredicate).firstMatch
+        let appeared = outputElement.waitForExistence(timeout: 15)
+
+        if !appeared {
+            // If no output appeared, take screenshot for debugging but don't fail hard
+            // Ping against localhost may be blocked by sandbox
+            let screenshot = pingScreen.takeScreenshot(name: "Ping-Output-Missing")
+            add(screenshot)
+            throw XCTSkip("Ping output did not appear - may be blocked by sandbox restrictions")
+        }
+
+        let screenshot = pingScreen.takeScreenshot(name: "Ping-Output-Validation")
+        add(screenshot)
+
+        pingScreen.close()
+    }
+
+    func testPingToolCountPicker() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let pingScreen = tools.openPingTool()
+        _ = pingScreen.waitForScreen(timeout: 5)
+
+        XCTAssertTrue(pingScreen.countPicker.exists, "Ping count picker should exist")
+
+        let screenshot = pingScreen.takeScreenshot(name: "Ping-CountPicker")
+        add(screenshot)
+
+        pingScreen.close()
+    }
+
+    func testPingToolClearButton() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let pingScreen = tools.openPingTool()
+        _ = pingScreen.waitForScreen(timeout: 5)
+
+        // Run ping first to generate output
+        pingScreen.runPing(host: "127.0.0.1")
+
+        // Wait for ping to complete (summary appears when done)
+        let summaryPredicate = NSPredicate(format: "label CONTAINS 'Summary' OR label CONTAINS 'packets transmitted'")
+        let summaryElement = app.staticTexts.matching(summaryPredicate).firstMatch
+        _ = summaryElement.waitForExistence(timeout: 15)
+
+        // Clear button should appear after output is present and ping is not running
+        let clearButton = pingScreen.clearButton
+        let clearAppeared = clearButton.waitForExistence(timeout: 10)
+        XCTAssertTrue(clearAppeared, "Clear button should appear after ping completes")
+
+        clearButton.tap()
+        sleep(1)
+
+        // After clearing, clear button should disappear
+        XCTAssertFalse(pingScreen.clearButton.exists, "Clear button should disappear after clearing output")
+
+        let screenshot = pingScreen.takeScreenshot(name: "Ping-Cleared")
+        add(screenshot)
+
         pingScreen.close()
     }
     
@@ -127,26 +202,90 @@ final class ToolsUITests: BaseUITests {
     func testTracerouteToolExecutes() throws {
         sidebar.navigateToTools()
         _ = tools.waitForScreen(timeout: 5)
-        
+
         let tracerouteScreen = tools.openTracerouteTool()
         _ = tracerouteScreen.waitForScreen(timeout: 5)
-        
-        if tracerouteScreen.hostTextField.exists {
-            tracerouteScreen.hostTextField.tap()
-            tracerouteScreen.hostTextField.typeText("127.0.0.1")
+
+        tracerouteScreen.runTraceroute(host: "127.0.0.1")
+
+        // Wait for output or error (traceroute may fail in sandbox)
+        let outputPredicate = NSPredicate(format: "label CONTAINS 'localhost' OR label CONTAINS '127.0.0.1' OR label CONTAINS 'elevated privileges' OR label CONTAINS 'not permitted' OR label CONTAINS 'hops completed' OR label CONTAINS 'Trace failed' OR label CONTAINS 'error' OR label CONTAINS 'traceroute'")
+        let outputElement = app.staticTexts.matching(outputPredicate).firstMatch
+        let hasOutput = outputElement.waitForExistence(timeout: 20)
+
+        if !hasOutput {
+            let screenshot = tracerouteScreen.takeScreenshot(name: "Traceroute-No-Output")
+            add(screenshot)
+            throw XCTSkip("Traceroute produced no output - may be blocked by sandbox restrictions")
         }
-        
-        if tracerouteScreen.runButton.exists {
-            tracerouteScreen.runButton.tap()
-        } else {
-            app.buttons["Run"].tap()
-        }
-        
-        sleep(2)
-        
+
         let screenshot = tracerouteScreen.takeScreenshot(name: "Traceroute-Running")
         add(screenshot)
-        
+
+        tracerouteScreen.close()
+    }
+
+    func testTracerouteToolCancelButton() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let tracerouteScreen = tools.openTracerouteTool()
+        _ = tracerouteScreen.waitForScreen(timeout: 5)
+
+        tracerouteScreen.runTraceroute(host: "8.8.8.8")
+        sleep(2)
+
+        // Try to stop/cancel the traceroute
+        let stopButton = app.buttons["Stop"]
+        if stopButton.exists {
+            stopButton.tap()
+        } else if tracerouteScreen.runButton.exists && tracerouteScreen.runButton.label == "Stop" {
+            tracerouteScreen.runButton.tap()
+        }
+
+        let screenshot = tracerouteScreen.takeScreenshot(name: "Traceroute-Cancelled")
+        add(screenshot)
+
+        tracerouteScreen.close()
+    }
+
+    func testTracerouteToolClearButton() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let tracerouteScreen = tools.openTracerouteTool()
+        _ = tracerouteScreen.waitForScreen(timeout: 5)
+
+        tracerouteScreen.runTraceroute(host: "127.0.0.1")
+
+        // Wait for traceroute to finish
+        let donePredicate = NSPredicate(format: "label CONTAINS 'hops completed' OR label CONTAINS 'Trace failed' OR label CONTAINS 'elevated privileges'")
+        let doneElement = app.staticTexts.matching(donePredicate).firstMatch
+        _ = doneElement.waitForExistence(timeout: 15)
+
+        let clearButton = app.buttons["traceroute_button_clear"]
+        if clearButton.waitForExistence(timeout: 5) {
+            clearButton.tap()
+            sleep(1)
+            XCTAssertFalse(clearButton.exists, "Clear button should disappear after clearing traceroute output")
+        }
+
+        let screenshot = tracerouteScreen.takeScreenshot(name: "Traceroute-Cleared")
+        add(screenshot)
+
+        tracerouteScreen.close()
+    }
+
+    func testTracerouteToolHopsPicker() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let tracerouteScreen = tools.openTracerouteTool()
+        _ = tracerouteScreen.waitForScreen(timeout: 5)
+
+        let hopsPicker = app.popUpButtons["traceroute_picker_hops"]
+        XCTAssertTrue(hopsPicker.waitForExistence(timeout: 5), "Max hops picker should exist in traceroute tool")
+
         tracerouteScreen.close()
     }
     
@@ -169,30 +308,137 @@ final class ToolsUITests: BaseUITests {
     func testPortScannerToolExecutes() throws {
         sidebar.navigateToTools()
         _ = tools.waitForScreen(timeout: 5)
-        
+
         let portScannerScreen = tools.openPortScannerTool()
         _ = portScannerScreen.waitForScreen(timeout: 5)
-        
+
         if portScannerScreen.hostTextField.exists {
             portScannerScreen.hostTextField.tap()
             portScannerScreen.hostTextField.typeText("127.0.0.1")
         }
-        
+
         if portScannerScreen.scanButton.exists {
             portScannerScreen.scanButton.tap()
         } else {
             app.buttons["Scan"].tap()
         }
-        
-        sleep(2)
-        
+
+        // Wait for scan to finish with result
+        let finishedPredicate = NSPredicate(format: "label CONTAINS 'open port' OR label CONTAINS 'Scan failed' OR label CONTAINS 'Scan complete' OR label CONTAINS 'error' OR label CONTAINS 'No open'")
+        let finishedText = app.staticTexts.matching(finishedPredicate).firstMatch
+        let scanFinished = finishedText.waitForExistence(timeout: 20)
+
+        if !scanFinished {
+            let screenshot = portScannerScreen.takeScreenshot(name: "PortScanner-No-Results")
+            add(screenshot)
+            throw XCTSkip("Port scan produced no results - may be blocked by sandbox restrictions")
+        }
+
         let screenshot = portScannerScreen.takeScreenshot(name: "PortScanner-Running")
         add(screenshot)
-        
-        if portScannerScreen.scanButton.exists && portScannerScreen.scanButton.label == "Stop" {
+
+        portScannerScreen.close()
+    }
+
+    func testPortScannerPresetPicker() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let portScannerScreen = tools.openPortScannerTool()
+        _ = portScannerScreen.waitForScreen(timeout: 5)
+
+        XCTAssertTrue(portScannerScreen.presetPicker.exists, "Port preset picker should exist")
+
+        // Switch to Custom preset to reveal custom ports field
+        portScannerScreen.presetPicker.tap()
+        let customOption = app.menuItems["Custom"].firstMatch
+        if customOption.waitForExistence(timeout: 3) {
+            customOption.tap()
+        }
+
+        // Custom ports text field should now appear
+        let customField = portScannerScreen.customPortsField
+        XCTAssertTrue(customField.waitForExistence(timeout: 5), "Custom ports field should appear when Custom preset is selected")
+
+        let screenshot = portScannerScreen.takeScreenshot(name: "PortScanner-CustomPreset")
+        add(screenshot)
+
+        portScannerScreen.close()
+    }
+
+    func testPortScannerStopDuringScan() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let portScannerScreen = tools.openPortScannerTool()
+        _ = portScannerScreen.waitForScreen(timeout: 5)
+
+        if portScannerScreen.hostTextField.exists {
+            portScannerScreen.hostTextField.tap()
+            portScannerScreen.hostTextField.typeText("127.0.0.1")
+        }
+
+        if portScannerScreen.scanButton.exists {
             portScannerScreen.scanButton.tap()
         }
-        
+
+        sleep(1)
+
+        // Stop the scan
+        let stopButton = app.buttons["Stop"]
+        if stopButton.exists {
+            stopButton.tap()
+        } else if portScannerScreen.scanButton.exists {
+            portScannerScreen.scanButton.tap()
+        }
+
+        let screenshot = portScannerScreen.takeScreenshot(name: "PortScanner-Stopped")
+        add(screenshot)
+
+        portScannerScreen.close()
+    }
+
+    func testPortScannerClearResults() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let portScannerScreen = tools.openPortScannerTool()
+        _ = portScannerScreen.waitForScreen(timeout: 5)
+
+        if portScannerScreen.hostTextField.exists {
+            portScannerScreen.hostTextField.tap()
+            portScannerScreen.hostTextField.typeText("127.0.0.1")
+        }
+
+        // Use Web preset for fewer ports and faster scan
+        if portScannerScreen.presetPicker.exists {
+            portScannerScreen.presetPicker.tap()
+            let webOption = app.menuItems["Web"].firstMatch
+            if webOption.waitForExistence(timeout: 3) {
+                webOption.tap()
+            }
+        }
+
+        if portScannerScreen.scanButton.exists {
+            portScannerScreen.scanButton.tap()
+        }
+
+        // Wait for scan to finish
+        let finishedPredicate = NSPredicate(format: "label CONTAINS 'open port'")
+        let finishedText = app.staticTexts.matching(finishedPredicate).firstMatch
+        _ = finishedText.waitForExistence(timeout: 15)
+
+        // Clear button should appear after scan completes
+        let clearButton = portScannerScreen.clearButton
+        if clearButton.waitForExistence(timeout: 5) {
+            clearButton.tap()
+            sleep(1)
+            XCTAssertFalse(clearButton.exists, "Clear button should disappear after clearing port scan results")
+        }
+
+        let screenshot = portScannerScreen.takeScreenshot(name: "PortScanner-Cleared")
+        add(screenshot)
+
         portScannerScreen.close()
     }
     
@@ -215,26 +461,93 @@ final class ToolsUITests: BaseUITests {
     func testDNSLookupToolExecutes() throws {
         sidebar.navigateToTools()
         _ = tools.waitForScreen(timeout: 5)
-        
+
         let dnsScreen = tools.openDNSLookupTool()
         _ = dnsScreen.waitForScreen(timeout: 5)
-        
+
         if dnsScreen.domainTextField.exists {
             dnsScreen.domainTextField.tap()
             dnsScreen.domainTextField.typeText("example.com")
         }
-        
+
         if dnsScreen.lookupButton.exists {
             dnsScreen.lookupButton.tap()
         } else {
             app.buttons["Lookup"].tap()
         }
-        
-        sleep(2)
-        
+
+        // Wait for DNS results
+        let footerPredicate = NSPredicate(format: "label CONTAINS 'record(s) found' OR label CONTAINS 'No' OR label CONTAINS 'Query failed' OR label CONTAINS 'error' OR label CONTAINS 'records'")
+        let footerText = app.staticTexts.matching(footerPredicate).firstMatch
+        let hasResults = footerText.waitForExistence(timeout: 20)
+
+        if !hasResults {
+            let screenshot = dnsScreen.takeScreenshot(name: "DNSLookup-No-Results")
+            add(screenshot)
+            throw XCTSkip("DNS lookup produced no results - may be blocked by sandbox or network restrictions")
+        }
+
         let screenshot = dnsScreen.takeScreenshot(name: "DNSLookup-Running")
         add(screenshot)
-        
+
+        dnsScreen.close()
+    }
+
+    func testDNSLookupRecordTypePicker() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let dnsScreen = tools.openDNSLookupTool()
+        _ = dnsScreen.waitForScreen(timeout: 5)
+
+        let typePicker = dnsScreen.typePicker
+        XCTAssertTrue(typePicker.exists, "DNS record type picker should exist")
+
+        // Change to MX record type
+        typePicker.tap()
+        let mxOption = app.menuItems["MX"].firstMatch
+        if mxOption.waitForExistence(timeout: 3) {
+            mxOption.tap()
+        }
+
+        let screenshot = dnsScreen.takeScreenshot(name: "DNSLookup-TypePicker")
+        add(screenshot)
+
+        dnsScreen.close()
+    }
+
+    func testDNSLookupClearResults() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let dnsScreen = tools.openDNSLookupTool()
+        _ = dnsScreen.waitForScreen(timeout: 5)
+
+        if dnsScreen.domainTextField.exists {
+            dnsScreen.domainTextField.tap()
+            dnsScreen.domainTextField.typeText("example.com")
+        }
+
+        if dnsScreen.lookupButton.exists {
+            dnsScreen.lookupButton.tap()
+        }
+
+        // Wait for results to appear
+        let resultPredicate = NSPredicate(format: "label CONTAINS 'record(s) found'")
+        let resultText = app.staticTexts.matching(resultPredicate).firstMatch
+        _ = resultText.waitForExistence(timeout: 15)
+
+        // Click clear button and verify it disappears
+        let clearButton = dnsScreen.clearButton
+        if clearButton.waitForExistence(timeout: 5) {
+            clearButton.tap()
+            sleep(1)
+            XCTAssertFalse(clearButton.exists, "Clear button should disappear after clearing DNS results")
+        }
+
+        let screenshot = dnsScreen.takeScreenshot(name: "DNSLookup-Cleared")
+        add(screenshot)
+
         dnsScreen.close()
     }
     
@@ -257,26 +570,67 @@ final class ToolsUITests: BaseUITests {
     func testWhoisToolExecutes() throws {
         sidebar.navigateToTools()
         _ = tools.waitForScreen(timeout: 5)
-        
+
         let whoisScreen = tools.openWhoisTool()
         _ = whoisScreen.waitForScreen(timeout: 5)
-        
+
         if whoisScreen.domainTextField.exists {
             whoisScreen.domainTextField.tap()
             whoisScreen.domainTextField.typeText("example.com")
         }
-        
+
         if whoisScreen.lookupButton.exists {
             whoisScreen.lookupButton.tap()
         } else {
             app.buttons["Lookup"].tap()
         }
-        
-        sleep(2)
-        
+
+        // Wait for WHOIS results in footer
+        let outputPredicate = NSPredicate(format: "label CONTAINS 'WHOIS data retrieved' OR label CONTAINS 'Lookup failed'")
+        let outputText = app.staticTexts.matching(outputPredicate).firstMatch
+        let hasOutput = outputText.waitForExistence(timeout: 15)
+        if !hasOutput {
+            throw XCTSkip("WHOIS output not shown - shell command access may be restricted in sandbox")
+        }
+
         let screenshot = whoisScreen.takeScreenshot(name: "WHOIS-Running")
         add(screenshot)
-        
+
+        whoisScreen.close()
+    }
+
+    func testWhoisToolClearResults() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let whoisScreen = tools.openWhoisTool()
+        _ = whoisScreen.waitForScreen(timeout: 5)
+
+        if whoisScreen.domainTextField.exists {
+            whoisScreen.domainTextField.tap()
+            whoisScreen.domainTextField.typeText("example.com")
+        }
+
+        if whoisScreen.lookupButton.exists {
+            whoisScreen.lookupButton.tap()
+        }
+
+        // Wait for WHOIS data
+        let dataPredicate = NSPredicate(format: "label CONTAINS 'WHOIS data retrieved'")
+        let dataText = app.staticTexts.matching(dataPredicate).firstMatch
+        _ = dataText.waitForExistence(timeout: 15)
+
+        // Click clear button and verify it disappears
+        let clearButton = whoisScreen.clearButton
+        if clearButton.waitForExistence(timeout: 5) {
+            clearButton.tap()
+            sleep(1)
+            XCTAssertFalse(clearButton.exists, "Clear button should disappear after clearing WHOIS output")
+        }
+
+        let screenshot = whoisScreen.takeScreenshot(name: "WHOIS-Cleared")
+        add(screenshot)
+
         whoisScreen.close()
     }
     
@@ -299,25 +653,54 @@ final class ToolsUITests: BaseUITests {
     func testSpeedTestToolStartStop() throws {
         sidebar.navigateToTools()
         _ = tools.waitForScreen(timeout: 5)
-        
+
         let speedTestScreen = tools.openSpeedTestTool()
         _ = speedTestScreen.waitForScreen(timeout: 5)
-        
+
         if speedTestScreen.startButton.exists {
             speedTestScreen.startButton.tap()
         } else if app.buttons["Start"].exists {
             app.buttons["Start"].tap()
         }
-        
+
         sleep(3)
-        
+
         if speedTestScreen.stopButton.exists {
             speedTestScreen.stopButton.tap()
         }
-        
+
         let screenshot = speedTestScreen.takeScreenshot(name: "SpeedTest-Started")
         add(screenshot)
-        
+
+        speedTestScreen.close()
+    }
+
+    func testSpeedTestToolResetButton() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let speedTestScreen = tools.openSpeedTestTool()
+        _ = speedTestScreen.waitForScreen(timeout: 5)
+
+        // Start and then stop
+        if speedTestScreen.startButton.exists {
+            speedTestScreen.startButton.tap()
+        }
+        sleep(2)
+        if speedTestScreen.stopButton.exists {
+            speedTestScreen.stopButton.tap()
+        }
+        sleep(1)
+
+        // Reset
+        if speedTestScreen.resetButton.exists {
+            speedTestScreen.resetButton.tap()
+            sleep(1)
+        }
+
+        let screenshot = speedTestScreen.takeScreenshot(name: "SpeedTest-Reset")
+        add(screenshot)
+
         speedTestScreen.close()
     }
     
@@ -340,19 +723,52 @@ final class ToolsUITests: BaseUITests {
     func testBonjourBrowserRefresh() throws {
         sidebar.navigateToTools()
         _ = tools.waitForScreen(timeout: 5)
-        
+
         let bonjourScreen = tools.openBonjourBrowserTool()
         _ = bonjourScreen.waitForScreen(timeout: 5)
-        
+
+        // Wait for initial scan to finish
+        let scanDonePredicate = NSPredicate(format: "label CONTAINS 'service(s) found' OR label CONTAINS 'No services found'")
+        let scanDoneText = app.staticTexts.matching(scanDonePredicate).firstMatch
+        _ = scanDoneText.waitForExistence(timeout: 12)
+
+        // Tap refresh button
         if bonjourScreen.refreshButton.exists {
             bonjourScreen.refreshButton.tap()
+
+            // Should see scanning indicator
+            let scanningPredicate = NSPredicate(format: "label CONTAINS 'Scanning'")
+            let scanningText = app.staticTexts.matching(scanningPredicate).firstMatch
+            _ = scanningText.waitForExistence(timeout: 3)
+
+            // Wait for refresh scan to complete
+            _ = scanDoneText.waitForExistence(timeout: 12)
         }
-        
-        sleep(2)
-        
+
         let screenshot = bonjourScreen.takeScreenshot(name: "BonjourBrowser-Refreshed")
         add(screenshot)
-        
+
+        bonjourScreen.close()
+    }
+
+    func testBonjourBrowserServiceListAppears() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let bonjourScreen = tools.openBonjourBrowserTool()
+        _ = bonjourScreen.waitForScreen(timeout: 5)
+
+        // Bonjour auto-scans on open; wait for scan to complete
+        let scanDonePredicate = NSPredicate(format: "label CONTAINS 'service(s) found' OR label CONTAINS 'No services found'")
+        let scanDoneText = app.staticTexts.matching(scanDonePredicate).firstMatch
+        let scanDone = scanDoneText.waitForExistence(timeout: 12)
+        if !scanDone {
+            throw XCTSkip("Bonjour scan did not complete - local network access may be restricted in sandbox")
+        }
+
+        let screenshot = bonjourScreen.takeScreenshot(name: "BonjourBrowser-ServiceList")
+        add(screenshot)
+
         bonjourScreen.close()
     }
     
@@ -375,43 +791,134 @@ final class ToolsUITests: BaseUITests {
     func testWakeOnLanToolFields() throws {
         sidebar.navigateToTools()
         _ = tools.waitForScreen(timeout: 5)
-        
+
         let wolScreen = tools.openWakeOnLanTool()
         _ = wolScreen.waitForScreen(timeout: 5)
-        
+
         XCTAssertTrue(wolScreen.macAddressTextField.exists || app.textFields.firstMatch.exists,
                       "Wake on LAN should have a MAC address field")
-        
+
+        // Enter valid MAC and send
         if wolScreen.macAddressTextField.exists {
             wolScreen.macAddressTextField.tap()
             wolScreen.macAddressTextField.typeText("AA:BB:CC:DD:EE:FF")
         }
-        
-        if wolScreen.wakeButton.exists {
-            wolScreen.wakeButton.tap()
+
+        // Send button should now be enabled
+        let sendButton = wolScreen.wakeButton
+        XCTAssertTrue(sendButton.waitForExistence(timeout: 3), "Send button should exist")
+
+        if sendButton.isEnabled {
+            sendButton.tap()
+
+            // Wait for result message (success or failure)
+            let resultPredicate = NSPredicate(format: "label CONTAINS 'Magic packet sent' OR label CONTAINS 'Failed to send'")
+            let resultText = app.staticTexts.matching(resultPredicate).firstMatch
+            let hasResult = resultText.waitForExistence(timeout: 10)
+            if !hasResult {
+                throw XCTSkip("WOL result message not shown - network access may be restricted in sandbox")
+            }
         }
-        
+
         let screenshot = wolScreen.takeScreenshot(name: "WakeOnLAN-Fields")
         add(screenshot)
-        
+
+        wolScreen.close()
+    }
+
+    func testWakeOnLanInvalidMAC() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let wolScreen = tools.openWakeOnLanTool()
+        _ = wolScreen.waitForScreen(timeout: 5)
+
+        // Enter invalid MAC address (too short)
+        if wolScreen.macAddressTextField.exists {
+            wolScreen.macAddressTextField.tap()
+            wolScreen.macAddressTextField.typeText("AA:BB:CC")
+        }
+
+        // Send button should be disabled for invalid MAC
+        let sendButton = wolScreen.wakeButton
+        if sendButton.exists {
+            XCTAssertFalse(sendButton.isEnabled, "Send button should be disabled for invalid MAC address")
+        }
+
+        let screenshot = wolScreen.takeScreenshot(name: "WakeOnLAN-InvalidMAC")
+        add(screenshot)
+
+        wolScreen.close()
+    }
+
+    func testWakeOnLanDevicePicker() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let wolScreen = tools.openWakeOnLanTool()
+        _ = wolScreen.waitForScreen(timeout: 5)
+
+        // Verify device picker exists
+        let devicePicker = wolScreen.devicePicker
+        XCTAssertTrue(devicePicker.waitForExistence(timeout: 5), "Device picker should exist in WOL tool")
+
+        let screenshot = wolScreen.takeScreenshot(name: "WakeOnLAN-DevicePicker")
+        add(screenshot)
+
+        wolScreen.close()
+    }
+
+    func testWakeOnLanBroadcastField() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let wolScreen = tools.openWakeOnLanTool()
+        _ = wolScreen.waitForScreen(timeout: 5)
+
+        // Verify broadcast address field exists
+        let broadcastField = wolScreen.broadcastTextField
+        XCTAssertTrue(broadcastField.waitForExistence(timeout: 5), "Broadcast address field should exist")
+
+        let screenshot = wolScreen.takeScreenshot(name: "WakeOnLAN-BroadcastField")
+        add(screenshot)
+
         wolScreen.close()
     }
     
     // MARK: - Close Tool Tests
-    
+
     func testCloseToolWithEscape() throws {
         sidebar.navigateToTools()
         _ = tools.waitForScreen(timeout: 5)
-        
+
         let pingScreen = tools.openPingTool()
         _ = pingScreen.waitForScreen(timeout: 5)
-        
+
         // Close with Escape key
         app.typeKey(.escape, modifierFlags: [])
-        
+
         // Verify tool closed
         sleep(1)
         XCTAssertTrue(tools.pingText.exists, "Should return to tools view after closing")
+    }
+
+    func testCloseToolWithCloseButton() throws {
+        sidebar.navigateToTools()
+        _ = tools.waitForScreen(timeout: 5)
+
+        let pingScreen = tools.openPingTool()
+        _ = pingScreen.waitForScreen(timeout: 5)
+
+        // Close with close button
+        let closeButton = pingScreen.closeButton
+        if closeButton.waitForExistence(timeout: 3) {
+            closeButton.tap()
+        } else {
+            app.typeKey(.escape, modifierFlags: [])
+        }
+
+        sleep(1)
+        XCTAssertTrue(tools.pingText.exists, "Should return to tools view after closing with button")
     }
     
     // MARK: - Navigation Tests

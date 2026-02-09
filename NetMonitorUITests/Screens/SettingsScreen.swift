@@ -70,17 +70,23 @@ final class SettingsScreen: BaseScreen {
     }
     
     // MARK: - General Settings Elements
-    
+
     var launchAtLoginToggle: XCUIElement {
-        app.checkBoxes["settings_toggle_launchAtLogin"]
+        let checkbox = app.checkBoxes["settings_toggle_launchAtLogin"]
+        if checkbox.exists { return checkbox }
+        return app.switches["settings_toggle_launchAtLogin"].firstMatch
     }
-    
+
     var showInMenuBarToggle: XCUIElement {
-        app.checkBoxes["settings_toggle_showInMenuBar"]
+        let checkbox = app.checkBoxes["settings_toggle_showInMenuBar"]
+        if checkbox.exists { return checkbox }
+        return app.switches["settings_toggle_showInMenuBar"].firstMatch
     }
-    
+
     var showInDockToggle: XCUIElement {
-        app.checkBoxes["settings_toggle_showInDock"]
+        let checkbox = app.checkBoxes["settings_toggle_showInDock"]
+        if checkbox.exists { return checkbox }
+        return app.switches["settings_toggle_showInDock"].firstMatch
     }
     
     // MARK: - Data Settings Elements
@@ -224,9 +230,15 @@ final class SettingsScreen: BaseScreen {
     }
     
     func cancelClearData() {
-        let cancelButton = app.buttons["Cancel"]
-        if cancelButton.waitForExistence(timeout: 2) {
-            cancelButton.tap()
+        let sheetCancel = app.sheets.buttons["Cancel"]
+        let alertCancel = app.dialogs.buttons["Cancel"]
+        if sheetCancel.waitForExistence(timeout: 2) {
+            sheetCancel.tap()
+        } else if alertCancel.waitForExistence(timeout: 2) {
+            alertCancel.tap()
+        } else {
+            // Fallback: use firstMatch to avoid TouchBar ambiguity
+            app.buttons["Cancel"].firstMatch.tap()
         }
     }
     

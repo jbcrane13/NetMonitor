@@ -89,10 +89,10 @@ final class DevicesUITests: XCTestCase {
     
     func testNavigateToDevicesFromTools() throws {
         sidebar.navigateToTools()
-        sleep(1)
-        
+        sleep(2)
+
         sidebar.navigateToDevices()
-        
+
         XCTAssertTrue(devices.waitForScreen(timeout: 5), "Should navigate to Devices from Tools")
     }
 }

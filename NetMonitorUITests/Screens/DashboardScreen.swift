@@ -67,17 +67,26 @@ final class DashboardScreen: BaseScreen {
     
     func startMonitoring() {
         if monitoringToggleButton.exists && monitoringToggleButton.label.contains("Start") {
-            monitoringToggleButton.tap()
+            tapElement(monitoringToggleButton)
         } else if startMonitoringButton.exists {
-            startMonitoringButton.tap()
+            tapElement(startMonitoringButton)
         }
     }
-    
+
     func stopMonitoring() {
         if monitoringToggleButton.exists && monitoringToggleButton.label.contains("Stop") {
-            monitoringToggleButton.tap()
+            tapElement(monitoringToggleButton)
         } else if stopMonitoringButton.exists {
-            stopMonitoringButton.tap()
+            tapElement(stopMonitoringButton)
+        }
+    }
+
+    /// Tap an element, falling back to coordinate-based tap if not hittable.
+    private func tapElement(_ element: XCUIElement) {
+        if element.isHittable {
+            element.tap()
+        } else {
+            element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         }
     }
     
