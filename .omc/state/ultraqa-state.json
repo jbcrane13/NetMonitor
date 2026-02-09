@@ -1,0 +1,12 @@
+{
+  "active": false,
+  "iteration": 1,
+  "max_iterations": 5,
+  "current_phase": "cycle-1-complete",
+  "task_description": "Complete end-to-end release testing of NetMonitor app for 1.0 App Store release.",
+  "_meta": {
+    "mode": "ultraqa",
+    "updatedAt": "2026-02-07T19:18:26.629Z",
+    "updatedBy": "state_write_tool"
+  }
+}

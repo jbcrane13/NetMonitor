@@ -1,0 +1,344 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1770477672473,
+  "projectRoot": "/Users/blake/Projects/NetMonitor",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs",
+      "scripts"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "Documentation": {
+      "path": "Documentation",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1770477672463,
+      "keyFiles": [
+        "UI-AUTOMATION-STRATEGY.md"
+      ]
+    },
+    "NetMonitor": {
+      "path": "NetMonitor",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1770477672463,
+      "keyFiles": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "ContentView.swift",
+        "Info.plist",
+        "NetMonitor.entitlements"
+      ]
+    },
+    "NetMonitor.xcodeproj": {
+      "path": "NetMonitor.xcodeproj",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1770477672463,
+      "keyFiles": [
+        "CLAUDE.md",
+        "project.pbxproj"
+      ]
+    },
+    "NetMonitorShared": {
+      "path": "NetMonitorShared",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1770477672463,
+      "keyFiles": [
+        "AGENTS.md",
+        "Package.swift"
+      ]
+    },
+    "NetMonitorTests": {
+      "path": "NetMonitorTests",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1770477672463,
+      "keyFiles": [
+        "AGENTS.md",
+        "NetMonitorTests.swift"
+      ]
+    },
+    "NetMonitorUITests": {
+      "path": "NetMonitorUITests",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1770477672463,
+      "keyFiles": [
+        "AGENTS.md",
+        "NetMonitorUITests.swift",
+        "NetMonitorUITestsLaunchTests.swift"
+      ]
+    },
+    "Screenshots": {
+      "path": "Screenshots",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1770477672464,
+      "keyFiles": [
+        "01-full-screen.png",
+        "02-dashboard-clean.png",
+        "03-targets.png",
+        "04-targets.png",
+        "05-monitoring-active.png"
+      ]
+    },
+    "build": {
+      "path": "build",
+      "purpose": "Build output",
+      "fileCount": 1,
+      "lastAccessed": 1770477672464,
+      "keyFiles": []
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 7,
+      "lastAccessed": 1770477672464,
+      "keyFiles": [
+        "AGENTS.md",
+        "AppStore-Metadata.md",
+        "Companion-Protocol-API.md",
+        "NetMonitor for macOS - Product Requirements Document.md",
+        "PHASE1-COMPLETE.md"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 4,
+      "lastAccessed": 1770477672464,
+      "keyFiles": [
+        "fix_ui_test_auth.sh",
+        "manual_ui_check.sh",
+        "prepare_ui_tests.sh",
+        "run_ui_tests.sh"
+      ]
+    },
+    "NetMonitor/Models": {
+      "path": "NetMonitor/Models",
+      "purpose": "Data models",
+      "fileCount": 7,
+      "lastAccessed": 1770477672464,
+      "keyFiles": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "LocalDevice.swift"
+      ]
+    },
+    "NetMonitorShared/build": {
+      "path": "NetMonitorShared/build",
+      "purpose": "Build output",
+      "fileCount": 0,
+      "lastAccessed": 1770477672464,
+      "keyFiles": []
+    },
+    "NetMonitorTests/Services": {
+      "path": "NetMonitorTests/Services",
+      "purpose": "Business logic services",
+      "fileCount": 19,
+      "lastAccessed": 1770477672464,
+      "keyFiles": [
+        "AGENTS.md",
+        "ARPScannerServiceTests.swift",
+        "BonjourDiscoveryServiceTests.swift"
+      ]
+    },
+    "NetMonitorUITests/Helpers": {
+      "path": "NetMonitorUITests/Helpers",
+      "purpose": "Helper functions",
+      "fileCount": 2,
+      "lastAccessed": 1770477672464,
+      "keyFiles": [
+        "BaseScreen.swift",
+        "BaseUITests.swift"
+      ]
+    },
+    "NetMonitorUITests/Tests": {
+      "path": "NetMonitorUITests/Tests",
+      "purpose": "Test files",
+      "fileCount": 8,
+      "lastAccessed": 1770477672464,
+      "keyFiles": [
+        "DashboardUITests.swift",
+        "DevicesUITests.swift",
+        "ExportUITests.swift"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "NetMonitor/Views/ToolsView.swift",
+      "accessCount": 6,
+      "lastAccessed": 1770491706126,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/Tools/TracerouteToolView.swift",
+      "accessCount": 5,
+      "lastAccessed": 1770491717149,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/TargetsView.swift",
+      "accessCount": 2,
+      "lastAccessed": 1770478299884,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/DevicesView.swift",
+      "accessCount": 2,
+      "lastAccessed": 1770478300847,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/SettingsView.swift",
+      "accessCount": 2,
+      "lastAccessed": 1770478301120,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/QuickStatsBar.swift",
+      "accessCount": 2,
+      "lastAccessed": 1770483207119,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/Tools/PingToolView.swift",
+      "accessCount": 2,
+      "lastAccessed": 1770490605103,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/ContentView.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478298237,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/NetMonitorApp.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478298679,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/DashboardView.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478299017,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/SidebarView.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478299474,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/Tools/PortScannerToolView.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478307341,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/Tools/DNSLookupToolView.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478307863,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/Tools/WHOISToolView.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478308383,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/Tools/SpeedTestToolView.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478308809,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/Tools/BonjourBrowserToolView.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478309443,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/Tools/WakeOnLanToolView.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478310135,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/AddTargetSheet.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478316647,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/DeviceDetailView.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478317553,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/ConnectionInfoCard.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478317598,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/GatewayInfoCard.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478318106,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Views/ISPInfoCard.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770478318363,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor/Services/MonitoringSession.swift",
+      "accessCount": 1,
+      "lastAccessed": 1770483207664,
+      "type": "file"
+    },
+    {
+      "path": "NetMonitor",
+      "accessCount": 1,
+      "lastAccessed": 1770483283973,
+      "type": "directory"
+    }
+  ],
+  "userDirectives": []
+}

@@ -1,0 +1,11 @@
+{"t":0,"agent":"system","event":"keyword_detected","keyword":"autopilot"}
+{"t":0,"agent":"system","event":"mode_change","mode_from":"none","mode_to":"autopilot"}
+{"t":0,"agent":"a091f60","agent_type":"unknown","event":"agent_stop","success":true}
+{"t":0,"agent":"af599ce","agent_type":"unknown","event":"agent_stop","success":true}
+{"t":0,"agent":"a907b75","agent_type":"unknown","event":"agent_stop","success":true}
+{"t":0,"agent":"ac2f870","agent_type":"unknown","event":"agent_stop","success":true}
+{"t":0,"agent":"a3a5135","agent_type":"executor-low","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a2687ea","agent_type":"executor-low","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a3a5135","agent_type":"executor-low","event":"agent_stop","success":true,"duration_ms":12022}
+{"t":0,"agent":"a2687ea","agent_type":"executor-low","event":"agent_stop","success":true,"duration_ms":24414}
+{"t":0,"agent":"a51a52a","agent_type":"unknown","event":"agent_stop","success":true}
