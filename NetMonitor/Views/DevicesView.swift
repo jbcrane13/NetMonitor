@@ -568,7 +568,8 @@ struct DevicePortScanSheet: View {
     }
 
     private func checkPort(port: Int) async -> Bool {
-        await withCheckedContinuation { continuation in
+        let ipAddress = device.ipAddress
+        return await withCheckedContinuation { continuation in
             let queue = DispatchQueue(label: "com.netmonitor.portscan")
             queue.async {
                 var hints = addrinfo()
@@ -578,7 +579,7 @@ struct DevicePortScanSheet: View {
 
                 var result: UnsafeMutablePointer<addrinfo>?
                 let portString = String(port)
-                let resolveStatus = getaddrinfo(device.ipAddress, portString, &hints, &result)
+                let resolveStatus = getaddrinfo(ipAddress, portString, &hints, &result)
 
                 guard resolveStatus == 0, let addrInfo = result else {
                     continuation.resume(returning: false)

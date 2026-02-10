@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import os
 
 @main
 struct NetMonitorApp: App {
@@ -69,8 +70,8 @@ struct NetMonitorApp: App {
             )
         } catch {
             // Fall back to in-memory container if persistent storage fails
-            print("Warning: Could not create persistent ModelContainer: \(error)")
-            print("Falling back to in-memory storage")
+            Logger.app.warning("Could not create persistent ModelContainer: \(error)")
+            Logger.app.warning("Falling back to in-memory storage")
 
             do {
                 let inMemoryConfig = ModelConfiguration(
@@ -206,7 +207,7 @@ struct NetMonitorApp: App {
                     return nil
                 }
             } catch {
-                print("Failed to start companion service: \(error)")
+                Logger.app.error("Failed to start companion service: \(error)")
             }
         }
 

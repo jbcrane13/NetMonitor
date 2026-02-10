@@ -29,7 +29,7 @@ enum NetworkTool: String, CaseIterable, Identifiable {
         case .whois: return "doc.text.magnifyingglass"
         case .speedTest: return "speedometer"
         case .bonjourBrowser: return "bonjour"
-        case .wakeOnLan: return "wake"
+        case .wakeOnLan: return "power"
         }
     }
 

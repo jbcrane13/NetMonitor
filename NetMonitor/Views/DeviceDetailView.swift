@@ -7,7 +7,7 @@ import os
 struct DeviceDetailView: View {
     @Bindable var device: LocalDevice
     @Environment(\.modelContext) private var modelContext
-    @Environment(DeviceDiscoveryCoordinator.self) private var discoveryCoordinator
+    @Environment(DeviceDiscoveryCoordinator.self) private var discoveryCoordinator: DeviceDiscoveryCoordinator?
 
     @State private var isEditing = false
     @State private var editedName: String = ""
@@ -397,6 +397,7 @@ struct DeviceDetailView: View {
 
     private func loadBonjourServices() async {
         // Get cached Bonjour services from the last discovery scan
+        guard let discoveryCoordinator else { return }
         let cachedServices = await discoveryCoordinator.bonjourScanner.discoveredServices
         let deviceServices = cachedServices.filter { service in
             service.ipAddress == device.ipAddress

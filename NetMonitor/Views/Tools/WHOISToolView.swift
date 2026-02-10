@@ -294,6 +294,7 @@ struct WHOISToolView: View {
                 Button("Clear") {
                     output = ""
                     errorMessage = nil
+                    parsedInfo = nil
                 }
                 .accessibilityIdentifier("whois_button_clear")
             }

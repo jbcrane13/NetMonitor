@@ -283,8 +283,14 @@ final class MonitoringSession {
 
     @MainActor
     private func pruneOldMeasurements() {
-        let retentionDays = UserDefaults.standard.integer(forKey: "netmonitor.dataRetentionDays")
-        let days = retentionDays > 0 ? retentionDays : 30 // Default 30 days
+        let retentionValue = UserDefaults.standard.string(forKey: "netmonitor.data.historyRetention") ?? "7 days"
+        guard retentionValue != "Forever" else { return } // Skip pruning when Forever is selected
+        let days: Int
+        switch retentionValue {
+        case "1 day": days = 1
+        case "30 days": days = 30
+        default: days = 7 // Default 7 days
+        }
         let cutoffDate = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
 
         let descriptor = FetchDescriptor<TargetMeasurement>(

@@ -13,4 +13,5 @@ extension Logger {
     static let monitoring = Logger(subsystem: "com.netmonitor", category: "monitoring")
     static let data = Logger(subsystem: "com.netmonitor", category: "data")
     static let network = Logger(subsystem: "com.netmonitor", category: "network")
+    static let app = Logger(subsystem: "com.netmonitor", category: "app")
 }
