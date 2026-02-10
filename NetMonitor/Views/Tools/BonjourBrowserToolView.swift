@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct BonjourBrowserToolView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @State private var isScanning = false
     @State private var services: [BonjourService] = []
     @State private var selectedService: BonjourService?
     @State private var errorMessage: String?
+    @State private var browseTask: Task<Void, Never>?
 
     @State private var discoveryService = BonjourDiscoveryService()
 
@@ -25,46 +24,32 @@ struct BonjourBrowserToolView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            contentArea
-            Divider()
-            footer
-        }
-        .frame(minWidth: 600, minHeight: 500)
+        ToolSheetContainer(
+            title: "Bonjour Browser",
+            iconName: "bonjour",
+            closeAccessibilityID: "bonjour_button_close",
+            minWidth: 600,
+            minHeight: 500,
+            headerTrailing: {
+                Button {
+                    startScan()
+                } label: {
+                    Label("Refresh", systemImage: "arrow.clockwise")
+                }
+                .disabled(isScanning)
+                .accessibilityIdentifier("bonjour_button_refresh")
+            },
+            inputArea: { contentArea },
+            footerContent: { footer }
+        )
         .task {
             startScan()
         }
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        HStack {
-            Label("Bonjour Browser", systemImage: "bonjour")
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                startScan()
-            } label: {
-                Label("Refresh", systemImage: "arrow.clockwise")
-            }
-            .disabled(isScanning)
-            .accessibilityIdentifier("bonjour_button_refresh")
-
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("bonjour_button_close")
+        .onDisappear {
+            browseTask?.cancel()
+            browseTask = nil
+            Task { await discoveryService.stopDiscovery() }
         }
-        .padding()
     }
 
     // MARK: - Content Area
@@ -283,7 +268,7 @@ struct BonjourBrowserToolView: View {
         selectedService = nil
         errorMessage = nil
 
-        Task {
+        browseTask = Task {
             await discoveryService.startDiscovery()
 
             // Wait for discovery to populate services

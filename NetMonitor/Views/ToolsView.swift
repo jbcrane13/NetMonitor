@@ -45,15 +45,6 @@ enum NetworkTool: String, CaseIterable, Identifiable {
         case .wakeOnLan: return "Wake network devices"
         }
     }
-
-    var isComplex: Bool {
-        switch self {
-        case .portScanner, .speedTest, .bonjourBrowser:
-            return true
-        default:
-            return false
-        }
-    }
 }
 
 struct ToolsView: View {
@@ -77,13 +68,8 @@ struct ToolsView: View {
             .padding()
         }
         .navigationTitle("Network Tools")
-        .sheet(isPresented: Binding(
-            get: { selectedTool != nil },
-            set: { if !$0 { selectedTool = nil } }
-        )) {
-            if let tool = selectedTool {
-                toolSheet(for: tool)
-            }
+        .sheet(item: $selectedTool) { tool in
+            toolSheet(for: tool)
         }
     }
 
@@ -92,28 +78,20 @@ struct ToolsView: View {
         switch tool {
         case .ping:
             PingToolView()
-                .frame(minWidth: 500, minHeight: 400)
         case .traceroute:
             TracerouteToolView()
-                .frame(minWidth: 500, minHeight: 400)
         case .portScanner:
             PortScannerToolView()
-                .frame(minWidth: 600, minHeight: 500)
         case .dnsLookup:
             DNSLookupToolView()
-                .frame(minWidth: 500, minHeight: 400)
         case .whois:
             WHOISToolView()
-                .frame(minWidth: 500, minHeight: 400)
         case .speedTest:
             SpeedTestToolView()
-                .frame(minWidth: 600, minHeight: 500)
         case .bonjourBrowser:
             BonjourBrowserToolView()
-                .frame(minWidth: 600, minHeight: 500)
         case .wakeOnLan:
             WakeOnLanToolView()
-                .frame(minWidth: 500, minHeight: 400)
         }
     }
 }

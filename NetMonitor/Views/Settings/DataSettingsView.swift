@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
+import os
 
 enum HistoryRetention: String, CaseIterable {
     case oneDay = "1 day"
@@ -99,7 +100,7 @@ struct DataSettingsView: View {
             exportURL = exportFile
             showExportDialog = true
         } catch {
-            print("Export failed: \(error)")
+            Logger.data.error("Export failed: \(error, privacy: .public)")
         }
     }
 
@@ -111,7 +112,7 @@ struct DataSettingsView: View {
             try modelContext.delete(model: SessionRecord.self)
             try modelContext.save()
         } catch {
-            print("Failed to clear data: \(error)")
+            Logger.data.error("Failed to clear data: \(error, privacy: .public)")
         }
     }
 }

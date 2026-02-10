@@ -27,8 +27,6 @@ enum PortPreset: String, CaseIterable {
 }
 
 struct PortScannerToolView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @State private var host = ""
     @State private var preset: PortPreset = .common
     @State private var customPorts = ""
@@ -39,37 +37,20 @@ struct PortScannerToolView: View {
     @State private var errorMessage: String?
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            inputArea
-            Divider()
-            outputArea
-            Divider()
-            footer
+        ToolSheetContainer(
+            title: "Port Scanner",
+            iconName: "network",
+            closeAccessibilityID: "portscan_button_close",
+            minWidth: 600,
+            minHeight: 500,
+            inputArea: { inputArea },
+            outputArea: { outputArea },
+            footerContent: { footer }
+        )
+        .onDisappear {
+            scanTask?.cancel()
+            scanTask = nil
         }
-        .frame(minWidth: 600, minHeight: 500)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        HStack {
-            Label("Port Scanner", systemImage: "network")
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("portscan_button_close")
-        }
-        .padding()
     }
 
     // MARK: - Input Area

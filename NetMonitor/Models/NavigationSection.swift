@@ -1,6 +1,6 @@
 import Foundation
 
-enum Section: String, CaseIterable, Identifiable {
+enum NavigationSection: String, CaseIterable, Identifiable {
     case dashboard = "Dashboard"
     case targets = "Targets"
     case devices = "Devices"

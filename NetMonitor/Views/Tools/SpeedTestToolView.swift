@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct SpeedTestToolView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @State private var isRunning = false
     @State private var phase: SpeedTestPhase = .idle
     @State private var pingLatency: Double?
@@ -28,35 +26,19 @@ struct SpeedTestToolView: View {
     private let uploadURL = URL(string: "https://speed.cloudflare.com/__up")! // Upload endpoint
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            contentArea
-            Divider()
-            footer
+        ToolSheetContainer(
+            title: "Speed Test",
+            iconName: "speedometer",
+            closeAccessibilityID: "speedtest_button_close",
+            minWidth: 600,
+            minHeight: 500,
+            inputArea: { contentArea },
+            footerContent: { footer }
+        )
+        .onDisappear {
+            speedTestTask?.cancel()
+            speedTestTask = nil
         }
-        .frame(minWidth: 600, minHeight: 500)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        HStack {
-            Label("Speed Test", systemImage: "speedometer")
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("speedtest_button_close")
-        }
-        .padding()
     }
 
     // MARK: - Content Area

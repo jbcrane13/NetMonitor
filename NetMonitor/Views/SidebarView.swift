@@ -2,12 +2,12 @@ import SwiftUI
 import SwiftData
 
 struct SidebarView: View {
-    @Binding var selection: Section?
+    @Binding var selection: NavigationSection?
     @Environment(MonitoringSession.self) private var monitoringSession: MonitoringSession?
     @Query private var targets: [NetworkTarget]
 
     var body: some View {
-        List(Section.allCases, selection: $selection) { section in
+        List(NavigationSection.allCases, selection: $selection) { section in
             HStack {
                 Label(section.rawValue, systemImage: section.iconName)
                     .accessibilityIdentifier("sidebar_\(section.rawValue.lowercased())")
@@ -31,7 +31,7 @@ struct SidebarView: View {
         .accessibilityIdentifier("sidebar_navigation")
     }
 
-    private func badgeText(for section: Section) -> String? {
+    private func badgeText(for section: NavigationSection) -> String? {
         switch section {
         case .dashboard, .targets:
             guard let monitoringSession else { return nil }
@@ -45,7 +45,7 @@ struct SidebarView: View {
         }
     }
 
-    private func badgeColor(for section: Section) -> Color {
+    private func badgeColor(for section: NavigationSection) -> Color {
         switch section {
         case .dashboard, .targets:
             guard let monitoringSession else { return .gray }
@@ -60,7 +60,7 @@ struct SidebarView: View {
 }
 
 #Preview {
-    @Previewable @State var selection: Section? = .dashboard
+    @Previewable @State var selection: NavigationSection? = .dashboard
 
     SidebarView(selection: $selection)
 }

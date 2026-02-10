@@ -54,12 +54,7 @@ struct NetMonitorApp: App {
     }
 
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            NetworkTarget.self,
-            TargetMeasurement.self,
-            LocalDevice.self,
-            SessionRecord.self
-        ])
+        let schema = Schema(versionedSchema: SchemaV1.self)
         let modelConfiguration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
@@ -67,9 +62,25 @@ struct NetMonitorApp: App {
         )
 
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            return try ModelContainer(
+                for: schema,
+                migrationPlan: NetMonitorMigrationPlan.self,
+                configurations: [modelConfiguration]
+            )
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            // Fall back to in-memory container if persistent storage fails
+            print("Warning: Could not create persistent ModelContainer: \(error)")
+            print("Falling back to in-memory storage")
+
+            do {
+                let inMemoryConfig = ModelConfiguration(
+                    schema: schema,
+                    isStoredInMemoryOnly: true
+                )
+                return try ModelContainer(for: schema, configurations: [inMemoryConfig])
+            } catch {
+                fatalError("Could not create in-memory ModelContainer: \(error)")
+            }
         }
     }()
 

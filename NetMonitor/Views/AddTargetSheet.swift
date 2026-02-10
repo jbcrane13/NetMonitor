@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import NetMonitorShared
+import os
 
 struct AddTargetSheet: View {
     @Environment(\.dismiss) private var dismiss
@@ -106,7 +107,11 @@ struct AddTargetSheet: View {
         )
 
         modelContext.insert(target)
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            Logger.data.error("Failed to save new target: \(error)")
+        }
     }
 }
 

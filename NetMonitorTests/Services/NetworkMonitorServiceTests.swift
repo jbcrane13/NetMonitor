@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import NetMonitor
 
@@ -19,14 +20,17 @@ actor MockNetworkMonitorService: NetworkMonitorService {
     var mockLatency: Double = 10.0
     var shouldFail: Bool = false
 
-    func check(target: NetworkTarget) async throws -> TargetMeasurement {
+    func check(request: TargetCheckRequest) async throws -> MeasurementResult {
         if shouldFail {
             throw NetworkMonitorError.timeout
         }
 
-        return TargetMeasurement(
+        return MeasurementResult(
+            targetID: request.id,
+            timestamp: Date(),
             latency: mockLatency,
-            isReachable: true
+            isReachable: true,
+            errorMessage: nil
         )
     }
 }

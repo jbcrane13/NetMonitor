@@ -341,6 +341,10 @@ struct DevicePingSheet: View {
                 runPing()
             }
         }
+        .onDisappear {
+            pingTask?.cancel()
+            pingTask = nil
+        }
     }
 
     private func runPing() {
@@ -389,6 +393,7 @@ struct DevicePortScanSheet: View {
     @State private var portScanResults: [(port: Int, name: String, isOpen: Bool)] = []
     @State private var isScanning = false
     @State private var scanProgress: Double = 0.0
+    @State private var scanTask: Task<Void, Never>?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -508,6 +513,10 @@ struct DevicePortScanSheet: View {
                 runPortScan()
             }
         }
+        .onDisappear {
+            scanTask?.cancel()
+            scanTask = nil
+        }
     }
 
     private func runPortScan() {
@@ -538,7 +547,7 @@ struct DevicePortScanSheet: View {
             (27017, "MongoDB")
         ]
 
-        Task {
+        scanTask = Task {
             for (index, portInfo) in commonPorts.enumerated() {
                 guard isScanning else { break }
 
@@ -613,6 +622,8 @@ struct DevicePortScanSheet: View {
     }
 
     private func stopPortScan() {
+        scanTask?.cancel()
+        scanTask = nil
         isScanning = false
     }
 }

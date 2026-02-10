@@ -9,7 +9,6 @@ import SwiftUI
 import SwiftData
 
 struct WakeOnLanToolView: View {
-    @Environment(\.dismiss) private var dismiss
     @Query private var devices: [LocalDevice]
 
     @State private var selectedDeviceID: UUID?
@@ -18,6 +17,7 @@ struct WakeOnLanToolView: View {
     @State private var isSending = false
     @State private var resultMessage: String?
     @State private var isError = false
+    @State private var wakeTask: Task<Void, Never>?
 
     private let wakeService = WakeOnLanService()
 
@@ -31,42 +31,18 @@ struct WakeOnLanToolView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            header
-
-            Divider()
-
-            // Input area
-            inputArea
-
-            Divider()
-
-            // Footer
-            footer
+        ToolSheetContainer(
+            title: "Wake on LAN",
+            iconName: "power",
+            closeAccessibilityID: "wol_button_close",
+            minHeight: 300,
+            inputArea: { inputArea },
+            footerContent: { footer }
+        )
+        .onDisappear {
+            wakeTask?.cancel()
+            wakeTask = nil
         }
-        .frame(minWidth: 500, minHeight: 300)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        HStack {
-            Label("Wake on LAN", systemImage: "power")
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("wol_button_close")
-        }
-        .padding()
     }
 
     // MARK: - Input Area
@@ -187,9 +163,9 @@ struct WakeOnLanToolView: View {
         resultMessage = nil
         isError = false
 
-        Task {
+        wakeTask = Task {
             do {
-                try await wakeService.wake(macAddress: macAddress)
+                try await wakeService.wake(macAddress: macAddress, broadcastAddress: broadcastAddress)
 
                 await MainActor.run {
                     resultMessage = "Magic packet sent successfully to \(macAddress)"

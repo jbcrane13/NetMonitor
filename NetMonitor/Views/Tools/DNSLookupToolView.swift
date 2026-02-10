@@ -20,48 +20,28 @@ enum DNSRecordType: String, CaseIterable {
 }
 
 struct DNSLookupToolView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @State private var hostname = ""
     @State private var recordType: DNSRecordType = .a
     @State private var isRunning = false
     @State private var results: [String] = []
     @State private var errorMessage: String?
+    @State private var lookupTask: Task<Void, Never>?
 
     private let runner = ShellCommandRunner()
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            inputArea
-            Divider()
-            outputArea
-            Divider()
-            footer
+        ToolSheetContainer(
+            title: "DNS Lookup",
+            iconName: "magnifyingglass",
+            closeAccessibilityID: "dns_button_close",
+            inputArea: { inputArea },
+            outputArea: { outputArea },
+            footerContent: { footer }
+        )
+        .onDisappear {
+            lookupTask?.cancel()
+            lookupTask = nil
         }
-        .frame(minWidth: 500, minHeight: 400)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        HStack {
-            Label("DNS Lookup", systemImage: "magnifyingglass")
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("dns_button_close")
-        }
-        .padding()
     }
 
     // MARK: - Input Area
@@ -199,7 +179,7 @@ struct DNSLookupToolView: View {
         results.removeAll()
         errorMessage = nil
 
-        Task {
+        lookupTask = Task {
             do {
                 let output = try await runner.run(
                     "/usr/bin/dig",

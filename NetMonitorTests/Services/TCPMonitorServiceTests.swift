@@ -10,20 +10,20 @@ struct TCPMonitorServiceTests {
         let service = TCPMonitorService()
 
         // Use a commonly open port (HTTPS on Google)
-        let target = NetworkTarget(
-            name: "Google HTTPS",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "www.google.com",
             port: 443,
             targetProtocol: .tcp,
             timeout: 5.0
         )
 
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
 
-        #expect(measurement.isReachable == true)
-        #expect(measurement.latency != nil)
-        #expect(measurement.latency! > 0)
-        #expect(measurement.errorMessage == nil)
+        #expect(result.isReachable == true)
+        #expect(result.latency != nil)
+        #expect(result.latency! > 0)
+        #expect(result.errorMessage == nil)
     }
 
     @Test("TCP monitor handles closed port")
@@ -31,34 +31,35 @@ struct TCPMonitorServiceTests {
         let service = TCPMonitorService()
 
         // Use a commonly closed port
-        let target = NetworkTarget(
-            name: "Google Closed Port",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "www.google.com",
             port: 12345,
             targetProtocol: .tcp,
             timeout: 3.0
         )
 
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
 
-        #expect(measurement.isReachable == false)
-        #expect(measurement.errorMessage != nil)
+        #expect(result.isReachable == false)
+        #expect(result.errorMessage != nil)
     }
 
     @Test("TCP monitor requires port number")
     func checkRequiresPort() async throws {
         let service = TCPMonitorService()
 
-        // Create target without port
-        let target = NetworkTarget(
-            name: "No Port",
+        // Create request without port
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "www.google.com",
+            port: nil,
             targetProtocol: .tcp,
             timeout: 3.0
         )
 
         await #expect(throws: NetworkMonitorError.self) {
-            _ = try await service.check(target: target)
+            _ = try await service.check(request: request)
         }
     }
 
@@ -67,18 +68,18 @@ struct TCPMonitorServiceTests {
         let service = TCPMonitorService()
 
         // Use a non-existent domain
-        let target = NetworkTarget(
-            name: "Invalid",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "this-domain-definitely-does-not-exist-12345.com",
             port: 80,
             targetProtocol: .tcp,
             timeout: 2.0
         )
 
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
 
-        #expect(measurement.isReachable == false)
-        #expect(measurement.errorMessage != nil)
+        #expect(result.isReachable == false)
+        #expect(result.errorMessage != nil)
     }
 
     @Test("TCP monitor respects timeout")
@@ -86,8 +87,8 @@ struct TCPMonitorServiceTests {
         let service = TCPMonitorService()
 
         // Use a non-routable IP to force timeout
-        let target = NetworkTarget(
-            name: "Timeout Test",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "10.255.255.1",
             port: 80,
             targetProtocol: .tcp,
@@ -95,12 +96,12 @@ struct TCPMonitorServiceTests {
         )
 
         let startTime = Date()
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
         let duration = Date().timeIntervalSince(startTime)
 
-        #expect(measurement.isReachable == false)
+        #expect(result.isReachable == false)
         #expect(duration < 2.0)  // Should timeout within reasonable time
-        #expect(measurement.errorMessage != nil)
+        #expect(result.errorMessage != nil)
     }
 
     @Test("TCP monitor handles localhost connection")
@@ -108,18 +109,18 @@ struct TCPMonitorServiceTests {
         let service = TCPMonitorService()
 
         // Port 22 (SSH) is commonly open on macOS
-        let target = NetworkTarget(
-            name: "Localhost SSH",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "127.0.0.1",
             port: 22,
             targetProtocol: .tcp,
             timeout: 2.0
         )
 
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
 
         // May be reachable or not depending on system config
         // We just verify it returns a valid measurement
-        #expect(measurement.latency == nil || measurement.latency! >= 0)
+        #expect(result.latency == nil || result.latency! >= 0)
     }
 }

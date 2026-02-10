@@ -76,7 +76,7 @@ struct ConnectionInfoCard: View {
                             .padding(.horizontal, 8)
                             .padding(.vertical, 2)
                             .background(.quaternary)
-                            .cornerRadius(4)
+                            .clipShape(RoundedRectangle(cornerRadius: 4))
                     }
 
                     // Signal Strength (WiFi only)
@@ -109,7 +109,7 @@ struct ConnectionInfoCard: View {
         }
         .padding()
         .background(.ultraThinMaterial)
-        .cornerRadius(12)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
         .task {
             await loadConnectionInfo()
         }

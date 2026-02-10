@@ -8,59 +8,28 @@
 import SwiftUI
 
 struct PingToolView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @State private var host = ""
     @State private var count = 5
     @State private var isRunning = false
     @State private var output: [String] = []
     @State private var summary: PingResult?
     @State private var errorMessage: String?
-
-    private let pingService = ProcessPingService()
+    @State private var pingTask: Task<Void, Never>?
+    @State private var pingService = ProcessPingService()
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            header
-
-            Divider()
-
-            // Input area
-            inputArea
-
-            Divider()
-
-            // Output area
-            outputArea
-
-            Divider()
-
-            // Footer
-            footer
+        ToolSheetContainer(
+            title: "Ping",
+            iconName: "waveform.path",
+            closeAccessibilityID: "ping_button_close",
+            inputArea: { inputArea },
+            outputArea: { outputArea },
+            footerContent: { footer }
+        )
+        .onDisappear {
+            pingTask?.cancel()
+            pingTask = nil
         }
-        .frame(minWidth: 500, minHeight: 400)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        HStack {
-            Label("Ping", systemImage: "waveform.path")
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("ping_button_close")
-        }
-        .padding()
     }
 
     // MARK: - Input Area
@@ -196,11 +165,11 @@ struct PingToolView: View {
 
         output.append("PING \(host) (\(count) packets)...")
 
-        Task {
+        pingTask = Task {
             do {
                 var latencies: [Double] = []
                 var received = 0
-                
+
                 for try await line in await pingService.pingStream(host: host, count: count) {
                     await MainActor.run {
                         if let latency = line.latency {

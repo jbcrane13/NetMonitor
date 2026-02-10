@@ -4,10 +4,10 @@ import Foundation
 /// Implementations must be actors for thread safety
 protocol NetworkMonitorService: Actor {
     /// Check a network target and return measurement result
-    /// - Parameter target: The target to check
-    /// - Returns: Measurement result with latency and reachability
+    /// - Parameter request: Sendable DTO with target parameters (extracted from NetworkTarget on @MainActor)
+    /// - Returns: Sendable measurement result DTO
     /// - Throws: NetworkMonitorError for unrecoverable failures
-    func check(target: NetworkTarget) async throws -> TargetMeasurement
+    func check(request: TargetCheckRequest) async throws -> MeasurementResult
 }
 
 /// Errors that can occur during network monitoring

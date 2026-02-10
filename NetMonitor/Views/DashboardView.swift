@@ -47,7 +47,7 @@ struct DashboardView: View {
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(.orange.opacity(0.1))
-                    .cornerRadius(8)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .padding(.horizontal)
                 }
 
@@ -164,7 +164,7 @@ struct TargetStatusCard: View {
         }
         .padding()
         .background(.ultraThinMaterial)
-        .cornerRadius(12)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private var statusColor: Color {

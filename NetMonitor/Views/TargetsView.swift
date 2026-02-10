@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import os
 
 struct TargetsView: View {
     @Environment(\.modelContext) private var modelContext
@@ -51,7 +52,11 @@ struct TargetsView: View {
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button {
                                     target.isEnabled.toggle()
-                                    try? modelContext.save()
+                                    do {
+                                        try modelContext.save()
+                                    } catch {
+                                        Logger.data.error("Failed to save target enabled state: \(error)")
+                                    }
                                 } label: {
                                     Label(target.isEnabled ? "Disable" : "Enable",
                                           systemImage: target.isEnabled ? "pause.circle" : "play.circle")
@@ -126,7 +131,7 @@ struct TargetsView: View {
         do {
             try modelContext.save()
         } catch {
-            print("Error deleting targets: \(error)")
+            Logger.data.error("Error deleting targets: \(error, privacy: .public)")
         }
     }
 
@@ -141,7 +146,7 @@ struct TargetsView: View {
         do {
             try modelContext.save()
         } catch {
-            print("Error deleting target: \(error)")
+            Logger.data.error("Error deleting target: \(error, privacy: .public)")
         }
     }
 }

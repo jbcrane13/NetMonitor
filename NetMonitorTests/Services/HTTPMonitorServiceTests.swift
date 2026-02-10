@@ -9,36 +9,38 @@ struct HTTPMonitorServiceTests {
     func checkReachableTarget() async throws {
         let service = HTTPMonitorService()
 
-        let target = NetworkTarget(
-            name: "Google",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "www.google.com",
+            port: nil,
             targetProtocol: .https,
             timeout: 5.0
         )
 
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
 
-        #expect(measurement.isReachable == true)
-        #expect(measurement.latency != nil)
-        #expect(measurement.latency! > 0)
-        #expect(measurement.errorMessage == nil)
+        #expect(result.isReachable == true)
+        #expect(result.latency != nil)
+        #expect(result.latency! > 0)
+        #expect(result.errorMessage == nil)
     }
 
     @Test("HTTP monitor handles unreachable target")
     func checkUnreachableTarget() async throws {
         let service = HTTPMonitorService()
 
-        let target = NetworkTarget(
-            name: "Invalid",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "this-domain-definitely-does-not-exist-12345.com",
+            port: nil,
             targetProtocol: .https,
             timeout: 2.0
         )
 
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
 
-        #expect(measurement.isReachable == false)
-        #expect(measurement.errorMessage != nil)
+        #expect(result.isReachable == false)
+        #expect(result.errorMessage != nil)
     }
 
     @Test("HTTP monitor respects timeout")
@@ -46,8 +48,8 @@ struct HTTPMonitorServiceTests {
         let service = HTTPMonitorService()
 
         // Use a non-routable IP to force timeout
-        let target = NetworkTarget(
-            name: "Timeout Test",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "10.255.255.1",
             port: 80,
             targetProtocol: .http,
@@ -55,10 +57,10 @@ struct HTTPMonitorServiceTests {
         )
 
         let startTime = Date()
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
         let duration = Date().timeIntervalSince(startTime)
 
-        #expect(measurement.isReachable == false)
+        #expect(result.isReachable == false)
         #expect(duration < 2.0)  // Should timeout within reasonable time
     }
 }

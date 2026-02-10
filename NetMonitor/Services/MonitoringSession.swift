@@ -1,5 +1,23 @@
 import Foundation
 import SwiftData
+import os
+
+// MARK: - Service Provider Protocol
+
+/// Protocol for providing monitor service instances
+/// Enables dependency injection and testability for MonitoringSession
+protocol MonitorServiceProviding: Sendable {
+    func createHTTPService() -> HTTPMonitorService
+    func createTCPService() -> TCPMonitorService
+    func createICMPService() -> ICMPMonitorService
+}
+
+/// Default implementation that creates standard service instances
+struct DefaultMonitorServiceProvider: MonitorServiceProviding {
+    func createHTTPService() -> HTTPMonitorService { HTTPMonitorService() }
+    func createTCPService() -> TCPMonitorService { TCPMonitorService() }
+    func createICMPService() -> ICMPMonitorService { ICMPMonitorService() }
+}
 
 /// Main-actor bound monitoring session coordinator
 /// Manages active monitoring and publishes results to the UI
@@ -24,6 +42,12 @@ final class MonitoringSession {
     /// Active monitoring tasks (for cancellation)
     private var monitoringTasks: [UUID: Task<Void, Never>] = [:]
 
+    /// Current session record for lifecycle tracking
+    private var currentSessionRecord: SessionRecord?
+
+    /// Timer for periodic measurement pruning
+    private var pruneTimer: Task<Void, Never>?
+
     // MARK: - Dependencies
 
     private let modelContext: ModelContext
@@ -33,6 +57,26 @@ final class MonitoringSession {
 
     // MARK: - Initialization
 
+    /// Initialize with a service provider (preferred)
+    /// - Parameters:
+    ///   - modelContext: SwiftData model context for persistence
+    ///   - serviceProvider: Provider for creating monitor services
+    init(
+        modelContext: ModelContext,
+        serviceProvider: MonitorServiceProviding = DefaultMonitorServiceProvider()
+    ) {
+        self.modelContext = modelContext
+        self.httpService = serviceProvider.createHTTPService()
+        self.icmpService = serviceProvider.createICMPService()
+        self.tcpService = serviceProvider.createTCPService()
+    }
+
+    /// Initialize with explicit service instances (backwards compatible)
+    /// - Parameters:
+    ///   - modelContext: SwiftData model context for persistence
+    ///   - httpService: HTTP/HTTPS monitoring service
+    ///   - icmpService: ICMP ping monitoring service
+    ///   - tcpService: TCP port monitoring service
     init(
         modelContext: ModelContext,
         httpService: HTTPMonitorService,
@@ -77,9 +121,27 @@ final class MonitoringSession {
         isMonitoring = true
         startTime = Date()
 
+        // Create session record
+        let sessionRecord = SessionRecord(startedAt: Date(), isActive: true)
+        currentSessionRecord = sessionRecord
+        modelContext.insert(sessionRecord)
+        do {
+            try modelContext.save()
+        } catch {
+            Logger.monitoring.error("Failed to save session record: \(error)")
+        }
+
         // Start monitoring each target
         for target in targets {
             startMonitoringTarget(target)
+        }
+
+        // Start periodic measurement pruning (hourly)
+        pruneTimer = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(3600))
+                await self?.pruneOldMeasurements()
+            }
         }
     }
 
@@ -88,6 +150,22 @@ final class MonitoringSession {
         guard isMonitoring else { return }
 
         isMonitoring = false
+
+        // Update session record
+        if let session = currentSessionRecord {
+            session.stoppedAt = Date()
+            session.isActive = false
+            do {
+                try modelContext.save()
+            } catch {
+                Logger.monitoring.error("Failed to save session stop: \(error)")
+            }
+            currentSessionRecord = nil
+        }
+
+        // Cancel pruning timer
+        pruneTimer?.cancel()
+        pruneTimer = nil
 
         // Cancel all monitoring tasks
         for task in monitoringTasks.values {
@@ -148,15 +226,31 @@ final class MonitoringSession {
                 tcpService
             }
 
-            // Perform check
+            // Extract Sendable DTO on @MainActor before crossing actor boundary
+            let request = TargetCheckRequest(
+                id: target.id,
+                host: target.host,
+                port: target.port,
+                targetProtocol: target.targetProtocol,
+                timeout: target.timeout
+            )
+
+            // Perform check across actor boundary with Sendable DTO
             do {
-                let measurement = try await service.check(target: target)
+                let result = try await service.check(request: request)
+
+                // Convert MeasurementResult back to TargetMeasurement on @MainActor
+                let measurement = TargetMeasurement(
+                    latency: result.latency,
+                    isReachable: result.isReachable,
+                    errorMessage: result.errorMessage
+                )
 
                 // Update latest results and save to SwiftData on main actor
                 await updateMeasurement(measurement, for: target)
 
             } catch {
-                // Handle errors by creating failed measurement
+                // Handle errors by creating failed measurement (already on @MainActor)
                 let failedMeasurement = TargetMeasurement(
                     latency: nil,
                     isReachable: false,
@@ -175,9 +269,39 @@ final class MonitoringSession {
     private func updateMeasurement(_ measurement: TargetMeasurement, for target: NetworkTarget) {
         // Update latest results dictionary
         latestResults[target.id] = measurement
-        
+
         // Save to SwiftData on main context
         target.measurements.append(measurement)
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            Logger.monitoring.error("Failed to save measurement: \(error)")
+        }
+    }
+
+    // MARK: - Measurement Pruning
+
+    @MainActor
+    private func pruneOldMeasurements() {
+        let retentionDays = UserDefaults.standard.integer(forKey: "netmonitor.dataRetentionDays")
+        let days = retentionDays > 0 ? retentionDays : 30 // Default 30 days
+        let cutoffDate = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+
+        let descriptor = FetchDescriptor<TargetMeasurement>(
+            predicate: #Predicate { $0.timestamp < cutoffDate }
+        )
+
+        do {
+            let oldMeasurements = try modelContext.fetch(descriptor)
+            for measurement in oldMeasurements {
+                modelContext.delete(measurement)
+            }
+            if !oldMeasurements.isEmpty {
+                try modelContext.save()
+                Logger.data.info("Pruned \(oldMeasurements.count) measurements older than \(days) days")
+            }
+        } catch {
+            Logger.data.error("Failed to prune measurements: \(error)")
+        }
     }
 }

@@ -2,10 +2,12 @@ import SwiftUI
 import SwiftData
 import NetMonitorShared
 import Darwin
+import os
 
 struct DeviceDetailView: View {
     @Bindable var device: LocalDevice
     @Environment(\.modelContext) private var modelContext
+    @Environment(DeviceDiscoveryCoordinator.self) private var discoveryCoordinator
 
     @State private var isEditing = false
     @State private var editedName: String = ""
@@ -15,21 +17,15 @@ struct DeviceDetailView: View {
 
     // Ping sheet state
     @State private var showPingSheet = false
-    @State private var pingResults: [String] = []
-    @State private var isPinging = false
-    @State private var pingTask: Task<Void, Never>?
 
     // Port scan sheet state
     @State private var showPortScanSheet = false
-    @State private var portScanResults: [(port: Int, name: String, isOpen: Bool)] = []
-    @State private var isScanning = false
-    @State private var scanProgress: Double = 0.0
 
     // Add to targets feedback
     @State private var showAddToTargetsAlert = false
     @State private var addToTargetsMessage = ""
 
-    // Bonjour services discovered for this device
+    // Bonjour services discovered for this device (loaded from cache)
     @State private var bonjourServices: [String] = []
 
     var body: some View {
@@ -392,27 +388,19 @@ struct DeviceDetailView: View {
         device.customName = editedName.isEmpty ? nil : editedName
         device.notes = editedNotes.isEmpty ? nil : editedNotes
         device.deviceType = selectedDeviceType
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            Logger.data.error("Failed to save device changes: \(error)")
+        }
     }
 
     private func loadBonjourServices() async {
-        // Create a Bonjour discovery service to check for services at this IP
-        let bonjourService = BonjourDiscoveryService()
-
-        // Start discovery and wait briefly to collect services
-        await bonjourService.startDiscovery()
-
-        // Wait 2 seconds for services to be discovered
-        try? await Task.sleep(for: .seconds(2))
-
-        // Get discovered services and filter by IP address
-        let discoveredServices = await bonjourService.discoveredServices
-        let deviceServices = discoveredServices.filter { service in
+        // Get cached Bonjour services from the last discovery scan
+        let cachedServices = await discoveryCoordinator.bonjourScanner.discoveredServices
+        let deviceServices = cachedServices.filter { service in
             service.ipAddress == device.ipAddress
         }
-
-        // Stop discovery
-        await bonjourService.stopDiscovery()
 
         // Update bonjourServices with the service types found
         bonjourServices = deviceServices.map { service in

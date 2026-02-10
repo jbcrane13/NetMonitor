@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import os
 
 /// Coordinates device discovery from multiple sources and manages persistence
 @MainActor
@@ -13,7 +14,7 @@ final class DeviceDiscoveryCoordinator {
 
     private let modelContext: ModelContext
     private let arpScanner: ARPScannerService
-    private let bonjourScanner: BonjourDiscoveryService
+    let bonjourScanner: BonjourDiscoveryService
     private let nameResolver: DeviceNameResolver
     private let macVendorService: MACVendorLookupService
 
@@ -79,7 +80,7 @@ final class DeviceDiscoveryCoordinator {
             } catch is CancellationError {
                 // Cancelled - exit gracefully
             } catch {
-                print("Scan error: \(error)")
+                Logger.discovery.error("Scan error: \(error, privacy: .public)")
             }
 
             isScanning = false
@@ -138,7 +139,11 @@ final class DeviceDiscoveryCoordinator {
             }
         }
 
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            Logger.discovery.error("Failed to save discovered devices: \(error)")
+        }
         loadPersistedDevices()
     }
 
@@ -149,7 +154,11 @@ final class DeviceDiscoveryCoordinator {
                 device.isOnline = false
             }
         }
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            Logger.discovery.error("Failed to save offline device status: \(error)")
+        }
     }
 
     // MARK: - Private Methods
@@ -198,7 +207,11 @@ final class DeviceDiscoveryCoordinator {
             }
         }
 
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            Logger.discovery.error("Failed to save device names: \(error)")
+        }
     }
 
     /// Enhanced vendor lookup for devices with MAC addresses but no vendor
@@ -245,7 +258,11 @@ final class DeviceDiscoveryCoordinator {
             }
         }
 
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            Logger.discovery.error("Failed to save device vendors: \(error)")
+        }
     }
 
     private func loadPersistedDevices() {

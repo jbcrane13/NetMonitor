@@ -43,9 +43,14 @@ actor ARPScannerService: DeviceDiscoveryService {
         let task = Task<[DiscoveredDevice], Error> {
             var discoveredDevices: [DiscoveredDevice] = []
 
-            // Scan IPs concurrently using a task group
+            // Scan IPs concurrently using a task group with throttling
+            let maxConcurrent = 50
             await withTaskGroup(of: DiscoveredDevice?.self) { group in
-                for ip in ipRange {
+                var pendingIPs = ipRange.makeIterator()
+                var activeCount = 0
+
+                // Seed initial batch
+                while activeCount < maxConcurrent, let ip = pendingIPs.next() {
                     group.addTask {
                         // Probe the IP
                         let isReachable = await self.probeIP(ip)
@@ -62,11 +67,31 @@ actor ARPScannerService: DeviceDiscoveryService {
                         }
                         return nil
                     }
+                    activeCount += 1
                 }
 
+                // As each completes, launch next
                 for await result in group {
                     if let device = result {
                         discoveredDevices.append(device)
+                    }
+
+                    // Launch next task if available
+                    if let ip = pendingIPs.next() {
+                        group.addTask {
+                            let isReachable = await self.probeIP(ip)
+
+                            if isReachable {
+                                if let mac = await self.getMACFromARPCache(ip: ip) {
+                                    return DiscoveredDevice(
+                                        ipAddress: ip,
+                                        macAddress: mac,
+                                        hostname: nil
+                                    )
+                                }
+                            }
+                            return nil
+                        }
                     }
                 }
             }

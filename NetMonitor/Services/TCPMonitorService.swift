@@ -4,9 +4,9 @@ import Darwin
 /// Actor-based TCP port monitoring service
 actor TCPMonitorService: NetworkMonitorService {
 
-    func check(target: NetworkTarget) async throws -> TargetMeasurement {
+    func check(request: TargetCheckRequest) async throws -> MeasurementResult {
         // TCP requires a port
-        guard let port = target.port else {
+        guard let port = request.port else {
             throw NetworkMonitorError.invalidHost("TCP monitoring requires a port")
         }
 
@@ -18,13 +18,15 @@ actor TCPMonitorService: NetworkMonitorService {
 
         var result: UnsafeMutablePointer<addrinfo>?
         let portString = String(port)
-        let resolveStatus = getaddrinfo(target.host, portString, &hints, &result)
+        let resolveStatus = getaddrinfo(request.host, portString, &hints, &result)
 
         guard resolveStatus == 0, let addrInfo = result else {
-            return TargetMeasurement(
+            return MeasurementResult(
+                targetID: request.id,
+                timestamp: Date(),
                 latency: nil,
                 isReachable: false,
-                errorMessage: "Cannot resolve host: \(target.host)"
+                errorMessage: "Cannot resolve host: \(request.host)"
             )
         }
         defer { freeaddrinfo(result) }
@@ -32,7 +34,9 @@ actor TCPMonitorService: NetworkMonitorService {
         // Create socket
         let sock = socket(addrInfo.pointee.ai_family, addrInfo.pointee.ai_socktype, addrInfo.pointee.ai_protocol)
         guard sock >= 0 else {
-            return TargetMeasurement(
+            return MeasurementResult(
+                targetID: request.id,
+                timestamp: Date(),
                 latency: nil,
                 isReachable: false,
                 errorMessage: "Failed to create socket"
@@ -54,15 +58,20 @@ actor TCPMonitorService: NetworkMonitorService {
         if connectResult == 0 {
             // Immediate connection (unlikely for non-blocking but possible on localhost)
             let latency = Date().timeIntervalSince(startTime) * 1000
-            return TargetMeasurement(
+            return MeasurementResult(
+                targetID: request.id,
+                timestamp: Date(),
                 latency: latency,
-                isReachable: true
+                isReachable: true,
+                errorMessage: nil
             )
         }
 
         // Check if connection is in progress
         guard errno == EINPROGRESS else {
-            return TargetMeasurement(
+            return MeasurementResult(
+                targetID: request.id,
+                timestamp: Date(),
                 latency: nil,
                 isReachable: false,
                 errorMessage: "Connection failed: \(String(cString: strerror(errno)))"
@@ -70,21 +79,25 @@ actor TCPMonitorService: NetworkMonitorService {
         }
 
         // Wait for connection with timeout using poll()
-        let timeoutMs = Int32(target.timeout * 1000)
+        let timeoutMs = Int32(request.timeout * 1000)
         var pfd = pollfd(fd: sock, events: Int16(POLLOUT), revents: 0)
 
         let pollResult = poll(&pfd, 1, timeoutMs)
 
         if pollResult == 0 {
             // Timeout
-            return TargetMeasurement(
+            return MeasurementResult(
+                targetID: request.id,
+                timestamp: Date(),
                 latency: nil,
                 isReachable: false,
                 errorMessage: "Connection timed out"
             )
         } else if pollResult < 0 {
             // Error
-            return TargetMeasurement(
+            return MeasurementResult(
+                targetID: request.id,
+                timestamp: Date(),
                 latency: nil,
                 isReachable: false,
                 errorMessage: "Poll error: \(String(cString: strerror(errno)))"
@@ -99,12 +112,17 @@ actor TCPMonitorService: NetworkMonitorService {
         let latency = Date().timeIntervalSince(startTime) * 1000
 
         if socketError == 0 {
-            return TargetMeasurement(
+            return MeasurementResult(
+                targetID: request.id,
+                timestamp: Date(),
                 latency: latency,
-                isReachable: true
+                isReachable: true,
+                errorMessage: nil
             )
         } else {
-            return TargetMeasurement(
+            return MeasurementResult(
+                targetID: request.id,
+                timestamp: Date(),
                 latency: nil,
                 isReachable: false,
                 errorMessage: "Connection refused"

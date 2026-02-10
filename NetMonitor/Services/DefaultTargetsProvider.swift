@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 import NetMonitorShared
+import os
 
 /// Provides default monitoring targets for database seeding on first launch
 struct DefaultTargetsProvider {
@@ -68,7 +69,11 @@ struct DefaultTargetsProvider {
         }
 
         // Save changes
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            Logger.data.error("Failed to save default targets: \(error)")
+        }
 
         // Mark as seeded
         UserDefaults.standard.set(true, forKey: userDefaultsKey)

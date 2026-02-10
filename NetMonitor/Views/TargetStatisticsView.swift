@@ -61,25 +61,23 @@ struct TargetStatisticsView: View {
                 }
 
                 // Chart
-                if #available(macOS 13.0, *) {
-                    Chart {
-                        ForEach(measurements.prefix(20).reversed()) { measurement in
-                            if let latency = measurement.latency {
-                                LineMark(
-                                    x: .value("Time", measurement.timestamp),
-                                    y: .value("Latency", latency)
-                                )
-                                .foregroundStyle(.cyan)
-                            }
+                Chart {
+                    ForEach(measurements.prefix(20).reversed()) { measurement in
+                        if let latency = measurement.latency {
+                            LineMark(
+                                x: .value("Time", measurement.timestamp),
+                                y: .value("Latency", latency)
+                            )
+                            .foregroundStyle(.cyan)
                         }
                     }
-                    .frame(height: 150)
                 }
+                .frame(height: 150)
             }
         }
         .padding()
         .background(.ultraThinMaterial)
-        .cornerRadius(12)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     // MARK: - Statistics (extracted to TargetMeasurement model for testability)

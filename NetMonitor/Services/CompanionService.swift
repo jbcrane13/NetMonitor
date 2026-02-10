@@ -8,6 +8,7 @@
 import Foundation
 import Network
 import NetMonitorShared
+import os
 
 /// Bonjour service for companion app communication
 actor CompanionService {
@@ -99,9 +100,9 @@ actor CompanionService {
     private func handleListenerState(_ state: NWListener.State) {
         switch state {
         case .ready:
-            print("CompanionService: Listening on port \(port)")
+            Logger.companion.info("Listening on port \(self.port)")
         case .failed(let error):
-            print("CompanionService: Failed - \(error)")
+            Logger.companion.error("Failed to start: \(error, privacy: .public)")
             isRunning = false
         case .cancelled:
             isRunning = false
@@ -114,7 +115,7 @@ actor CompanionService {
         let clientID = UUID()
         connectedClients[clientID] = connection
 
-        print("CompanionService: New connection from client \(clientID)")
+        Logger.companion.info("New connection from client \(clientID)")
 
         connection.stateUpdateHandler = { [weak self] state in
             Task { [weak self] in
@@ -129,7 +130,7 @@ actor CompanionService {
     private func handleConnectionState(_ state: NWConnection.State, clientID: UUID) {
         switch state {
         case .ready:
-            print("CompanionService: Client \(clientID) connected")
+            Logger.companion.info("Client \(clientID) connected")
             // Send initial status
             Task {
                 await send(
@@ -138,10 +139,10 @@ actor CompanionService {
                 )
             }
         case .failed(let error):
-            print("CompanionService: Client \(clientID) failed - \(error)")
+            Logger.companion.error("Client \(clientID) failed: \(error, privacy: .public)")
             connectedClients.removeValue(forKey: clientID)
         case .cancelled:
-            print("CompanionService: Client \(clientID) disconnected")
+            Logger.companion.info("Client \(clientID) disconnected")
             connectedClients.removeValue(forKey: clientID)
         default:
             break
@@ -166,7 +167,7 @@ actor CompanionService {
             }
 
             if let error = capturedError {
-                print("CompanionService: Receive error - \(error)")
+                Logger.companion.error("Receive error: \(error, privacy: .public)")
                 return
             }
 
@@ -182,14 +183,14 @@ actor CompanionService {
     private func processReceivedData(_ data: Data, clientID: UUID) async {
         do {
             let message = try JSONDecoder().decode(CompanionMessage.self, from: data)
-            print("CompanionService: Received \(message) from \(clientID)")
+            Logger.companion.debug("Received \(String(describing: message)) from \(clientID)")
 
             // Handle message and get response
             if let response = await messageHandler?(message, clientID) {
                 await send(response, to: clientID)
             }
         } catch {
-            print("CompanionService: Failed to decode message - \(error)")
+            Logger.companion.error("Failed to decode message: \(error, privacy: .public)")
             await send(
                 .error(ErrorPayload(
                     code: "DECODE_ERROR",
@@ -211,7 +212,7 @@ actor CompanionService {
 
         connection.send(content: framedData, completion: .contentProcessed { error in
             if let error = error {
-                print("CompanionService: Send error to \(capturedClientID) - \(error)")
+                Logger.companion.error("Send error to \(capturedClientID): \(error, privacy: .public)")
             }
         })
     }
@@ -240,7 +241,7 @@ final class CompanionFramer: NWProtocolFramerImplementation {
         do {
             try framer.writeOutputNoCopy(length: messageLength)
         } catch {
-            print("Framer output error: \(error)")
+            Logger.companion.error("Framer output error: \(error, privacy: .public)")
         }
     }
 

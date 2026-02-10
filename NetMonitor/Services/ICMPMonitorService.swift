@@ -8,33 +8,39 @@ actor ICMPMonitorService: NetworkMonitorService {
 
     private let pingService = ProcessPingService()
 
-    func check(target: NetworkTarget) async throws -> TargetMeasurement {
+    func check(request: TargetCheckRequest) async throws -> MeasurementResult {
         // Validate target protocol
-        guard target.targetProtocol == .icmp else {
+        guard request.targetProtocol == .icmp else {
             throw NetworkMonitorError.invalidHost("Target protocol must be ICMP")
         }
 
         do {
             let result = try await pingService.ping(
-                host: target.host,
+                host: request.host,
                 count: 1,
-                timeout: TimeInterval(target.timeout)
+                timeout: request.timeout
             )
 
-            return TargetMeasurement(
+            return MeasurementResult(
+                targetID: request.id,
+                timestamp: Date(),
                 latency: result.isReachable ? result.avgLatency : nil,
                 isReachable: result.isReachable,
                 errorMessage: result.isReachable ? nil : "Host unreachable (100% packet loss)"
             )
 
         } catch let error as ToolError {
-            return TargetMeasurement(
+            return MeasurementResult(
+                targetID: request.id,
+                timestamp: Date(),
                 latency: nil,
                 isReachable: false,
                 errorMessage: error.localizedDescription
             )
         } catch {
-            return TargetMeasurement(
+            return MeasurementResult(
+                targetID: request.id,
+                timestamp: Date(),
                 latency: nil,
                 isReachable: false,
                 errorMessage: "ICMP error: \(error.localizedDescription)"

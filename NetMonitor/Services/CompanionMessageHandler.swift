@@ -151,20 +151,18 @@ final class CompanionMessageHandler {
             ))
         }
 
-        // Create temporary target for ping
-        let target = NetworkTarget(
-            name: "Ping \(host)",
+        // Create Sendable DTO for ping check
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: host,
             port: nil,
             targetProtocol: .icmp,
-            checkInterval: 5,
-            timeout: 10,
-            isEnabled: true
+            timeout: 10
         )
 
         do {
-            let measurement = try await icmpService.check(target: target)
-            if measurement.isReachable, let latency = measurement.latency {
+            let result = try await icmpService.check(request: request)
+            if result.isReachable, let latency = result.latency {
                 return .toolResult(ToolResultPayload(
                     tool: "ping",
                     success: true,
@@ -174,7 +172,7 @@ final class CompanionMessageHandler {
                 return .toolResult(ToolResultPayload(
                     tool: "ping",
                     success: false,
-                    result: measurement.errorMessage ?? "No response from \(host)"
+                    result: result.errorMessage ?? "No response from \(host)"
                 ))
             }
         } catch {

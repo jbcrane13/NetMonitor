@@ -28,34 +28,4 @@ public enum DeviceType: String, Codable, Sendable, CaseIterable {
     case router = "Router"
     case printer = "Printer"
     case unknown = "Unknown"
-
-    public var iconName: String {
-        switch self {
-        case .phone: return "iphone"
-        case .laptop: return "laptopcomputer"
-        case .tablet: return "ipad"
-        case .tv: return "tv"
-        case .speaker: return "homepod"
-        case .gaming: return "gamecontroller"
-        case .iot: return "sensor"
-        case .router: return "wifi.router"
-        case .printer: return "printer"
-        case .unknown: return "questionmark.circle"
-        }
-    }
-}
-
-// MARK: - TargetProtocol Extension
-
-extension TargetProtocol {
-    public var iconName: String {
-        switch self {
-        case .http, .https:
-            return "network"
-        case .icmp:
-            return "waveform.path.ecg"
-        case .tcp:
-            return "arrow.left.arrow.right"
-        }
-    }
 }

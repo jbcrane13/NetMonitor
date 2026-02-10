@@ -8,48 +8,28 @@
 import SwiftUI
 
 struct TracerouteToolView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @State private var host = ""
     @State private var maxHops = 30
     @State private var isRunning = false
     @State private var hops: [TracerouteHop] = []
     @State private var errorMessage: String?
+    @State private var tracerouteTask: Task<Void, Never>?
 
     private let runner = ShellCommandRunner()
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            inputArea
-            Divider()
-            outputArea
-            Divider()
-            footer
+        ToolSheetContainer(
+            title: "Traceroute",
+            iconName: "point.topleft.down.to.point.bottomright.curvepath",
+            closeAccessibilityID: "traceroute_button_close",
+            inputArea: { inputArea },
+            outputArea: { outputArea },
+            footerContent: { footer }
+        )
+        .onDisappear {
+            tracerouteTask?.cancel()
+            tracerouteTask = nil
         }
-        .frame(minWidth: 500, minHeight: 400)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        HStack {
-            Label("Traceroute", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("traceroute_button_close")
-        }
-        .padding()
     }
 
     // MARK: - Input Area
@@ -203,7 +183,7 @@ struct TracerouteToolView: View {
         hops.removeAll()
         errorMessage = nil
 
-        Task {
+        tracerouteTask = Task {
             // Try standard traceroute first, fall back to ping-based if it fails
             let success = await tryStandardTraceroute()
             if !success {
@@ -326,6 +306,8 @@ struct TracerouteToolView: View {
     }
 
     private func stopTraceroute() {
+        tracerouteTask?.cancel()
+        tracerouteTask = nil
         Task {
             await runner.cancel()
             await MainActor.run {

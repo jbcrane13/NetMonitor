@@ -32,16 +32,15 @@ actor WakeOnLanService {
     /// The standard WOL port
     private let wolPort: UInt16 = 9
 
-    /// Broadcast address for magic packets
-    private let broadcastAddress = "255.255.255.255"
-
     /// Send a Wake on LAN magic packet to the specified MAC address
-    /// - Parameter macAddress: Target MAC address (supports formats: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF, AABBCCDDEEFF)
+    /// - Parameters:
+    ///   - macAddress: Target MAC address (supports formats: AA:BB:CC:DD:EE:FF, AA-BB-CC-DD-EE-FF, AABBCCDDEEFF)
+    ///   - broadcastAddress: Broadcast address for the magic packet (default: "255.255.255.255")
     /// - Returns: True if the packet was sent successfully
-    func wake(macAddress: String) async throws {
+    func wake(macAddress: String, broadcastAddress: String = "255.255.255.255") async throws {
         let macBytes = try parseMACAddress(macAddress)
         let magicPacket = buildMagicPacket(macBytes: macBytes)
-        try await sendPacket(magicPacket)
+        try await sendPacket(magicPacket, to: broadcastAddress)
     }
 
     /// Parse a MAC address string into bytes
@@ -103,8 +102,10 @@ actor WakeOnLanService {
     }
 
     /// Send the magic packet via UDP broadcast
-    /// - Parameter packet: The magic packet data
-    private func sendPacket(_ packet: Data) async throws {
+    /// - Parameters:
+    ///   - packet: The magic packet data
+    ///   - broadcastAddress: Broadcast address to send to
+    private func sendPacket(_ packet: Data, to broadcastAddress: String) async throws {
         let tracker = ContinuationTracker()
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in

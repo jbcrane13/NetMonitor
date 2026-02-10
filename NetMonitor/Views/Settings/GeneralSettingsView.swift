@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ServiceManagement
+import os
 
 struct GeneralSettingsView: View {
     @AppStorage("netmonitor.general.launchAtLogin") private var launchAtLogin = false
@@ -60,7 +61,7 @@ struct GeneralSettingsView: View {
                 try SMAppService.mainApp.unregister()
             }
         } catch {
-            print("Failed to update launch at login: \(error)")
+            Logger.data.error("Failed to update launch at login: \(error, privacy: .public)")
         }
     }
 }

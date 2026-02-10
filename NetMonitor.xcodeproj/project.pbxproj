@@ -7,11 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		ENEX0001000000000000001A /* EnumExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ENEX0002000000000000001A /* EnumExtensions.swift */; };
+		459A583AE7BE458EBB87282F /* NavigationSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F29FB8437B4A0B957F71A5 /* NavigationSection.swift */; };
+		C99FAE4B96A648BB988FCBF5 /* NetMonitorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C2EE437C2354DEEB66E0A25 /* NetMonitorError.swift */; };
+		5E290323F66B46168C7AC931 /* SchemaV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A7DD5421054DF78AA500ED /* SchemaV1.swift */; };
 		2510D9A12F12D19400C8C91B /* NetMonitorShared in Frameworks */ = {isa = PBXBuildFile; productRef = 2510D9A02F12D19400C8C91B /* NetMonitorShared */; };
 		2510D9A62F13024300C8C91B /* SessionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A32F13024300C8C91B /* SessionRecord.swift */; };
 		2510D9A72F13024300C8C91B /* TargetMeasurement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A52F13024300C8C91B /* TargetMeasurement.swift */; };
 		2510D9A82F13024300C8C91B /* NetworkTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A42F13024300C8C91B /* NetworkTarget.swift */; };
 		2510D9A92F13024300C8C91B /* LocalDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A22F13024300C8C91B /* LocalDevice.swift */; };
+		DTO00001000000000000000A1 /* TargetCheckRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DTO00002000000000000000A1 /* TargetCheckRequest.swift */; };
+		DTO00001000000000000000A2 /* MeasurementResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DTO00002000000000000000A2 /* MeasurementResult.swift */; };
 		2A000001000000000000000A /* NetMonitorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000002000000000000000A /* NetMonitorApp.swift */; };
 		2A000003000000000000000A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A000004000000000000000A /* ContentView.swift */; };
 		2A000005000000000000000A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A000006000000000000000A /* Assets.xcassets */; };
@@ -36,7 +42,6 @@
 		UITB000F000000000000001A /* TargetsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF000F000000000000001A /* TargetsUITests.swift */; };
 		UITB0010000000000000001A /* ToolsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF0010000000000000001A /* ToolsUITests.swift */; };
 	2510D9AB2F13025400C8C91B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9AA2F13025400C8C91B /* SettingsView.swift */; };
-	2510D9AD2F13030000C8C91B /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9AE2F13030000C8C91B /* Section.swift */; };
 	2510D9AF2F13031000C8C91B /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B02F13031000C8C91B /* SidebarView.swift */; };
 	2510D9B12F13032000C8C91B /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B22F13032000C8C91B /* DashboardView.swift */; };
 	2510D9B32F13033000C8C91B /* TargetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B42F13033000C8C91B /* TargetsView.swift */; };
@@ -70,6 +75,7 @@
 		CMPT0001000000000000001A /* CompanionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CMPT0002000000000000001A /* CompanionMessageTests.swift */; };
 		CSVC0001000000000000001A /* CompanionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0002000000000000001A /* CompanionService.swift */; };
 		CSVC0003000000000000001A /* CompanionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CSVC0004000000000000001A /* CompanionServiceTests.swift */; };
+		LOGG0001000000000000001A /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = LOGG0002000000000000001A /* Logging.swift */; };
 		SCRT0002000000000000001A /* ShellCommandRunnerTests.swift in Sources */ = {isa = PBXBuildFile;
 		SCRT-00003072558989684779645 /* TCPMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCRT-00005974070841990001634 /* TCPMonitorServiceTests.swift */; };
 		SCRT-00008637475560693238271 /* ICMPMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCRT000006958071107418854610 /* ICMPMonitorServiceTests.swift */; };
@@ -98,6 +104,7 @@
 		SPDT0002000000000000001A /* SpeedTestToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SPDT0001000000000000001A /* SpeedTestToolView.swift */; };
 		BNJT0002000000000000001A /* BonjourBrowserToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BNJT0001000000000000001A /* BonjourBrowserToolView.swift */; };
 		WOLT0001000000000000001A /* WakeOnLanToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLT0002000000000000001A /* WakeOnLanToolView.swift */; };
+		TSCV0001000000000000001A /* ToolSheetContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSCV0002000000000000001A /* ToolSheetContainer.swift */; };
 		GNSV0002000000000000001A /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GNSV0001000000000000001A /* GeneralSettingsView.swift */; };
 		MNSV0002000000000000001A /* MonitoringSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MNSV0001000000000000001A /* MonitoringSettingsView.swift */; };
 		NTSV0002000000000000001A /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = NTSV0001000000000000001A /* NotificationSettingsView.swift */; };
@@ -135,11 +142,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		80F29FB8437B4A0B957F71A5 /* NavigationSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NavigationSection.swift; path = NetMonitor/Models/NavigationSection.swift; sourceTree = "<group>"; };
+		ENEX0002000000000000001A /* EnumExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnumExtensions.swift; path = NetMonitor/Models/EnumExtensions.swift; sourceTree = "<group>"; };
+		1C2EE437C2354DEEB66E0A25 /* NetMonitorError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetMonitorError.swift; path = NetMonitor/Models/NetMonitorError.swift; sourceTree = "<group>"; };
+		95A7DD5421054DF78AA500ED /* SchemaV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SchemaV1.swift; path = NetMonitor/Models/SchemaV1.swift; sourceTree = "<group>"; };
 		2510D9A22F13024300C8C91B /* LocalDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalDevice.swift; path = NetMonitor/Models/LocalDevice.swift; sourceTree = "<group>"; };
 		2510D9A32F13024300C8C91B /* SessionRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonitoringSession.swift; path = NetMonitor/Models/SessionRecord.swift; sourceTree = "<group>"; };
 		2510D9A42F13024300C8C91B /* NetworkTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkTarget.swift; path = NetMonitor/Models/NetworkTarget.swift; sourceTree = "<group>"; };
 		2510D9A52F13024300C8C91B /* TargetMeasurement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TargetMeasurement.swift; path = NetMonitor/Models/TargetMeasurement.swift; sourceTree = "<group>"; };
-		2510D9AE2F13030000C8C91B /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Section.swift; path = NetMonitor/Models/Section.swift; sourceTree = "<group>"; };
+		DTO00002000000000000000A1 /* TargetCheckRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TargetCheckRequest.swift; path = NetMonitor/Models/TargetCheckRequest.swift; sourceTree = "<group>"; };
+		DTO00002000000000000000A2 /* MeasurementResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeasurementResult.swift; path = NetMonitor/Models/MeasurementResult.swift; sourceTree = "<group>"; };
 		2510D9AA2F13025400C8C91B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2510D9B02F13031000C8C91B /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		2510D9B22F13032000C8C91B /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
@@ -201,6 +213,7 @@
 		CMPT0002000000000000001A /* CompanionMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionMessageTests.swift; sourceTree = "<group>"; };
 		CSVC0002000000000000001A /* CompanionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionService.swift; path = NetMonitor/Services/CompanionService.swift; sourceTree = "<group>"; };
 		CSVC0004000000000000001A /* CompanionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionServiceTests.swift; path = NetMonitorTests/Services/CompanionServiceTests.swift; sourceTree = "<group>"; };
+		LOGG0002000000000000001A /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Logging.swift; path = NetMonitor/Services/Logging.swift; sourceTree = "<group>"; };
 		SCRT0001000000000000001A /* ShellCommandRunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShellCommandRunnerTests.swift; path = NetMonitorTests/Services/ShellCommandRunnerTests.swift; sourceTree = "<group>"; };
 		PPST0001000000000000001A /* ProcessPingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProcessPingServiceTests.swift; path = NetMonitorTests/Services/ProcessPingServiceTests.swift; sourceTree = "<group>"; };
 		CMHD0002000000000000001A /* CompanionMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionMessageHandler.swift; path = NetMonitor/Services/CompanionMessageHandler.swift; sourceTree = "<group>"; };
@@ -219,6 +232,7 @@
 		SPDT0001000000000000001A /* SpeedTestToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedTestToolView.swift; sourceTree = "<group>"; };
 		BNJT0001000000000000001A /* BonjourBrowserToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourBrowserToolView.swift; sourceTree = "<group>"; };
 		WOLT0002000000000000001A /* WakeOnLanToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeOnLanToolView.swift; sourceTree = "<group>"; };
+		TSCV0002000000000000001A /* ToolSheetContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolSheetContainer.swift; sourceTree = "<group>"; };
 		GNSV0001000000000000001A /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		MNSV0001000000000000001A /* MonitoringSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitoringSettingsView.swift; sourceTree = "<group>"; };
 		NTSV0001000000000000001A /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
@@ -271,7 +285,9 @@
 				2510D9A32F13024300C8C91B /* SessionRecord.swift */,
 				2510D9A42F13024300C8C91B /* NetworkTarget.swift */,
 				2510D9A52F13024300C8C91B /* TargetMeasurement.swift */,
-				2510D9AE2F13030000C8C91B /* Section.swift */,
+				DTO00002000000000000000A1 /* TargetCheckRequest.swift */,
+				DTO00002000000000000000A2 /* MeasurementResult.swift */,
+				ENEX0002000000000000001A /* EnumExtensions.swift */,
 				2A00001B000000000000000A /* NetMonitor */,
 				2A00001C000000000000000A /* NetMonitorTests */,
 				2A00001D000000000000000A /* NetMonitorUITests */,
@@ -405,6 +421,7 @@
 				SPDT0001000000000000001A /* SpeedTestToolView.swift */,
 				BNJT0001000000000000001A /* BonjourBrowserToolView.swift */,
 				WOLT0002000000000000001A /* WakeOnLanToolView.swift */,
+				TSCV0002000000000000001A /* ToolSheetContainer.swift */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -448,6 +465,7 @@
 				MACV0002000000000000001A /* MACVendorLookupService.swift */,
 				CSVC0002000000000000001A /* CompanionService.swift */,
 				CMHD0002000000000000001A /* CompanionMessageHandler.swift */,
+				LOGG0002000000000000001A /* Logging.swift */,
 				WOLS0002000000000000001A /* WakeOnLanService.swift */,
 				SHCR0002000000000000001A /* ShellCommandRunner.swift */,
 				DVNR77E1846C42E3A8B46056 /* DeviceNameResolver.swift */,
@@ -650,8 +668,9 @@
 								2510D9A72F13024300C8C91B /* TargetMeasurement.swift in Sources */,
 								2510D9A82F13024300C8C91B /* NetworkTarget.swift in Sources */,
 								2510D9A92F13024300C8C91B /* LocalDevice.swift in Sources */,
+								DTO00001000000000000000A1 /* TargetCheckRequest.swift in Sources */,
+								DTO00001000000000000000A2 /* MeasurementResult.swift in Sources */,
 								2510D9AB2F13025400C8C91B /* SettingsView.swift in Sources */,
-								2510D9AD2F13030000C8C91B /* Section.swift in Sources */,
 								2510D9AF2F13031000C8C91B /* SidebarView.swift in Sources */,
 				EAD61DA40AAA0D4676EA0906 /* AddTargetSheet.swift in Sources */,
 								2510D9B12F13032000C8C91B /* DashboardView.swift in Sources */,
@@ -678,6 +697,7 @@
 								MBCM0001000000000000001A /* MenuBarCommands.swift in Sources */,
 								CSVC0001000000000000001A /* CompanionService.swift in Sources */,
 								CMHD0001000000000000001A /* CompanionMessageHandler.swift in Sources */,
+								LOGG0001000000000000001A /* Logging.swift in Sources */,
 				WOLS0001000000000000001A /* WakeOnLanService.swift in Sources */,
 				SHCR0001000000000000001A /* ShellCommandRunner.swift in Sources */,
 				DVNR47E99A898BDB9F015F2E /* DeviceNameResolver.swift in Sources */,
@@ -693,6 +713,7 @@
 				SPDT0002000000000000001A /* SpeedTestToolView.swift in Sources */,
 				BNJT0002000000000000001A /* BonjourBrowserToolView.swift in Sources */,
 				WOLT0001000000000000001A /* WakeOnLanToolView.swift in Sources */,
+				TSCV0001000000000000001A /* ToolSheetContainer.swift in Sources */,
 				GNSV0002000000000000001A /* GeneralSettingsView.swift in Sources */,
 				MNSV0002000000000000001A /* MonitoringSettingsView.swift in Sources */,
 				NTSV0002000000000000001A /* NotificationSettingsView.swift in Sources */,
@@ -710,7 +731,11 @@
 				ISIC0001000000000000001A /* ISPInfoCard.swift in Sources */,
 				QKSB0001000000000000001A /* QuickStatsBar.swift in Sources */,
 				LVDV0001000000000000001A /* LiveDurationView.swift in Sources */,
-			);
+			
+				C99FAE4B96A648BB988FCBF5 /* NetMonitorError.swift in Sources */,
+				5E290323F66B46168C7AC931 /* SchemaV1.swift in Sources */,
+				459A583AE7BE458EBB87282F /* NavigationSection.swift in Sources */,
+				ENEX0001000000000000001A /* EnumExtensions.swift in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2A000025000000000000000A /* Sources */ = {

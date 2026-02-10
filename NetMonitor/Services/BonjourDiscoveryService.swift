@@ -1,6 +1,7 @@
 import Foundation
 import Network
 import CoreFoundation
+import os
 
 /// Represents a discovered Bonjour/mDNS service on the local network
 struct BonjourService: Sendable, Identifiable {
@@ -214,7 +215,7 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
             break
         case .failed(let error):
             // Log error but continue - other browsers may succeed
-            print("Bonjour browser failed for \(serviceType): \(error)")
+            Logger.discovery.error("Bonjour browser failed for \(serviceType, privacy: .public): \(error, privacy: .public)")
         case .cancelled:
             // Browser was cancelled
             break
@@ -368,24 +369,30 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
     private func resolveHostnameToIP(_ hostname: String) async -> String? {
         // Use a simpler approach with URLSession for DNS resolution
         guard let url = URL(string: "http://\(hostname)") else { return nil }
-        
+
         return await withCheckedContinuation { continuation in
+            let tracker = ContinuationTracker()
+
             let task = URLSession.shared.dataTask(with: url) { _, response, _ in
-                if let httpResponse = response as? HTTPURLResponse,
-                   let resolvedHost = httpResponse.url?.host {
-                    // Try to extract IP if it's available in the resolved URL
-                    continuation.resume(returning: resolvedHost)
-                } else {
-                    continuation.resume(returning: nil)
+                if tracker.tryResume() {
+                    if let httpResponse = response as? HTTPURLResponse,
+                       let resolvedHost = httpResponse.url?.host {
+                        // Try to extract IP if it's available in the resolved URL
+                        continuation.resume(returning: resolvedHost)
+                    } else {
+                        continuation.resume(returning: nil)
+                    }
                 }
             }
-            
+
             task.resume()
-            
+
             // Timeout after 2 seconds
-            DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
-                task.cancel()
-                continuation.resume(returning: nil)
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) { [tracker] in
+                if tracker.tryResume() {
+                    task.cancel()
+                    continuation.resume(returning: nil)
+                }
             }
         }
     }

@@ -9,19 +9,20 @@ struct ICMPMonitorServiceTests {
     func checkReachableHost() async throws {
         let service = ICMPMonitorService()
 
-        let target = NetworkTarget(
-            name: "Cloudflare DNS",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "1.1.1.1",
+            port: nil,
             targetProtocol: .icmp,
             timeout: 5.0
         )
 
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
 
-        #expect(measurement.isReachable == true)
-        #expect(measurement.latency != nil)
-        #expect(measurement.latency! > 0)
-        #expect(measurement.errorMessage == nil)
+        #expect(result.isReachable == true)
+        #expect(result.latency != nil)
+        #expect(result.latency! > 0)
+        #expect(result.errorMessage == nil)
     }
 
     @Test("ICMP monitor handles unreachable host")
@@ -29,34 +30,36 @@ struct ICMPMonitorServiceTests {
         let service = ICMPMonitorService()
 
         // Use a non-routable IP
-        let target = NetworkTarget(
-            name: "Unreachable",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "10.255.255.254",
+            port: nil,
             targetProtocol: .icmp,
             timeout: 2.0
         )
 
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
 
-        #expect(measurement.isReachable == false)
-        #expect(measurement.latency == nil)
-        #expect(measurement.errorMessage != nil)
+        #expect(result.isReachable == false)
+        #expect(result.latency == nil)
+        #expect(result.errorMessage != nil)
     }
 
     @Test("ICMP monitor validates target protocol")
     func checkProtocolValidation() async throws {
         let service = ICMPMonitorService()
 
-        // Create target with wrong protocol
-        let target = NetworkTarget(
-            name: "Wrong Protocol",
+        // Create request with wrong protocol
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "1.1.1.1",
+            port: nil,
             targetProtocol: .http,
             timeout: 3.0
         )
 
         await #expect(throws: NetworkMonitorError.self) {
-            _ = try await service.check(target: target)
+            _ = try await service.check(request: request)
         }
     }
 
@@ -65,18 +68,19 @@ struct ICMPMonitorServiceTests {
         let service = ICMPMonitorService()
 
         // Use a non-routable IP to force timeout
-        let target = NetworkTarget(
-            name: "Timeout Test",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "10.255.255.1",
+            port: nil,
             targetProtocol: .icmp,
             timeout: 1.0
         )
 
         let startTime = Date()
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
         let duration = Date().timeIntervalSince(startTime)
 
-        #expect(measurement.isReachable == false)
+        #expect(result.isReachable == false)
         #expect(duration < 2.0)  // Should timeout within reasonable time
     }
 
@@ -84,34 +88,36 @@ struct ICMPMonitorServiceTests {
     func checkLocalhost() async throws {
         let service = ICMPMonitorService()
 
-        let target = NetworkTarget(
-            name: "Localhost",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "127.0.0.1",
+            port: nil,
             targetProtocol: .icmp,
             timeout: 2.0
         )
 
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
 
-        #expect(measurement.isReachable == true)
-        #expect(measurement.latency != nil)
-        #expect(measurement.latency! >= 0)
+        #expect(result.isReachable == true)
+        #expect(result.latency != nil)
+        #expect(result.latency! >= 0)
     }
 
     @Test("ICMP monitor handles hostname resolution")
     func checkHostnameResolution() async throws {
         let service = ICMPMonitorService()
 
-        let target = NetworkTarget(
-            name: "Google DNS",
+        let request = TargetCheckRequest(
+            id: UUID(),
             host: "dns.google",
+            port: nil,
             targetProtocol: .icmp,
             timeout: 5.0
         )
 
-        let measurement = try await service.check(target: target)
+        let result = try await service.check(request: request)
 
-        #expect(measurement.isReachable == true)
-        #expect(measurement.latency != nil)
+        #expect(result.isReachable == true)
+        #expect(result.latency != nil)
     }
 }

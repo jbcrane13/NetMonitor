@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(MonitoringSession.self) private var session: MonitoringSession?
-    @State private var selectedSection: Section? = .dashboard
+    @State private var selectedSection: NavigationSection? = .dashboard
     @State private var localSession: MonitoringSession?
 
     /// The active session - prefers environment, falls back to local

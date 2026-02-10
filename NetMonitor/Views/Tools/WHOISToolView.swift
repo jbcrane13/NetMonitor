@@ -68,49 +68,29 @@ struct WHOISInfo {
 }
 
 struct WHOISToolView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @State private var domain = ""
     @State private var isRunning = false
     @State private var output = ""
     @State private var errorMessage: String?
     @State private var parsedInfo: WHOISInfo?
     @State private var showRawOutput = false
+    @State private var lookupTask: Task<Void, Never>?
 
     private let runner = ShellCommandRunner()
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            inputArea
-            Divider()
-            outputArea
-            Divider()
-            footer
+        ToolSheetContainer(
+            title: "WHOIS",
+            iconName: "doc.text.magnifyingglass",
+            closeAccessibilityID: "whois_button_close",
+            inputArea: { inputArea },
+            outputArea: { outputArea },
+            footerContent: { footer }
+        )
+        .onDisappear {
+            lookupTask?.cancel()
+            lookupTask = nil
         }
-        .frame(minWidth: 500, minHeight: 400)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        HStack {
-            Label("WHOIS", systemImage: "doc.text.magnifyingglass")
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("whois_button_close")
-        }
-        .padding()
     }
 
     // MARK: - Input Area
@@ -332,7 +312,7 @@ struct WHOISToolView: View {
         parsedInfo = nil
         showRawOutput = false
 
-        Task {
+        lookupTask = Task {
             do {
                 let result = try await runner.run(
                     "/usr/bin/whois",

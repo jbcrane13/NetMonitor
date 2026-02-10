@@ -36,7 +36,7 @@ struct ISPInfoCard: View {
                 Spacer()
 
                 Button {
-                    Task { await refresh() }
+                    Task { await loadISPInfo() }
                 } label: {
                     Image(systemName: "arrow.clockwise")
                         .imageScale(.medium)
@@ -135,24 +135,6 @@ struct ISPInfoCard: View {
     // MARK: - Methods
 
     private func loadISPInfo() async {
-        isLoading = true
-        errorMessage = nil
-
-        do {
-            let info = try await ispLookupService.lookup()
-            withAnimation {
-                self.ispInfo = info
-                self.isLoading = false
-            }
-        } catch {
-            withAnimation {
-                self.errorMessage = handleError(error)
-                self.isLoading = false
-            }
-        }
-    }
-
-    private func refresh() async {
         isLoading = true
         errorMessage = nil
 
