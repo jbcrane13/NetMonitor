@@ -9,6 +9,8 @@ struct TargetsView: View {
     @State private var showingAddSheet = false
     @State private var selectedTarget: NetworkTarget?
     @State private var sortOption: TargetSortOption = .name
+    @State private var targetToDelete: NetworkTarget?
+    @State private var showDeleteConfirmation = false
 
     var sortedTargets: [NetworkTarget] {
         switch sortOption {
@@ -56,6 +58,14 @@ struct TargetsView: View {
                                 }
                                 .tint(target.isEnabled ? .orange : .green)
                             }
+                            .contextMenu {
+                                Button(role: .destructive) {
+                                    targetToDelete = target
+                                    showDeleteConfirmation = true
+                                } label: {
+                                    Label("Delete Target", systemImage: "trash")
+                                }
+                            }
                     }
                     .onDelete(perform: deleteTargets)
                 }
@@ -67,6 +77,19 @@ struct TargetsView: View {
                 Button(action: { showingAddSheet = true }) {
                     Label("Add Target", systemImage: "plus")
                 }
+                .accessibilityIdentifier("targets_button_add")
+            }
+            ToolbarItem(placement: .automatic) {
+                Button(role: .destructive) {
+                    if let selected = selectedTarget {
+                        targetToDelete = selected
+                        showDeleteConfirmation = true
+                    }
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+                .disabled(selectedTarget == nil)
+                .accessibilityIdentifier("targets_button_delete")
             }
             ToolbarItem(placement: .automatic) {
                 Menu {
@@ -80,10 +103,19 @@ struct TargetsView: View {
                 } label: {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
+                .accessibilityIdentifier("targets_menu_sort")
             }
         }
         .sheet(isPresented: $showingAddSheet) {
             AddTargetSheet()
+        }
+        .confirmationDialog("Delete Target?", isPresented: $showDeleteConfirmation, presenting: targetToDelete) { target in
+            Button("Delete", role: .destructive) {
+                deleteTarget(target)
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: { target in
+            Text("This will permanently delete '\(target.name)' and all its measurement history.")
         }
     }
 
@@ -91,7 +123,26 @@ struct TargetsView: View {
         for index in offsets {
             modelContext.delete(sortedTargets[index])
         }
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error deleting targets: \(error)")
+        }
+    }
+
+    private func deleteTarget(_ target: NetworkTarget) {
+        modelContext.delete(target)
+
+        // Clear selection if deleted target was selected
+        if selectedTarget?.id == target.id {
+            selectedTarget = nil
+        }
+
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error deleting target: \(error)")
+        }
     }
 }
 

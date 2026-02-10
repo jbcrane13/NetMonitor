@@ -14,17 +14,23 @@ final class DeviceDiscoveryCoordinator {
     private let modelContext: ModelContext
     private let arpScanner: ARPScannerService
     private let bonjourScanner: BonjourDiscoveryService
+    private let nameResolver: DeviceNameResolver
+    private let macVendorService: MACVendorLookupService
 
     private var scanTask: Task<Void, Never>?
 
     init(
         modelContext: ModelContext,
         arpScanner: ARPScannerService,
-        bonjourScanner: BonjourDiscoveryService
+        bonjourScanner: BonjourDiscoveryService,
+        nameResolver: DeviceNameResolver = DeviceNameResolver(),
+        macVendorService: MACVendorLookupService = MACVendorLookupService()
     ) {
         self.modelContext = modelContext
         self.arpScanner = arpScanner
         self.bonjourScanner = bonjourScanner
+        self.nameResolver = nameResolver
+        self.macVendorService = macVendorService
 
         loadPersistedDevices()
     }
@@ -52,9 +58,18 @@ final class DeviceDiscoveryCoordinator {
                 try Task.checkCancellation()
                 scanProgress = 0.9
 
-                // Merge results
+                // Phase 3: Merge results (5% of progress)
                 let allDiscovered = mergeDiscoveryResults(arp: arpDevices, bonjour: bonjourDevices)
                 mergeDiscoveredDevices(allDiscovered)
+
+                try Task.checkCancellation()
+                scanProgress = 0.95
+
+                // Phase 4: Enhanced name resolution for devices without hostnames
+                await resolveDeviceNames()
+
+                // Phase 5: Vendor lookup for devices with MAC addresses
+                await resolveDeviceVendors()
 
                 // Mark devices not seen in this scan as offline
                 markOfflineDevices(currentIPs: Set(allDiscovered.map(\.ipAddress)))
@@ -138,6 +153,100 @@ final class DeviceDiscoveryCoordinator {
     }
 
     // MARK: - Private Methods
+
+    /// Enhanced name resolution for devices without hostnames
+    private func resolveDeviceNames() async {
+        // Find devices without hostnames
+        let predicate = #Predicate<LocalDevice> { device in
+            device.hostname == nil || device.hostname == ""
+        }
+        let descriptor = FetchDescriptor<LocalDevice>(predicate: predicate)
+
+        guard let devicesNeedingNames = try? modelContext.fetch(descriptor) else { return }
+
+        // Resolve names concurrently (max 10 at a time to avoid overwhelming the network)
+        await withTaskGroup(of: (UUID, String?).self) { group in
+            var activeCount = 0
+            var deviceIterator = devicesNeedingNames.makeIterator()
+
+            // Initial batch of 10
+            while activeCount < 10, let device = deviceIterator.next() {
+                let deviceId = device.id
+                let ip = device.ipAddress
+                group.addTask {
+                    let name = await self.nameResolver.resolveName(for: ip)
+                    return (deviceId, name)
+                }
+                activeCount += 1
+            }
+
+            // Process results and launch new tasks as previous ones complete
+            for await (deviceId, name) in group {
+                if let name, let device = devicesNeedingNames.first(where: { $0.id == deviceId }) {
+                    device.hostname = name
+                }
+
+                // Add next device if available
+                if let nextDevice = deviceIterator.next() {
+                    let deviceId = nextDevice.id
+                    let ip = nextDevice.ipAddress
+                    group.addTask {
+                        let name = await self.nameResolver.resolveName(for: ip)
+                        return (deviceId, name)
+                    }
+                }
+            }
+        }
+
+        try? modelContext.save()
+    }
+
+    /// Enhanced vendor lookup for devices with MAC addresses but no vendor
+    private func resolveDeviceVendors() async {
+        // Find devices with MAC addresses but no vendor
+        let predicate = #Predicate<LocalDevice> { device in
+            !device.macAddress.isEmpty && (device.vendor == nil || device.vendor == "")
+        }
+        let descriptor = FetchDescriptor<LocalDevice>(predicate: predicate)
+
+        guard let devicesNeedingVendors = try? modelContext.fetch(descriptor) else { return }
+
+        // Resolve vendors concurrently (max 5 at a time to respect API rate limits)
+        await withTaskGroup(of: (UUID, String?).self) { group in
+            var activeCount = 0
+            var deviceIterator = devicesNeedingVendors.makeIterator()
+
+            // Initial batch of 5
+            while activeCount < 5, let device = deviceIterator.next() {
+                let deviceId = device.id
+                let mac = device.macAddress
+                group.addTask {
+                    let vendor = await self.macVendorService.lookupVendorEnhanced(macAddress: mac)
+                    return (deviceId, vendor)
+                }
+                activeCount += 1
+            }
+
+            // Process results and launch new tasks as previous ones complete
+            for await (deviceId, vendor) in group {
+                if let vendor, let device = devicesNeedingVendors.first(where: { $0.id == deviceId }) {
+                    device.vendor = vendor
+                }
+
+                // Add next device if available
+                if let nextDevice = deviceIterator.next() {
+                    let deviceId = nextDevice.id
+                    let mac = nextDevice.macAddress
+                    group.addTask {
+                        let vendor = await self.macVendorService.lookupVendorEnhanced(macAddress: mac)
+                        return (deviceId, vendor)
+                    }
+                }
+            }
+        }
+
+        try? modelContext.save()
+    }
 
     private func loadPersistedDevices() {
         let descriptor = FetchDescriptor<LocalDevice>(

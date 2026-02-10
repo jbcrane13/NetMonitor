@@ -204,44 +204,122 @@ struct TracerouteToolView: View {
         errorMessage = nil
 
         Task {
+            // Try standard traceroute first, fall back to ping-based if it fails
+            let success = await tryStandardTraceroute()
+            if !success {
+                await runPingBasedTraceroute()
+            }
+
+            await MainActor.run {
+                isRunning = false
+            }
+        }
+    }
+
+    private func tryStandardTraceroute() async -> Bool {
+        do {
+            for try await line in await runner.stream(
+                "/usr/sbin/traceroute",
+                arguments: ["-m", String(maxHops), host]
+            ) {
+                if let hop = parseTracerouteLine(line) {
+                    await MainActor.run {
+                        hops.append(hop)
+                    }
+                }
+            }
+            return true
+        } catch {
+            // Check if it's a permission error - if so, fall back to ping-based
+            let message = error.localizedDescription
+            if message.contains("not permitted") || message.contains("Operation not permitted") {
+                return false
+            }
+
+            // For other errors, if we got some results, consider it a success
+            if !hops.isEmpty {
+                return true
+            }
+
+            // Otherwise, show the error and don't fall back
+            await MainActor.run {
+                errorMessage = message
+            }
+            return true // Don't fall back for non-permission errors
+        }
+    }
+
+    private func runPingBasedTraceroute() async {
+        await MainActor.run {
+            hops.removeAll()
+        }
+
+        let target = host.trimmingCharacters(in: .whitespacesAndNewlines)
+        var destinationReached = false
+
+        for ttl in 1...maxHops {
+            guard isRunning else { break }
+            guard !destinationReached else { break }
+
             do {
-                for try await line in await runner.stream(
-                    "/usr/sbin/traceroute",
-                    arguments: ["-m", String(maxHops), host]
-                ) {
-                    if let hop = parseTracerouteLine(line) {
-                        await MainActor.run {
-                            hops.append(hop)
+                // Use ping with specific TTL: -c 1 (one packet), -t TTL, -W 2000 (2 sec timeout)
+                let result = try await runner.run(
+                    "/sbin/ping",
+                    arguments: ["-c", "1", "-t", "\(ttl)", "-W", "2000", target],
+                    timeout: 5
+                )
+
+                let output = result.stdout + result.stderr
+                var hop = TracerouteHop(hopNumber: ttl, isTimeout: true)
+
+                // Parse response - check for "Time to live exceeded" (intermediate hop) or normal response (destination)
+                if output.contains("Time to live exceeded") || output.contains("from") {
+                    // Extract source IP from "Time to live exceeded from X" or "bytes from X"
+                    if let fromRange = output.range(of: "from ") {
+                        let afterFrom = String(output[fromRange.upperBound...])
+
+                        // Extract hostname/IP part before colon
+                        if let colonRange = afterFrom.range(of: ":") {
+                            let hostPart = String(afterFrom[..<colonRange.lowerBound]).trimmingCharacters(in: .whitespaces)
+
+                            // Check for format "hostname (ip)" or just "ip"
+                            if let parenStart = hostPart.range(of: "("),
+                               let parenEnd = hostPart.range(of: ")") {
+                                hop.hostname = String(hostPart[..<parenStart.lowerBound]).trimmingCharacters(in: .whitespaces)
+                                hop.ipAddress = String(hostPart[parenStart.upperBound..<parenEnd.lowerBound])
+                            } else {
+                                hop.ipAddress = hostPart
+                                hop.hostname = hostPart
+                            }
+                            hop.isTimeout = false
+                        }
+                    }
+
+                    // Extract latency from "time=X.XX ms" if present
+                    if let timeRange = output.range(of: "time=") {
+                        let afterTime = String(output[timeRange.upperBound...])
+                        if let msRange = afterTime.range(of: " ms") {
+                            let latencyStr = String(afterTime[..<msRange.lowerBound])
+                            if let latency = Double(latencyStr) {
+                                hop.latencies = [latency]
+                            }
                         }
                     }
                 }
+
                 await MainActor.run {
-                    isRunning = false
+                    hops.append(hop)
                 }
-            } catch let error as ToolError {
-                await MainActor.run {
-                    // Traceroute often exits with non-zero even on partial success
-                    if case .executionFailed = error, !hops.isEmpty {
-                        // We have some results, don't show error
-                    } else {
-                        let message = error.localizedDescription
-                        if message.contains("not permitted") || message.contains("Operation not permitted") {
-                            errorMessage = "Traceroute requires elevated privileges that are not available in sandboxed apps. Try running 'traceroute \(host)' in Terminal instead."
-                        } else {
-                            errorMessage = message
-                        }
-                    }
-                    isRunning = false
+
+                // Check if we reached the destination (exit code 0 and received response)
+                if result.exitCode == 0 && output.contains("1 packets received") {
+                    destinationReached = true
                 }
+
             } catch {
+                // Timeout or error for this hop
                 await MainActor.run {
-                    let message = error.localizedDescription
-                    if message.contains("not permitted") || message.contains("Operation not permitted") {
-                        errorMessage = "Traceroute requires elevated privileges that are not available in sandboxed apps. Try running 'traceroute \(host)' in Terminal instead."
-                    } else {
-                        errorMessage = message
-                    }
-                    isRunning = false
+                    hops.append(TracerouteHop(hopNumber: ttl, isTimeout: true))
                 }
             }
         }

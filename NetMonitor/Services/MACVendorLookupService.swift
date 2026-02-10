@@ -3,6 +3,15 @@ import Foundation
 /// Service for looking up MAC address vendors from OUI database
 actor MACVendorLookupService {
 
+    // MARK: - Properties
+
+    /// In-memory cache for API lookups
+    private var vendorCache: [String: String] = [:]
+
+    /// Rate limiting
+    private var lastAPICall = Date.distantPast
+    private let rateLimitInterval: TimeInterval = 1.0
+
     /// Common vendor prefixes (OUI - first 3 bytes of MAC address)
     private let vendorDatabase: [String: String] = [
         // Apple
@@ -177,7 +186,24 @@ actor MACVendorLookupService {
         "B8:E9:37": "Sonos"
     ]
 
-    /// Look up the vendor for a MAC address
+    // MARK: - Public Methods
+
+    /// Look up vendor using online API first, then local database as fallback
+    /// - Parameter macAddress: MAC address in any format (colons, dashes, or none)
+    /// - Returns: Vendor name if found
+    func lookupVendorEnhanced(macAddress: String) async -> String? {
+        // Try online API first
+        if let vendor = await lookupVendorOnline(macAddress: macAddress) {
+            // Cache the result
+            cacheResult(macAddress: macAddress, vendor: vendor)
+            return vendor
+        }
+
+        // Fall back to local OUI database
+        return lookup(macAddress: macAddress)
+    }
+
+    /// Look up the vendor for a MAC address (local database only)
     /// - Parameter macAddress: MAC address in any format (colons, dashes, or none)
     /// - Returns: Vendor name if found
     func lookup(macAddress: String) -> String? {
@@ -185,6 +211,67 @@ actor MACVendorLookupService {
         guard normalized.count >= 8 else { return nil }
         let prefix = String(normalized.prefix(8)) // First 3 bytes = OUI
         return vendorDatabase[prefix]
+    }
+
+    // MARK: - Private Methods
+
+    /// Look up vendor using online API (macvendors.com)
+    private func lookupVendorOnline(macAddress: String) async -> String? {
+        let cleanMAC = macAddress.replacingOccurrences(of: ":", with: "")
+            .replacingOccurrences(of: "-", with: "")
+
+        guard cleanMAC.count >= 6 else { return nil }
+        let prefix = String(cleanMAC.prefix(6)).uppercased()
+
+        // Check cache first
+        if let cached = vendorCache[prefix] {
+            return cached
+        }
+
+        guard let url = URL(string: "https://api.macvendors.com/\(prefix)") else { return nil }
+
+        // Rate limit API calls
+        await rateLimitedAPICall()
+
+        do {
+            var request = URLRequest(url: url)
+            request.timeoutInterval = 5
+
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200,
+                  let vendor = String(data: data, encoding: .utf8) else {
+                return nil
+            }
+
+            let trimmed = vendor.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty && !trimmed.contains("Not Found") {
+                return trimmed
+            }
+        } catch {
+            // API unavailable, fall through to local database
+        }
+
+        return nil
+    }
+
+    /// Cache API lookup result
+    private func cacheResult(macAddress: String, vendor: String) {
+        let prefix = macAddress.replacingOccurrences(of: ":", with: "")
+            .replacingOccurrences(of: "-", with: "")
+            .prefix(6)
+            .uppercased()
+        vendorCache[String(prefix)] = vendor
+    }
+
+    /// Rate limit API calls to avoid hitting the API too fast
+    private func rateLimitedAPICall() async {
+        let elapsed = Date().timeIntervalSince(lastAPICall)
+        if elapsed < rateLimitInterval {
+            try? await Task.sleep(for: .seconds(rateLimitInterval - elapsed))
+        }
+        lastAPICall = Date()
     }
 
     /// Normalize MAC address to XX:XX:XX:XX:XX:XX format

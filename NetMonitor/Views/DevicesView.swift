@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import AppKit
+import Darwin
 
 struct DevicesView: View {
     @Environment(\.modelContext) private var modelContext
@@ -11,6 +12,10 @@ struct DevicesView: View {
     @State private var searchText: String = ""
     @State private var filterOnlineOnly: Bool = false
     @State private var wolAction = WakeOnLanAction()
+
+    // Context menu action state
+    @State private var deviceToPing: LocalDevice?
+    @State private var deviceToScan: LocalDevice?
 
     var filteredDevices: [LocalDevice] {
         var result = devices
@@ -61,6 +66,18 @@ struct DevicesView: View {
         .searchable(text: $searchText, prompt: "Search devices...")
         .accessibilityIdentifier("devices_search_field")
         .wakeOnLanAlert(wolAction)
+        .sheet(item: $deviceToPing) { device in
+            DevicePingSheet(device: device, isPresented: Binding(
+                get: { deviceToPing != nil },
+                set: { if !$0 { deviceToPing = nil } }
+            ))
+        }
+        .sheet(item: $deviceToScan) { device in
+            DevicePortScanSheet(device: device, isPresented: Binding(
+                get: { deviceToScan != nil },
+                set: { if !$0 { deviceToScan = nil } }
+            ))
+        }
     }
 
     // MARK: - Device List
@@ -181,14 +198,14 @@ struct DevicesView: View {
         Divider()
 
         Button {
-            // TODO: Implement ping
+            deviceToPing = device
         } label: {
             Label("Ping Device", systemImage: "waveform.path")
         }
         .accessibilityIdentifier("devices_menu_ping")
 
         Button {
-            // TODO: Implement port scan
+            deviceToScan = device
         } label: {
             Label("Scan Ports", systemImage: "network")
         }
@@ -213,6 +230,390 @@ struct DevicesView: View {
             Label("Remove Device", systemImage: "trash")
         }
         .accessibilityIdentifier("devices_menu_remove")
+    }
+}
+
+// MARK: - Helper Sheet Views
+
+struct DevicePingSheet: View {
+    let device: LocalDevice
+    @Binding var isPresented: Bool
+
+    @State private var pingResults: [String] = []
+    @State private var isPinging = false
+    @State private var pingTask: Task<Void, Never>?
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            HStack {
+                Label("Ping \(device.displayName)", systemImage: "waveform.path")
+                    .font(.headline)
+                Spacer()
+                Button {
+                    stopPing()
+                    isPresented = false
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding()
+
+            Divider()
+
+            // Device info
+            HStack {
+                Text("Target:")
+                    .foregroundStyle(.secondary)
+                Text(device.ipAddress)
+                    .fontDesign(.monospaced)
+                if let hostname = device.hostname {
+                    Text("(\(hostname))")
+                        .foregroundStyle(.tertiary)
+                }
+                Spacer()
+            }
+            .padding()
+            .background(Color.gray.opacity(0.1))
+
+            Divider()
+
+            // Results
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 2) {
+                        ForEach(Array(pingResults.enumerated()), id: \.offset) { index, line in
+                            Text(line)
+                                .font(.system(.body, design: .monospaced))
+                                .textSelection(.enabled)
+                                .id(index)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                }
+                .background(Color.black.opacity(0.2))
+                .onChange(of: pingResults.count) { _, _ in
+                    if let lastIndex = pingResults.indices.last {
+                        proxy.scrollTo(lastIndex, anchor: .bottom)
+                    }
+                }
+            }
+
+            Divider()
+
+            // Footer
+            HStack {
+                if isPinging {
+                    ProgressView()
+                        .scaleEffect(0.7)
+                    Text("Pinging...")
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text(pingResults.isEmpty ? "Ready to ping" : "Completed")
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                if !isPinging && !pingResults.isEmpty {
+                    Button("Clear") {
+                        pingResults.removeAll()
+                    }
+                }
+
+                Button(isPinging ? "Stop" : "Run") {
+                    if isPinging {
+                        stopPing()
+                    } else {
+                        runPing()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .padding()
+        }
+        .frame(width: 600, height: 500)
+        .onAppear {
+            if !isPinging && pingResults.isEmpty {
+                runPing()
+            }
+        }
+    }
+
+    private func runPing() {
+        isPinging = true
+        pingResults.removeAll()
+        pingResults.append("PING \(device.ipAddress) (5 packets)...")
+
+        pingTask = Task {
+            let pingService = ProcessPingService()
+            do {
+                for try await line in await pingService.pingStream(host: device.ipAddress, count: 5) {
+                    await MainActor.run {
+                        if let latency = line.latency {
+                            pingResults.append("\(line.bytes) bytes from \(line.host): icmp_seq=\(line.sequenceNumber) ttl=\(line.ttl ?? 0) time=\(String(format: "%.2f", latency)) ms")
+                        } else {
+                            pingResults.append("Request timeout for icmp_seq \(line.sequenceNumber)")
+                        }
+                    }
+                }
+                await MainActor.run {
+                    pingResults.append("--- Ping completed ---")
+                    isPinging = false
+                }
+            } catch {
+                await MainActor.run {
+                    pingResults.append("Error: \(error.localizedDescription)")
+                    isPinging = false
+                }
+            }
+        }
+    }
+
+    private func stopPing() {
+        pingTask?.cancel()
+        if isPinging {
+            pingResults.append("--- Ping cancelled ---")
+            isPinging = false
+        }
+    }
+}
+
+struct DevicePortScanSheet: View {
+    let device: LocalDevice
+    @Binding var isPresented: Bool
+
+    @State private var portScanResults: [(port: Int, name: String, isOpen: Bool)] = []
+    @State private var isScanning = false
+    @State private var scanProgress: Double = 0.0
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            HStack {
+                Label("Port Scan \(device.displayName)", systemImage: "network")
+                    .font(.headline)
+                Spacer()
+                Button {
+                    stopPortScan()
+                    isPresented = false
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding()
+
+            Divider()
+
+            // Device info
+            HStack {
+                Text("Target:")
+                    .foregroundStyle(.secondary)
+                Text(device.ipAddress)
+                    .fontDesign(.monospaced)
+                if let hostname = device.hostname {
+                    Text("(\(hostname))")
+                        .foregroundStyle(.tertiary)
+                }
+                Spacer()
+            }
+            .padding()
+            .background(Color.gray.opacity(0.1))
+
+            Divider()
+
+            // Progress
+            if isScanning {
+                VStack(spacing: 8) {
+                    ProgressView(value: scanProgress)
+                        .progressViewStyle(.linear)
+                    Text("\(Int(scanProgress * 100))% complete")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
+            }
+
+            // Results
+            ScrollView {
+                LazyVStack(spacing: 1) {
+                    ForEach(portScanResults, id: \.port) { result in
+                        HStack {
+                            Text("\(result.port)")
+                                .fontDesign(.monospaced)
+                                .frame(width: 60, alignment: .leading)
+                            Text(result.name)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            HStack(spacing: 4) {
+                                Circle()
+                                    .fill(result.isOpen ? Color.green : Color.gray.opacity(0.3))
+                                    .frame(width: 8, height: 8)
+                                Text(result.isOpen ? "Open" : "Closed")
+                                    .foregroundStyle(result.isOpen ? .green : .secondary)
+                                    .font(.caption)
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 6)
+                        .background(result.isOpen ? Color.green.opacity(0.1) : Color.clear)
+                    }
+                }
+            }
+            .background(Color.black.opacity(0.1))
+
+            Divider()
+
+            // Footer
+            HStack {
+                if isScanning {
+                    ProgressView()
+                        .scaleEffect(0.7)
+                    Text("Scanning ports...")
+                        .foregroundStyle(.secondary)
+                } else {
+                    let openCount = portScanResults.filter { $0.isOpen }.count
+                    Text(portScanResults.isEmpty ? "Ready to scan" : "\(openCount) open ports found")
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                if !isScanning && !portScanResults.isEmpty {
+                    Button("Clear") {
+                        portScanResults.removeAll()
+                        scanProgress = 0.0
+                    }
+                }
+
+                Button(isScanning ? "Stop" : "Scan") {
+                    if isScanning {
+                        stopPortScan()
+                    } else {
+                        runPortScan()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .padding()
+        }
+        .frame(width: 500, height: 600)
+        .onAppear {
+            if !isScanning && portScanResults.isEmpty {
+                runPortScan()
+            }
+        }
+    }
+
+    private func runPortScan() {
+        isScanning = true
+        portScanResults.removeAll()
+        scanProgress = 0.0
+
+        // Common ports to scan
+        let commonPorts: [(Int, String)] = [
+            (22, "SSH"),
+            (80, "HTTP"),
+            (443, "HTTPS"),
+            (445, "SMB"),
+            (548, "AFP"),
+            (3389, "RDP"),
+            (5900, "VNC"),
+            (8080, "HTTP-Alt"),
+            (8443, "HTTPS-Alt"),
+            (21, "FTP"),
+            (23, "Telnet"),
+            (25, "SMTP"),
+            (53, "DNS"),
+            (110, "POP3"),
+            (143, "IMAP"),
+            (3306, "MySQL"),
+            (5432, "PostgreSQL"),
+            (6379, "Redis"),
+            (27017, "MongoDB")
+        ]
+
+        Task {
+            for (index, portInfo) in commonPorts.enumerated() {
+                guard isScanning else { break }
+
+                let (port, name) = portInfo
+                let isOpen = await checkPort(port: port)
+
+                await MainActor.run {
+                    portScanResults.append((port: port, name: name, isOpen: isOpen))
+                    scanProgress = Double(index + 1) / Double(commonPorts.count)
+                }
+            }
+
+            await MainActor.run {
+                isScanning = false
+                scanProgress = 1.0
+            }
+        }
+    }
+
+    private func checkPort(port: Int) async -> Bool {
+        await withCheckedContinuation { continuation in
+            let queue = DispatchQueue(label: "com.netmonitor.portscan")
+            queue.async {
+                var hints = addrinfo()
+                hints.ai_family = AF_INET
+                hints.ai_socktype = SOCK_STREAM
+                hints.ai_protocol = IPPROTO_TCP
+
+                var result: UnsafeMutablePointer<addrinfo>?
+                let portString = String(port)
+                let resolveStatus = getaddrinfo(device.ipAddress, portString, &hints, &result)
+
+                guard resolveStatus == 0, let addrInfo = result else {
+                    continuation.resume(returning: false)
+                    return
+                }
+                defer { freeaddrinfo(result) }
+
+                let sock = socket(addrInfo.pointee.ai_family, addrInfo.pointee.ai_socktype, addrInfo.pointee.ai_protocol)
+                guard sock >= 0 else {
+                    continuation.resume(returning: false)
+                    return
+                }
+                defer { close(sock) }
+
+                // Set socket to non-blocking
+                var flags = fcntl(sock, F_GETFL, 0)
+                flags |= O_NONBLOCK
+                _ = fcntl(sock, F_SETFL, flags)
+
+                // Attempt connection
+                _ = connect(sock, addrInfo.pointee.ai_addr, addrInfo.pointee.ai_addrlen)
+
+                if errno == EINPROGRESS {
+                    // Wait for connection with 2 second timeout
+                    var pfd = pollfd(fd: sock, events: Int16(POLLOUT), revents: 0)
+                    let pollResult = poll(&pfd, 1, 2000)
+
+                    if pollResult > 0 {
+                        var socketError: Int32 = 0
+                        var errorLen = socklen_t(MemoryLayout<Int32>.size)
+                        getsockopt(sock, SOL_SOCKET, SO_ERROR, &socketError, &errorLen)
+                        continuation.resume(returning: socketError == 0)
+                    } else {
+                        continuation.resume(returning: false)
+                    }
+                } else {
+                    continuation.resume(returning: errno == 0)
+                }
+            }
+        }
+    }
+
+    private func stopPortScan() {
+        isScanning = false
     }
 }
 

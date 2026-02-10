@@ -115,7 +115,7 @@ struct NetMonitorApp: App {
         if isUITesting {
             // Add a small delay to let any pending system authentication complete
             try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
-            
+
             // Configure other test-specific settings
             UserDefaults.standard.set(false, forKey: "autoStartMonitoring")
         }
@@ -138,6 +138,9 @@ struct NetMonitorApp: App {
             )
             return
         }
+
+        // CRITICAL: Seed default targets FIRST, before any services that depend on targets
+        await DefaultTargetsProvider.seedIfNeeded(modelContext: context)
 
         // Create all services first (centralized service instantiation)
         let httpService = HTTPMonitorService()
@@ -205,7 +208,7 @@ struct NetMonitorApp: App {
         // 5. Set up notification service and request permission (skip in UI tests)
         if notificationService == nil {
             notificationService = NotificationService()
-            
+
             // Skip authorization request during UI tests to avoid auth prompts
             if !isUITesting {
                 Task {
@@ -214,11 +217,8 @@ struct NetMonitorApp: App {
             }
         }
 
-        // 7. Seed default targets on first launch
-        await DefaultTargetsProvider.seedIfNeeded(modelContext: context)
-
-        // 8. Auto-start monitoring if enabled in settings (skip during testing)
-        if autoStartMonitoring && !shouldDisableMonitoring, 
+        // 6. Auto-start monitoring if enabled in settings (skip during testing)
+        if autoStartMonitoring && !shouldDisableMonitoring,
            let session = monitoringSession, !session.isMonitoring {
             session.startMonitoring()
         }

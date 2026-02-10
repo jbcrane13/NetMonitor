@@ -18,6 +18,9 @@ final class MonitoringSession {
     /// Latest measurement results by target ID
     private(set) var latestResults: [UUID: TargetMeasurement] = [:]
 
+    /// Error message from last failed operation
+    private(set) var errorMessage: String?
+
     /// Active monitoring tasks (for cancellation)
     private var monitoringTasks: [UUID: Task<Void, Never>] = [:]
 
@@ -48,18 +51,31 @@ final class MonitoringSession {
     func startMonitoring() {
         guard !isMonitoring else { return }
 
-        isMonitoring = true
-        startTime = Date()
+        // Clear any previous error messages
+        errorMessage = nil
 
         // Fetch all enabled targets
         let descriptor = FetchDescriptor<NetworkTarget>(
             predicate: #Predicate { $0.isEnabled }
         )
 
-        guard let targets = try? modelContext.fetch(descriptor) else {
-            stopMonitoring()
+        let targets: [NetworkTarget]
+        do {
+            targets = try modelContext.fetch(descriptor)
+        } catch {
+            errorMessage = "Failed to fetch targets: \(error.localizedDescription)"
             return
         }
+
+        // Validate that we have targets to monitor
+        guard !targets.isEmpty else {
+            errorMessage = "No enabled targets found. Add targets in the Targets section to start monitoring."
+            return
+        }
+
+        // All validations passed - start monitoring
+        isMonitoring = true
+        startTime = Date()
 
         // Start monitoring each target
         for target in targets {

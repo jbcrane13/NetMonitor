@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import NetMonitorShared
+import Darwin
 
 struct DeviceDetailView: View {
     @Bindable var device: LocalDevice
@@ -12,12 +13,33 @@ struct DeviceDetailView: View {
     @State private var selectedDeviceType: DeviceType = .unknown
     @State private var wolAction = WakeOnLanAction()
 
+    // Ping sheet state
+    @State private var showPingSheet = false
+    @State private var pingResults: [String] = []
+    @State private var isPinging = false
+    @State private var pingTask: Task<Void, Never>?
+
+    // Port scan sheet state
+    @State private var showPortScanSheet = false
+    @State private var portScanResults: [(port: Int, name: String, isOpen: Bool)] = []
+    @State private var isScanning = false
+    @State private var scanProgress: Double = 0.0
+
+    // Add to targets feedback
+    @State private var showAddToTargetsAlert = false
+    @State private var addToTargetsMessage = ""
+
+    // Bonjour services discovered for this device
+    @State private var bonjourServices: [String] = []
+
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
                 headerCard
                 networkInfoCard
-                timestampsCard
+                manufacturerSection
+                timelineSection
+                servicesSection
                 notesCard
                 actionsSection
             }
@@ -36,7 +58,21 @@ struct DeviceDetailView: View {
                 .accessibilityIdentifier("device_detail_button_edit")
             }
         }
+        .task {
+            await loadBonjourServices()
+        }
         .wakeOnLanAlert(wolAction)
+        .alert("Add to Targets", isPresented: $showAddToTargetsAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(addToTargetsMessage)
+        }
+        .sheet(isPresented: $showPingSheet) {
+            pingSheetView
+        }
+        .sheet(isPresented: $showPortScanSheet) {
+            portScanSheetView
+        }
     }
 
     // MARK: - Header Card
@@ -124,11 +160,39 @@ struct DeviceDetailView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
-    // MARK: - Timestamps Card
+    // MARK: - Manufacturer Section
 
-    private var timestampsCard: some View {
+    private var manufacturerSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("Activity", systemImage: "clock")
+            Label("Hardware", systemImage: "cpu")
+                .font(.headline)
+
+            Divider()
+
+            if let vendor = device.vendor {
+                infoRow(label: "Manufacturer", value: vendor)
+            }
+
+            if !device.macAddress.isEmpty {
+                infoRow(label: "MAC Address", value: device.macAddress, monospace: true)
+
+                infoRow(
+                    label: "OUI Prefix",
+                    value: String(device.macAddress.replacingOccurrences(of: ":", with: "").prefix(6)),
+                    monospace: true
+                )
+            }
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    // MARK: - Timeline Section
+
+    private var timelineSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Timeline", systemImage: "clock")
                 .font(.headline)
 
             Divider()
@@ -142,6 +206,39 @@ struct DeviceDetailView: View {
                 label: "Last Seen",
                 value: device.lastSeen.formatted(date: .abbreviated, time: .shortened)
             )
+
+            infoRow(label: "Time Since Last Seen", value: timeSinceLastSeen)
+
+            infoRow(label: "Total Time Tracked", value: totalTimeTracked)
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    // MARK: - Services Section
+
+    private var servicesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Discovered Services", systemImage: "server.rack")
+                .font(.headline)
+
+            Divider()
+
+            if bonjourServices.isEmpty {
+                Text("No services discovered")
+                    .foregroundStyle(.secondary)
+                    .font(.body)
+            } else {
+                ForEach(bonjourServices, id: \.self) { service in
+                    HStack {
+                        Image(systemName: "network")
+                            .foregroundStyle(.cyan)
+                        Text(service)
+                            .font(.system(.body, design: .monospaced))
+                    }
+                }
+            }
         }
         .padding()
         .background(.ultraThinMaterial)
@@ -195,14 +292,14 @@ struct DeviceDetailView: View {
                 actionButton(
                     title: "Ping",
                     systemImage: "waveform.path",
-                    action: { /* TODO: Implement ping action */ }
+                    action: { showPingSheet = true }
                 )
                 .accessibilityIdentifier("device_detail_button_ping")
 
                 actionButton(
                     title: "Port Scan",
                     systemImage: "network",
-                    action: { /* TODO: Implement port scan action */ }
+                    action: { showPortScanSheet = true }
                 )
                 .accessibilityIdentifier("device_detail_button_portScan")
 
@@ -266,6 +363,23 @@ struct DeviceDetailView: View {
         .buttonStyle(.bordered)
     }
 
+    // MARK: - Computed Properties
+
+    private var timeSinceLastSeen: String {
+        let interval = Date().timeIntervalSince(device.lastSeen)
+        if interval < 60 { return "Just now" }
+        if interval < 3600 { return "\(Int(interval / 60)) minutes ago" }
+        if interval < 86400 { return "\(Int(interval / 3600)) hours ago" }
+        return "\(Int(interval / 86400)) days ago"
+    }
+
+    private var totalTimeTracked: String {
+        let interval = Date().timeIntervalSince(device.firstSeen)
+        if interval < 3600 { return "\(Int(interval / 60)) minutes" }
+        if interval < 86400 { return "\(Int(interval / 3600)) hours" }
+        return "\(Int(interval / 86400)) days"
+    }
+
     // MARK: - Actions
 
     private func startEditing() {
@@ -281,17 +395,85 @@ struct DeviceDetailView: View {
         try? modelContext.save()
     }
 
+    private func loadBonjourServices() async {
+        // Create a Bonjour discovery service to check for services at this IP
+        let bonjourService = BonjourDiscoveryService()
+
+        // Start discovery and wait briefly to collect services
+        await bonjourService.startDiscovery()
+
+        // Wait 2 seconds for services to be discovered
+        try? await Task.sleep(for: .seconds(2))
+
+        // Get discovered services and filter by IP address
+        let discoveredServices = await bonjourService.discoveredServices
+        let deviceServices = discoveredServices.filter { service in
+            service.ipAddress == device.ipAddress
+        }
+
+        // Stop discovery
+        await bonjourService.stopDiscovery()
+
+        // Update bonjourServices with the service types found
+        bonjourServices = deviceServices.map { service in
+            if let port = service.port {
+                return "\(service.type) (Port \(port))"
+            } else {
+                return service.type
+            }
+        }
+    }
+
     private func addToTargets() {
-        let target = NetworkTarget(
-            name: device.displayName,
-            host: device.ipAddress,
-            port: nil,
-            targetProtocol: .icmp,
-            checkInterval: 30,
-            timeout: 10,
-            isEnabled: true
+        // Check for existing target with same host
+        let ipAddress = device.ipAddress
+        let descriptor = FetchDescriptor<NetworkTarget>(
+            predicate: #Predicate<NetworkTarget> { target in
+                target.host == ipAddress
+            }
         )
-        modelContext.insert(target)
-        try? modelContext.save()
+
+        do {
+            let existingTargets = try modelContext.fetch(descriptor)
+
+            if !existingTargets.isEmpty {
+                // Target already exists
+                addToTargetsMessage = "A monitoring target for \(device.ipAddress) already exists."
+                showAddToTargetsAlert = true
+                return
+            }
+
+            // Create new target
+            let target = NetworkTarget(
+                name: device.displayName,
+                host: device.ipAddress,
+                port: nil,
+                targetProtocol: .icmp,
+                checkInterval: 30,
+                timeout: 10,
+                isEnabled: true
+            )
+            modelContext.insert(target)
+            try modelContext.save()
+
+            // Show success message
+            addToTargetsMessage = "Successfully added \(device.displayName) to monitoring targets."
+            showAddToTargetsAlert = true
+
+        } catch {
+            // Show error message
+            addToTargetsMessage = "Failed to add target: \(error.localizedDescription)"
+            showAddToTargetsAlert = true
+        }
+    }
+
+    // MARK: - Sheet Views
+
+    private var pingSheetView: some View {
+        DevicePingSheet(device: device, isPresented: $showPingSheet)
+    }
+
+    private var portScanSheetView: some View {
+        DevicePortScanSheet(device: device, isPresented: $showPortScanSheet)
     }
 }

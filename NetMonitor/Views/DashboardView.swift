@@ -35,6 +35,22 @@ struct DashboardView: View {
                 }
                 .padding(.horizontal)
 
+                // Error Message Display
+                if let session = session, let errorMessage = session.errorMessage {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                        Text(errorMessage)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.orange.opacity(0.1))
+                    .cornerRadius(8)
+                    .padding(.horizontal)
+                }
+
                 // Network Info Cards
                 HStack(spacing: 16) {
                     ConnectionInfoCard()

@@ -15,11 +15,16 @@ struct SpeedTestToolView: View {
     @State private var pingLatency: Double?
     @State private var downloadSpeed: Double?
     @State private var uploadSpeed: Double?
+    @State private var peakDownloadSpeed: Double?
+    @State private var peakUploadSpeed: Double?
+    @State private var downloadSamples: [Double] = []
+    @State private var uploadSamples: [Double] = []
     @State private var progress: Double = 0
     @State private var errorMessage: String?
     @State private var speedTestTask: Task<Void, Never>?
+    @State private var testDuration: TimeInterval = 10 // Default 10 seconds
+    @State private var timeRemaining: TimeInterval = 0
 
-    private let testFileURL = URL(string: "https://speed.cloudflare.com/__down?bytes=25000000")! // 25MB test file
     private let uploadURL = URL(string: "https://speed.cloudflare.com/__up")! // Upload endpoint
 
     var body: some View {
@@ -58,10 +63,34 @@ struct SpeedTestToolView: View {
 
     private var contentArea: some View {
         VStack(spacing: 32) {
+            // Duration picker
+            VStack(spacing: 8) {
+                Text("Test Duration")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                Picker("Duration", selection: $testDuration) {
+                    Text("5 seconds").tag(TimeInterval(5))
+                    Text("10 seconds").tag(TimeInterval(10))
+                    Text("30 seconds").tag(TimeInterval(30))
+                }
+                .pickerStyle(.segmented)
+                .frame(maxWidth: 300)
+                .disabled(isRunning)
+                .accessibilityIdentifier("speedtest_picker_duration")
+            }
+
             Spacer()
 
             // Speedometer display
             speedometerView
+
+            // Time remaining during test
+            if isRunning && (phase == .download || phase == .upload) && timeRemaining > 0 {
+                Text("Time remaining: \(Int(timeRemaining))s")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
 
             // Results
             resultsView
@@ -191,9 +220,14 @@ struct SpeedTestToolView: View {
                 if let speed = downloadSpeed {
                     Text(formatSpeed(speed))
                         .font(.title2.bold())
-                    Text("Mbps down")
+                    Text("Mbps avg down")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    if let peak = peakDownloadSpeed {
+                        Text("Peak: \(formatSpeed(peak)) Mbps")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                 } else {
                     Text("--")
                         .font(.title2.bold())
@@ -213,9 +247,14 @@ struct SpeedTestToolView: View {
                 if let speed = uploadSpeed {
                     Text(formatSpeed(speed))
                         .font(.title2.bold())
-                    Text("Mbps up")
+                    Text("Mbps avg up")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    if let peak = peakUploadSpeed {
+                        Text("Peak: \(formatSpeed(peak)) Mbps")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                 } else {
                     Text("--")
                         .font(.title2.bold())
@@ -283,7 +322,12 @@ struct SpeedTestToolView: View {
         pingLatency = nil
         downloadSpeed = nil
         uploadSpeed = nil
+        peakDownloadSpeed = nil
+        peakUploadSpeed = nil
+        downloadSamples = []
+        uploadSamples = []
         progress = 0
+        timeRemaining = 0
 
         speedTestTask = Task {
             // Phase 1: Ping test
@@ -320,9 +364,14 @@ struct SpeedTestToolView: View {
         pingLatency = nil
         downloadSpeed = nil
         uploadSpeed = nil
+        peakDownloadSpeed = nil
+        peakUploadSpeed = nil
+        downloadSamples = []
+        uploadSamples = []
         progress = 0
         phase = .idle
         errorMessage = nil
+        timeRemaining = 0
     }
 
     // MARK: - Measurements
@@ -351,98 +400,139 @@ struct SpeedTestToolView: View {
     }
 
     private func measureDownload() async -> Double? {
+        let chunkURL = URL(string: "https://speed.cloudflare.com/__down?bytes=1000000")! // 1MB chunks
         let startTime = Date()
+        var totalBytes: Int64 = 0
+        var samples: [Double] = []
+        var peak: Double = 0
 
-        do {
-            var request = URLRequest(url: testFileURL)
-            request.timeoutInterval = 30
+        while Date().timeIntervalSince(startTime) < testDuration && isRunning {
+            let chunkStart = Date()
+            do {
+                var request = URLRequest(url: chunkURL)
+                request.timeoutInterval = 10
 
-            // Use buffered download for efficient transfer
-            let (data, response) = try await URLSession.shared.data(for: request)
+                let (data, response) = try await URLSession.shared.data(for: request)
 
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                throw URLError(.badServerResponse)
+                guard let httpResponse = response as? HTTPURLResponse,
+                      httpResponse.statusCode == 200 else {
+                    throw URLError(.badServerResponse)
+                }
+
+                guard isRunning else { return nil }
+
+                let chunkTime = Date().timeIntervalSince(chunkStart)
+                totalBytes += Int64(data.count)
+                let chunkSpeedMbps = Double(data.count * 8) / chunkTime / 1_000_000
+                samples.append(chunkSpeedMbps)
+                peak = max(peak, chunkSpeedMbps)
+
+                let elapsed = Date().timeIntervalSince(startTime)
+                let currentAvg = Double(totalBytes * 8) / elapsed / 1_000_000
+                let remaining = max(0, testDuration - elapsed)
+
+                await MainActor.run {
+                    downloadSpeed = currentAvg
+                    peakDownloadSpeed = peak
+                    downloadSamples = samples
+                    progress = min(elapsed / testDuration, 1.0)
+                    timeRemaining = remaining
+                }
+            } catch {
+                if isRunning {
+                    await MainActor.run {
+                        errorMessage = "Download failed: \(error.localizedDescription)"
+                    }
+                }
+                break
             }
-
-            guard isRunning else { return nil }
-
-            let totalBytes = data.count
-            let elapsed = Date().timeIntervalSince(startTime)
-            let bitsPerSecond = Double(totalBytes * 8) / elapsed
-            let speedMbps = bitsPerSecond / 1_000_000
-
-            await MainActor.run {
-                progress = 1.0
-                downloadSpeed = speedMbps
-            }
-
-            return speedMbps
-
-        } catch {
-            await MainActor.run {
-                errorMessage = "Download failed: \(error.localizedDescription)"
-            }
-            return nil
         }
+
+        let totalTime = Date().timeIntervalSince(startTime)
+        let finalSpeed = totalBytes > 0 ? Double(totalBytes * 8) / totalTime / 1_000_000 : nil
+
+        await MainActor.run {
+            downloadSpeed = finalSpeed
+            peakDownloadSpeed = peak
+            downloadSamples = samples
+            progress = 1.0
+            timeRemaining = 0
+        }
+
+        return finalSpeed
     }
 
     private func measureUpload() async -> Double? {
+        let chunkSize: Int = 256 * 1024 // 256KB chunks
         let startTime = Date()
-        let uploadSize: Int = 5 * 1024 * 1024 // 5MB
+        var totalBytes: Int64 = 0
+        var samples: [Double] = []
+        var peak: Double = 0
 
-        do {
-            // Generate random data payload
-            var data = Data(count: uploadSize)
-            data.withUnsafeMutableBytes { bytes in
-                guard let baseAddress = bytes.baseAddress else { return }
-                arc4random_buf(baseAddress, uploadSize)
+        while Date().timeIntervalSince(startTime) < testDuration && isRunning {
+            let chunkStart = Date()
+            do {
+                // Generate random data payload
+                var data = Data(count: chunkSize)
+                data.withUnsafeMutableBytes { bytes in
+                    guard let baseAddress = bytes.baseAddress else { return }
+                    arc4random_buf(baseAddress, chunkSize)
+                }
+
+                var request = URLRequest(url: uploadURL)
+                request.httpMethod = "POST"
+                request.httpBody = data
+                request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+                request.timeoutInterval = 10
+
+                let (_, response) = try await URLSession.shared.data(for: request)
+
+                guard let httpResponse = response as? HTTPURLResponse,
+                      (200...299).contains(httpResponse.statusCode) else {
+                    throw URLError(.badServerResponse)
+                }
+
+                guard isRunning else { return nil }
+
+                let chunkTime = Date().timeIntervalSince(chunkStart)
+                totalBytes += Int64(chunkSize)
+                let chunkSpeedMbps = Double(chunkSize * 8) / chunkTime / 1_000_000
+                samples.append(chunkSpeedMbps)
+                peak = max(peak, chunkSpeedMbps)
+
+                let elapsed = Date().timeIntervalSince(startTime)
+                let currentAvg = Double(totalBytes * 8) / elapsed / 1_000_000
+                let remaining = max(0, testDuration - elapsed)
+
+                await MainActor.run {
+                    uploadSpeed = currentAvg
+                    peakUploadSpeed = peak
+                    uploadSamples = samples
+                    progress = min(elapsed / testDuration, 1.0)
+                    timeRemaining = remaining
+                }
+            } catch {
+                if isRunning {
+                    await MainActor.run {
+                        errorMessage = "Upload failed: \(error.localizedDescription)"
+                    }
+                }
+                break
             }
-
-            var request = URLRequest(url: uploadURL)
-            request.httpMethod = "POST"
-            request.httpBody = data
-            request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
-            request.timeoutInterval = 30
-
-            let totalBytes = Int64(uploadSize)
-
-            // Track upload progress manually since URLSession doesn't provide byte-level upload progress
-            await MainActor.run {
-                progress = 0
-            }
-
-            let (_, response) = try await URLSession.shared.data(for: request)
-
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw URLError(.badServerResponse)
-            }
-
-            guard (200...299).contains(httpResponse.statusCode) else {
-                let statusError = NSError(
-                    domain: URLError.errorDomain,
-                    code: URLError.badServerResponse.rawValue,
-                    userInfo: [NSLocalizedDescriptionKey: "Server returned status code \(httpResponse.statusCode)"]
-                )
-                throw statusError
-            }
-
-            let elapsed = Date().timeIntervalSince(startTime)
-            let bitsPerSecond = Double(totalBytes * 8) / elapsed
-            let speedMbps = bitsPerSecond / 1_000_000
-
-            await MainActor.run {
-                progress = 1.0
-            }
-
-            return speedMbps
-
-        } catch {
-            await MainActor.run {
-                errorMessage = "Upload failed: \(error.localizedDescription)"
-            }
-            return nil
         }
+
+        let totalTime = Date().timeIntervalSince(startTime)
+        let finalSpeed = totalBytes > 0 ? Double(totalBytes * 8) / totalTime / 1_000_000 : nil
+
+        await MainActor.run {
+            uploadSpeed = finalSpeed
+            peakUploadSpeed = peak
+            uploadSamples = samples
+            progress = 1.0
+            timeRemaining = 0
+        }
+
+        return finalSpeed
     }
 
     // MARK: - Helpers
