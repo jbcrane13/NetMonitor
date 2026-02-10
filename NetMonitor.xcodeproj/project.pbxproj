@@ -19,6 +19,22 @@
 		2A000009000000000000000A /* NetMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00000A000000000000000A /* NetMonitorTests.swift */; };
 		2A00000B000000000000000A /* NetMonitorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00000C000000000000000A /* NetMonitorUITests.swift */; };
 		2A00000D000000000000000A /* NetMonitorUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A00000E000000000000000A /* NetMonitorUITestsLaunchTests.swift */; };
+		UITB0001000000000000001A /* BaseScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF0001000000000000001A /* BaseScreen.swift */; };
+		UITB0002000000000000001A /* BaseUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF0002000000000000001A /* BaseUITests.swift */; };
+		UITB0003000000000000001A /* DashboardScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF0003000000000000001A /* DashboardScreen.swift */; };
+		UITB0004000000000000001A /* DevicesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF0004000000000000001A /* DevicesScreen.swift */; };
+		UITB0005000000000000001A /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF0005000000000000001A /* SettingsScreen.swift */; };
+		UITB0006000000000000001A /* SidebarScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF0006000000000000001A /* SidebarScreen.swift */; };
+		UITB0007000000000000001A /* TargetsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF0007000000000000001A /* TargetsScreen.swift */; };
+		UITB0008000000000000001A /* ToolsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF0008000000000000001A /* ToolsScreen.swift */; };
+		UITB0009000000000000001A /* DashboardUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF0009000000000000001A /* DashboardUITests.swift */; };
+		UITB000A000000000000001A /* DevicesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF000A000000000000001A /* DevicesUITests.swift */; };
+		UITB000B000000000000001A /* ExportUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF000B000000000000001A /* ExportUITests.swift */; };
+		UITB000C000000000000001A /* MonitoringUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF000C000000000000001A /* MonitoringUITests.swift */; };
+		UITB000D000000000000001A /* NavigationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF000D000000000000001A /* NavigationUITests.swift */; };
+		UITB000E000000000000001A /* SettingsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF000E000000000000001A /* SettingsUITests.swift */; };
+		UITB000F000000000000001A /* TargetsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF000F000000000000001A /* TargetsUITests.swift */; };
+		UITB0010000000000000001A /* ToolsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = UITF0010000000000000001A /* ToolsUITests.swift */; };
 	2510D9AB2F13025400C8C91B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9AA2F13025400C8C91B /* SettingsView.swift */; };
 	2510D9AD2F13030000C8C91B /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9AE2F13030000C8C91B /* Section.swift */; };
 	2510D9AF2F13031000C8C91B /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9B02F13031000C8C91B /* SidebarView.swift */; };
@@ -138,6 +154,22 @@
 		2A00000A000000000000000A /* NetMonitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetMonitorTests.swift; sourceTree = "<group>"; };
 		2A00000C000000000000000A /* NetMonitorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetMonitorUITests.swift; sourceTree = "<group>"; };
 		2A00000E000000000000000A /* NetMonitorUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetMonitorUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		UITF0001000000000000001A /* BaseScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseScreen.swift; sourceTree = "<group>"; };
+		UITF0002000000000000001A /* BaseUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUITests.swift; sourceTree = "<group>"; };
+		UITF0003000000000000001A /* DashboardScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardScreen.swift; sourceTree = "<group>"; };
+		UITF0004000000000000001A /* DevicesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesScreen.swift; sourceTree = "<group>"; };
+		UITF0005000000000000001A /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
+		UITF0006000000000000001A /* SidebarScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarScreen.swift; sourceTree = "<group>"; };
+		UITF0007000000000000001A /* TargetsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetsScreen.swift; sourceTree = "<group>"; };
+		UITF0008000000000000001A /* ToolsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolsScreen.swift; sourceTree = "<group>"; };
+		UITF0009000000000000001A /* DashboardUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardUITests.swift; sourceTree = "<group>"; };
+		UITF000A000000000000001A /* DevicesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesUITests.swift; sourceTree = "<group>"; };
+		UITF000B000000000000001A /* ExportUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportUITests.swift; sourceTree = "<group>"; };
+		UITF000C000000000000001A /* MonitoringUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitoringUITests.swift; sourceTree = "<group>"; };
+		UITF000D000000000000001A /* NavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationUITests.swift; sourceTree = "<group>"; };
+		UITF000E000000000000001A /* SettingsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUITests.swift; sourceTree = "<group>"; };
+		UITF000F000000000000001A /* TargetsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetsUITests.swift; sourceTree = "<group>"; };
+		UITF0010000000000000001A /* ToolsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolsUITests.swift; sourceTree = "<group>"; };
 		2A000013000000000000000A /* NetMonitor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetMonitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A000014000000000000000A /* NetMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetMonitor.entitlements; sourceTree = "<group>"; };
 		2A000015000000000000000A /* NetMonitorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetMonitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -283,8 +315,48 @@
 			children = (
 				2A00000C000000000000000A /* NetMonitorUITests.swift */,
 				2A00000E000000000000000A /* NetMonitorUITestsLaunchTests.swift */,
+				UITG0001000000000000001A /* Helpers */,
+				UITG0002000000000000001A /* Screens */,
+				UITG0003000000000000001A /* Tests */,
 			);
 			path = NetMonitorUITests;
+			sourceTree = "<group>";
+		};
+		UITG0001000000000000001A /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				UITF0001000000000000001A /* BaseScreen.swift */,
+				UITF0002000000000000001A /* BaseUITests.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		UITG0002000000000000001A /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				UITF0003000000000000001A /* DashboardScreen.swift */,
+				UITF0004000000000000001A /* DevicesScreen.swift */,
+				UITF0005000000000000001A /* SettingsScreen.swift */,
+				UITF0006000000000000001A /* SidebarScreen.swift */,
+				UITF0007000000000000001A /* TargetsScreen.swift */,
+				UITF0008000000000000001A /* ToolsScreen.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		UITG0003000000000000001A /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				UITF0009000000000000001A /* DashboardUITests.swift */,
+				UITF000A000000000000001A /* DevicesUITests.swift */,
+				UITF000B000000000000001A /* ExportUITests.swift */,
+				UITF000C000000000000001A /* MonitoringUITests.swift */,
+				UITF000D000000000000001A /* NavigationUITests.swift */,
+				UITF000E000000000000001A /* SettingsUITests.swift */,
+				UITF000F000000000000001A /* TargetsUITests.swift */,
+				UITF0010000000000000001A /* ToolsUITests.swift */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		2A00001E000000000000000A /* Products */ = {
@@ -667,6 +739,22 @@
 			files = (
 				2A00000D000000000000000A /* NetMonitorUITestsLaunchTests.swift in Sources */,
 				2A00000B000000000000000A /* NetMonitorUITests.swift in Sources */,
+				UITB0001000000000000001A /* BaseScreen.swift in Sources */,
+				UITB0002000000000000001A /* BaseUITests.swift in Sources */,
+				UITB0003000000000000001A /* DashboardScreen.swift in Sources */,
+				UITB0004000000000000001A /* DevicesScreen.swift in Sources */,
+				UITB0005000000000000001A /* SettingsScreen.swift in Sources */,
+				UITB0006000000000000001A /* SidebarScreen.swift in Sources */,
+				UITB0007000000000000001A /* TargetsScreen.swift in Sources */,
+				UITB0008000000000000001A /* ToolsScreen.swift in Sources */,
+				UITB0009000000000000001A /* DashboardUITests.swift in Sources */,
+				UITB000A000000000000001A /* DevicesUITests.swift in Sources */,
+				UITB000B000000000000001A /* ExportUITests.swift in Sources */,
+				UITB000C000000000000001A /* MonitoringUITests.swift in Sources */,
+				UITB000D000000000000001A /* NavigationUITests.swift in Sources */,
+				UITB000E000000000000001A /* SettingsUITests.swift in Sources */,
+				UITB000F000000000000001A /* TargetsUITests.swift in Sources */,
+				UITB0010000000000000001A /* ToolsUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
