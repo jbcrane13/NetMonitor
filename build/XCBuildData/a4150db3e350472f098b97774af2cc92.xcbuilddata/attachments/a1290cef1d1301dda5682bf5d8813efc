@@ -1,0 +1,659 @@
+{
+  "" : {
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitor-primary.dia",
+    "emit-module-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitor-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitor-primary-emit-module.dia",
+    "pch" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitor-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitor-primary.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/ContentView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContentView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContentView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContentView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContentView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContentView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContentView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/MenuBar/MenuBarCommands.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarCommands.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarCommands.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarCommands.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarCommands.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarCommands.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarCommands.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarCommands.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarCommands~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/MenuBar/MenuBarController.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarController.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarController.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarController.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarController.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarController.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarController.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarController.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarController~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/MenuBar/MenuBarPopoverView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarPopoverView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarPopoverView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarPopoverView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarPopoverView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarPopoverView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarPopoverView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarPopoverView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MenuBarPopoverView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Models/LocalDevice.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LocalDevice.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LocalDevice.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LocalDevice.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LocalDevice.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LocalDevice.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LocalDevice.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LocalDevice.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LocalDevice~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Models/NetworkTarget.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkTarget.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkTarget.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkTarget.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkTarget.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkTarget.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkTarget.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkTarget.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkTarget~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Models/Section.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/Section.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/Section.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/Section.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/Section.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/Section.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/Section.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/Section.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/Section~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Models/SessionRecord.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SessionRecord.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SessionRecord.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SessionRecord.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SessionRecord.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SessionRecord.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SessionRecord.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SessionRecord.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SessionRecord~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Models/TargetMeasurement.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetMeasurement.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetMeasurement.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetMeasurement.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetMeasurement.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetMeasurement.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetMeasurement.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetMeasurement.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetMeasurement~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/NetMonitorApp.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitorApp.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitorApp.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitorApp.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitorApp.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitorApp.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitorApp.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitorApp.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetMonitorApp~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Preview Content/PreviewContainer.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PreviewContainer.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PreviewContainer.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PreviewContainer.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PreviewContainer.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PreviewContainer.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PreviewContainer.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PreviewContainer.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PreviewContainer~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/ARPScannerService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ARPScannerService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ARPScannerService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ARPScannerService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ARPScannerService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ARPScannerService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ARPScannerService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ARPScannerService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ARPScannerService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/BonjourDiscoveryService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourDiscoveryService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourDiscoveryService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourDiscoveryService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourDiscoveryService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourDiscoveryService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourDiscoveryService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourDiscoveryService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourDiscoveryService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/CompanionMessageHandler.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionMessageHandler.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionMessageHandler.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionMessageHandler.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionMessageHandler.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionMessageHandler.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionMessageHandler.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionMessageHandler.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionMessageHandler~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/CompanionService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/DefaultTargetsProvider.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DefaultTargetsProvider.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DefaultTargetsProvider.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DefaultTargetsProvider.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DefaultTargetsProvider.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DefaultTargetsProvider.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DefaultTargetsProvider.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DefaultTargetsProvider.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DefaultTargetsProvider~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/DeviceDiscoveryCoordinator.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryCoordinator.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryCoordinator.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryCoordinator.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryCoordinator.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryCoordinator.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryCoordinator.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryCoordinator.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryCoordinator~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/DeviceDiscoveryService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDiscoveryService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/HTTPMonitorService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/HTTPMonitorService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/HTTPMonitorService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/HTTPMonitorService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/HTTPMonitorService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/HTTPMonitorService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/HTTPMonitorService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/HTTPMonitorService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/HTTPMonitorService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/ICMPMonitorService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPMonitorService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPMonitorService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPMonitorService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPMonitorService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPMonitorService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPMonitorService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPMonitorService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPMonitorService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/ICMPSocket.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPSocket.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPSocket.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPSocket.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPSocket.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPSocket.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPSocket.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPSocket.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ICMPSocket~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/ISPLookupService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPLookupService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPLookupService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPLookupService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPLookupService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPLookupService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPLookupService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPLookupService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPLookupService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/MACVendorLookupService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MACVendorLookupService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MACVendorLookupService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MACVendorLookupService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MACVendorLookupService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MACVendorLookupService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MACVendorLookupService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MACVendorLookupService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MACVendorLookupService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/MonitoringSession.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSession.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSession.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSession.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSession.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSession.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSession.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSession.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSession~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/NetworkInfoService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkInfoService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkInfoService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkInfoService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkInfoService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkInfoService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkInfoService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkInfoService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkInfoService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/NetworkMonitorService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkMonitorService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkMonitorService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkMonitorService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkMonitorService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkMonitorService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkMonitorService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkMonitorService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkMonitorService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/NotificationService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/ProcessPingService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ProcessPingService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ProcessPingService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ProcessPingService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ProcessPingService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ProcessPingService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ProcessPingService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ProcessPingService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ProcessPingService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/ShellCommandRunner.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ShellCommandRunner.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ShellCommandRunner.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ShellCommandRunner.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ShellCommandRunner.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ShellCommandRunner.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ShellCommandRunner.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ShellCommandRunner.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ShellCommandRunner~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/StatisticsService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/StatisticsService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/StatisticsService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/StatisticsService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/StatisticsService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/StatisticsService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/StatisticsService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/StatisticsService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/StatisticsService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/TCPMonitorService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TCPMonitorService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TCPMonitorService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TCPMonitorService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TCPMonitorService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TCPMonitorService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TCPMonitorService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TCPMonitorService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TCPMonitorService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/WakeOnLanService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanService.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanService.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanService.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanService.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanService~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Utilities/ContinuationTracker.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContinuationTracker.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContinuationTracker.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContinuationTracker.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContinuationTracker.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContinuationTracker.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContinuationTracker.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContinuationTracker.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ContinuationTracker~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Utilities/WakeOnLanAction.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanAction.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanAction.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanAction.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanAction.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanAction.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanAction.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanAction.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanAction~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/AddTargetSheet.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AddTargetSheet.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AddTargetSheet.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AddTargetSheet.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AddTargetSheet.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AddTargetSheet.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AddTargetSheet.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AddTargetSheet.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AddTargetSheet~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/ConnectionInfoCard.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ConnectionInfoCard.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ConnectionInfoCard.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ConnectionInfoCard.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ConnectionInfoCard.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ConnectionInfoCard.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ConnectionInfoCard.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ConnectionInfoCard.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ConnectionInfoCard~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/DashboardView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DashboardView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DashboardView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DashboardView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DashboardView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DashboardView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DashboardView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DashboardView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DashboardView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/DeviceDetailView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDetailView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDetailView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDetailView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDetailView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDetailView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDetailView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDetailView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceDetailView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/DeviceRowView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceRowView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceRowView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceRowView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceRowView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceRowView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceRowView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceRowView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DeviceRowView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/DevicesView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DevicesView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DevicesView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DevicesView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DevicesView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DevicesView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DevicesView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DevicesView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DevicesView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/GatewayInfoCard.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GatewayInfoCard.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GatewayInfoCard.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GatewayInfoCard.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GatewayInfoCard.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GatewayInfoCard.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GatewayInfoCard.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GatewayInfoCard.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GatewayInfoCard~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/ISPInfoCard.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPInfoCard.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPInfoCard.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPInfoCard.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPInfoCard.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPInfoCard.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPInfoCard.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPInfoCard.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ISPInfoCard~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/LiveDurationView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LiveDurationView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LiveDurationView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LiveDurationView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LiveDurationView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LiveDurationView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LiveDurationView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LiveDurationView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/LiveDurationView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/QuickStatsBar.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/QuickStatsBar.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/QuickStatsBar.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/QuickStatsBar.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/QuickStatsBar.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/QuickStatsBar.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/QuickStatsBar.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/QuickStatsBar.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/QuickStatsBar~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Settings/AppearanceSettingsView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AppearanceSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AppearanceSettingsView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AppearanceSettingsView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AppearanceSettingsView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AppearanceSettingsView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AppearanceSettingsView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AppearanceSettingsView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/AppearanceSettingsView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Settings/CompanionSettingsView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionSettingsView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionSettingsView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionSettingsView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionSettingsView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionSettingsView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionSettingsView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/CompanionSettingsView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Settings/DataSettingsView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DataSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DataSettingsView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DataSettingsView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DataSettingsView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DataSettingsView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DataSettingsView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DataSettingsView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DataSettingsView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Settings/GeneralSettingsView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneralSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneralSettingsView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneralSettingsView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneralSettingsView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneralSettingsView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneralSettingsView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneralSettingsView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneralSettingsView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Settings/MonitoringSettingsView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSettingsView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSettingsView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSettingsView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSettingsView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSettingsView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSettingsView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/MonitoringSettingsView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Settings/NetworkSettingsView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkSettingsView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkSettingsView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkSettingsView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkSettingsView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkSettingsView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkSettingsView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NetworkSettingsView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Settings/NotificationSettingsView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationSettingsView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationSettingsView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationSettingsView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationSettingsView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationSettingsView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationSettingsView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/NotificationSettingsView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/SettingsView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SettingsView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SettingsView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SettingsView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SettingsView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SettingsView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SettingsView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SettingsView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SettingsView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/SidebarView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SidebarView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SidebarView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SidebarView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SidebarView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SidebarView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SidebarView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SidebarView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SidebarView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/TargetStatisticsView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetStatisticsView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetStatisticsView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetStatisticsView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetStatisticsView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetStatisticsView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetStatisticsView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetStatisticsView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetStatisticsView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/TargetsView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetsView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetsView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetsView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetsView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetsView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetsView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetsView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TargetsView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/BonjourBrowserToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourBrowserToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourBrowserToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourBrowserToolView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourBrowserToolView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourBrowserToolView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourBrowserToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourBrowserToolView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/BonjourBrowserToolView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/DNSLookupToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DNSLookupToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DNSLookupToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DNSLookupToolView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DNSLookupToolView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DNSLookupToolView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DNSLookupToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DNSLookupToolView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/DNSLookupToolView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/PingToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PingToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PingToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PingToolView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PingToolView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PingToolView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PingToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PingToolView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PingToolView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/PortScannerToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PortScannerToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PortScannerToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PortScannerToolView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PortScannerToolView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PortScannerToolView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PortScannerToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PortScannerToolView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/PortScannerToolView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/SpeedTestToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SpeedTestToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SpeedTestToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SpeedTestToolView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SpeedTestToolView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SpeedTestToolView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SpeedTestToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SpeedTestToolView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/SpeedTestToolView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/TracerouteToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TracerouteToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TracerouteToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TracerouteToolView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TracerouteToolView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TracerouteToolView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TracerouteToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TracerouteToolView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/TracerouteToolView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/WHOISToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WHOISToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WHOISToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WHOISToolView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WHOISToolView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WHOISToolView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WHOISToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WHOISToolView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WHOISToolView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/WakeOnLanToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanToolView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanToolView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanToolView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanToolView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/WakeOnLanToolView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/ToolsView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ToolsView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ToolsView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ToolsView.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ToolsView.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ToolsView.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ToolsView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ToolsView.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/ToolsView~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/x86_64/GeneratedAssetSymbols~partial.swiftmodule"
+  }
+}

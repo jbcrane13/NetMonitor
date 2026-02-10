@@ -1,0 +1,30 @@
+{
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/DefaultTargetsProvider.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DefaultTargetsProvider.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DefaultTargetsProvider.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DefaultTargetsProvider.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DefaultTargetsProvider.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DefaultTargetsProvider.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/ISPLookupService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ISPLookupService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ISPLookupService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ISPLookupService.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ISPLookupService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ISPLookupService.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/NotificationService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/NotificationService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/NotificationService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/NotificationService.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/NotificationService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/NotificationService.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/StatisticsService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/StatisticsService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/StatisticsService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/StatisticsService.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/StatisticsService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/StatisticsService.swiftdeps"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "/Users/blake/Projects/NetMonitor/NetMonitor/MenuBar/MenuBarController.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MenuBarController.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MenuBarController.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MenuBarController.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MenuBarController.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MenuBarController.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/MenuBar/MenuBarPopoverView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MenuBarPopoverView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MenuBarPopoverView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MenuBarPopoverView.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MenuBarPopoverView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MenuBarPopoverView.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/MACVendorLookupService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MACVendorLookupService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MACVendorLookupService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MACVendorLookupService.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MACVendorLookupService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/MACVendorLookupService.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/DeviceDetailView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDetailView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDetailView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDetailView.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDetailView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDetailView.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/DeviceRowView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceRowView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceRowView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceRowView.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceRowView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceRowView.swiftdeps"
+  }
+}

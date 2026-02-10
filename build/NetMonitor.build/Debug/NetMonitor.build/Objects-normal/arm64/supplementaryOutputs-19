@@ -1,0 +1,37 @@
+{
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/DNSLookupToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DNSLookupToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DNSLookupToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DNSLookupToolView.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DNSLookupToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DNSLookupToolView.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/PortScannerToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/PortScannerToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/PortScannerToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/PortScannerToolView.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/PortScannerToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/PortScannerToolView.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/SpeedTestToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/SpeedTestToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/SpeedTestToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/SpeedTestToolView.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/SpeedTestToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/SpeedTestToolView.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/TracerouteToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/TracerouteToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/TracerouteToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/TracerouteToolView.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/TracerouteToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/TracerouteToolView.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Views/Tools/WHOISToolView.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/WHOISToolView.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/WHOISToolView.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/WHOISToolView.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/WHOISToolView.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/WHOISToolView.swiftdeps"
+  }
+}

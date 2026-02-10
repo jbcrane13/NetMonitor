@@ -1,0 +1,37 @@
+{
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/ARPScannerService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ARPScannerService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ARPScannerService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ARPScannerService.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ARPScannerService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ARPScannerService.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/BonjourDiscoveryService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/BonjourDiscoveryService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/BonjourDiscoveryService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/BonjourDiscoveryService.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/BonjourDiscoveryService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/BonjourDiscoveryService.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/DeviceDiscoveryCoordinator.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDiscoveryCoordinator.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDiscoveryCoordinator.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDiscoveryCoordinator.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDiscoveryCoordinator.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDiscoveryCoordinator.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/DeviceDiscoveryService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDiscoveryService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDiscoveryService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDiscoveryService.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDiscoveryService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/DeviceDiscoveryService.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitor/Services/ICMPMonitorService.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ICMPMonitorService.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ICMPMonitorService.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ICMPMonitorService.dia",
+    "object" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ICMPMonitorService.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/build/NetMonitor.build/Debug/NetMonitor.build/Objects-normal/arm64/ICMPMonitorService.swiftdeps"
+  }
+}

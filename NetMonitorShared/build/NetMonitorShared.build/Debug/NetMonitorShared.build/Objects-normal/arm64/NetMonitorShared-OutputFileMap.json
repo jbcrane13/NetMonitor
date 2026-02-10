@@ -1,0 +1,29 @@
+{
+  "" : {
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/NetMonitorShared-primary.dia",
+    "emit-module-dependencies" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/NetMonitorShared-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/NetMonitorShared-primary-emit-module.dia",
+    "pch" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/NetMonitorShared-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/NetMonitorShared-primary.swiftdeps"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitorShared/Sources/NetMonitorShared/Common/Enums.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/Enums.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/Enums.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/Enums.dia",
+    "index-unit-output-path" : "/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/Enums.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/Enums.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/Enums.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/Enums.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/Enums~partial.swiftmodule"
+  },
+  "/Users/blake/Projects/NetMonitor/NetMonitorShared/Sources/NetMonitorShared/Protocol/CompanionMessage.swift" : {
+    "const-values" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/CompanionMessage.swiftconstvalues",
+    "dependencies" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/CompanionMessage.d",
+    "diagnostics" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/CompanionMessage.dia",
+    "index-unit-output-path" : "/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/CompanionMessage.o",
+    "llvm-bc" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/CompanionMessage.bc",
+    "object" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/CompanionMessage.o",
+    "swift-dependencies" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/CompanionMessage.swiftdeps",
+    "swiftmodule" : "/Users/blake/Projects/NetMonitor/NetMonitorShared/build/NetMonitorShared.build/Debug/NetMonitorShared.build/Objects-normal/arm64/CompanionMessage~partial.swiftmodule"
+  }
+}
