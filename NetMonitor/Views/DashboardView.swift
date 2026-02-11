@@ -178,6 +178,7 @@ struct TargetStatusCard: View {
 
 // MARK: - Preview
 
+#if DEBUG
 #Preview {
     let container = PreviewContainer().container
     let context = container.mainContext
@@ -195,3 +196,4 @@ struct TargetStatusCard: View {
         .modelContainer(container)
         .environment(session)
 }
+#endif

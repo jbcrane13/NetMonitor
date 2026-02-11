@@ -629,7 +629,9 @@ struct DevicePortScanSheet: View {
     }
 }
 
+#if DEBUG
 #Preview {
     DevicesView()
         .modelContainer(PreviewContainer().container)
 }
+#endif

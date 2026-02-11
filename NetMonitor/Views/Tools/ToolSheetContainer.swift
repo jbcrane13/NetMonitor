@@ -83,7 +83,9 @@ struct ToolSheetContainer<InputArea: View, OutputArea: View, FooterContent: View
                 dismiss()
             } label: {
                 Image(systemName: "xmark.circle.fill")
-                    .foregroundStyle(.secondary)
+                    .font(.title3)
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(.primary.opacity(0.6))
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier(closeAccessibilityID)

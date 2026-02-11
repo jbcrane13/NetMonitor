@@ -115,7 +115,9 @@ struct AddTargetSheet: View {
     }
 }
 
+#if DEBUG
 #Preview {
     AddTargetSheet()
         .modelContainer(PreviewContainer().container)
 }
+#endif

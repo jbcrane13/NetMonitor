@@ -141,6 +141,10 @@ struct SpeedTestToolView: View {
                     Text(phase.description)
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                } else if phase == .complete {
+                    Text("Complete")
+                        .font(.caption)
+                        .foregroundStyle(.green)
                 }
 
                 if phase == .download, let speed = downloadSpeed {
@@ -152,6 +156,13 @@ struct SpeedTestToolView: View {
                 } else if phase == .upload, let speed = uploadSpeed {
                     Text(formatSpeed(speed))
                         .font(.system(size: 36, weight: .bold, design: .rounded))
+                    Text("Mbps")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else if phase == .complete, let speed = downloadSpeed {
+                    Text(formatSpeed(speed))
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .foregroundStyle(.green)
                     Text("Mbps")
                         .font(.caption)
                         .foregroundStyle(.secondary)

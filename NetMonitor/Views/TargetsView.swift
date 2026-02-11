@@ -208,7 +208,9 @@ struct TargetRow: View {
     }
 }
 
+#if DEBUG
 #Preview {
     TargetsView()
         .modelContainer(PreviewContainer().container)
 }
+#endif

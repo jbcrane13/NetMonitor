@@ -131,6 +131,7 @@ private struct StatItem: View {
 
 // MARK: - Preview
 
+#if DEBUG
 #Preview {
     let container = PreviewContainer().container
     let context = container.mainContext
@@ -149,3 +150,4 @@ private struct StatItem: View {
         .modelContainer(container)
         .environment(session)
 }
+#endif

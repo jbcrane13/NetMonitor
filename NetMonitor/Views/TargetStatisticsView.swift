@@ -117,6 +117,7 @@ struct StatisticItem: View {
     }
 }
 
+#if DEBUG
 #Preview {
     let container = PreviewContainer().container
     let target = NetworkTarget(
@@ -130,3 +131,4 @@ struct StatisticItem: View {
         .modelContainer(container)
         .frame(width: 600)
 }
+#endif
