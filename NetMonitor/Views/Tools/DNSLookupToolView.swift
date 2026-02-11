@@ -20,6 +20,7 @@ enum DNSRecordType: String, CaseIterable {
 }
 
 struct DNSLookupToolView: View {
+    @Environment(\.appAccentColor) private var accentColor
     @State private var hostname = ""
     @State private var recordType: DNSRecordType = .a
     @State private var isRunning = false
@@ -104,7 +105,7 @@ struct DNSLookupToolView: View {
     private func resultRow(_ result: String) -> some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: iconForResult(result))
-                .foregroundStyle(.cyan)
+                .foregroundStyle(accentColor)
                 .frame(width: 20)
 
             Text(result)

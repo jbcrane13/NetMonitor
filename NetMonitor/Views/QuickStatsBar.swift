@@ -10,9 +10,11 @@ import SwiftUI
 /// Displays real-time monitoring statistics in a horizontal bar
 struct QuickStatsBar: View {
     @Environment(MonitoringSession.self) private var session: MonitoringSession?
+    @Environment(\.appAccentColor) private var accentColor
+    @Environment(\.compactMode) private var compactMode
 
     var body: some View {
-        HStack(spacing: 20) {
+        HStack(spacing: compactMode ? 12 : 20) {
             // Online count
             StatItem(
                 icon: "checkmark.circle.fill",
@@ -38,7 +40,7 @@ struct QuickStatsBar: View {
             // Average latency
             StatItem(
                 icon: "clock.arrow.circlepath",
-                color: .cyan,
+                color: accentColor,
                 label: "Avg Latency",
                 value: latencyString
             )
@@ -54,7 +56,7 @@ struct QuickStatsBar: View {
                 value: lastCheckString
             )
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }

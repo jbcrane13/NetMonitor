@@ -122,6 +122,8 @@
 		ISIC0001000000000000001A /* ISPInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ISIC0002000000000000001A /* ISPInfoCard.swift */; };
 		QKSB0001000000000000001A /* QuickStatsBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = QKSB0002000000000000001A /* QuickStatsBar.swift */; };
 		LVDV0001000000000000001A /* LiveDurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = LVDV0002000000000000001A /* LiveDurationView.swift */; };
+		CEXT0002000000000000001A /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEXT0001000000000000001A /* ColorExtension.swift */; };
+		AENV0002000000000000001A /* AppearanceEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = AENV0001000000000000001A /* AppearanceEnvironment.swift */; };
 		TSTM0003000000000000001A /* NavigationSectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSTM0002000000000000001A /* NavigationSectionTests.swift */; };
 		TSTM0005000000000000001A /* EnumExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSTM0004000000000000001A /* EnumExtensionsTests.swift */; };
 		TSTM0007000000000000001A /* MeasurementResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSTM0006000000000000001A /* MeasurementResultTests.swift */; };
@@ -256,6 +258,8 @@
 		ISIC0002000000000000001A /* ISPInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISPInfoCard.swift; sourceTree = "<group>"; };
 		QKSB0002000000000000001A /* QuickStatsBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickStatsBar.swift; sourceTree = "<group>"; };
 		LVDV0002000000000000001A /* LiveDurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDurationView.swift; sourceTree = "<group>"; };
+		CEXT0001000000000000001A /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
+		AENV0001000000000000001A /* AppearanceEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceEnvironment.swift; sourceTree = "<group>"; };
 		TSTM0002000000000000001A /* NavigationSectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NavigationSectionTests.swift; path = NetMonitorTests/Models/NavigationSectionTests.swift; sourceTree = "<group>"; };
 		TSTM0004000000000000001A /* EnumExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnumExtensionsTests.swift; path = NetMonitorTests/Models/EnumExtensionsTests.swift; sourceTree = "<group>"; };
 		TSTM0006000000000000001A /* MeasurementResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeasurementResultTests.swift; path = NetMonitorTests/Models/MeasurementResultTests.swift; sourceTree = "<group>"; };
@@ -542,6 +546,8 @@
 			children = (
 				CTRK0002000000000000001A /* ContinuationTracker.swift */,
 				WOLA0002000000000000001A /* WakeOnLanAction.swift */,
+				CEXT0001000000000000001A /* ColorExtension.swift */,
+				AENV0001000000000000001A /* AppearanceEnvironment.swift */,
 			);
 			name = Utilities;
 			path = Utilities;
@@ -756,6 +762,8 @@
 				ISIC0001000000000000001A /* ISPInfoCard.swift in Sources */,
 				QKSB0001000000000000001A /* QuickStatsBar.swift in Sources */,
 				LVDV0001000000000000001A /* LiveDurationView.swift in Sources */,
+				CEXT0002000000000000001A /* ColorExtension.swift in Sources */,
+				AENV0002000000000000001A /* AppearanceEnvironment.swift in Sources */,
 			
 				C99FAE4B96A648BB988FCBF5 /* NetMonitorError.swift in Sources */,
 				5E290323F66B46168C7AC931 /* SchemaV1.swift in Sources */,

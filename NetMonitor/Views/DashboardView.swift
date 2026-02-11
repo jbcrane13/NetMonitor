@@ -4,12 +4,13 @@ import SwiftData
 struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(MonitoringSession.self) private var session: MonitoringSession?
+    @Environment(\.compactMode) private var compactMode
 
     @Query(sort: \NetworkTarget.name) private var targets: [NetworkTarget]
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: compactMode ? 12 : 20) {
                 // Header
                 HStack {
                     Spacer()
@@ -87,7 +88,7 @@ struct DashboardView: View {
                     .padding(.horizontal)
                 }
             }
-            .padding(.vertical)
+            .padding(.vertical, compactMode ? 8 : 16)
         }
         .navigationTitle("Dashboard")
     }

@@ -68,6 +68,7 @@ struct WHOISInfo {
 }
 
 struct WHOISToolView: View {
+    @Environment(\.appAccentColor) private var accentColor
     @State private var domain = ""
     @State private var isRunning = false
     @State private var output = ""
@@ -240,7 +241,7 @@ struct WHOISToolView: View {
         VStack(alignment: .leading, spacing: 8) {
             Label(title, systemImage: icon)
                 .font(.headline)
-                .foregroundStyle(.cyan)
+                .foregroundStyle(accentColor)
 
             VStack(alignment: .leading, spacing: 4) {
                 content()

@@ -4,6 +4,7 @@ import Charts
 
 struct TargetStatisticsView: View {
     let target: NetworkTarget
+    @Environment(\.appAccentColor) private var accentColor
 
     @Query private var measurements: [TargetMeasurement]
 
@@ -68,7 +69,7 @@ struct TargetStatisticsView: View {
                                 x: .value("Time", measurement.timestamp),
                                 y: .value("Latency", latency)
                             )
-                            .foregroundStyle(.cyan)
+                            .foregroundStyle(accentColor)
                         }
                     }
                 }

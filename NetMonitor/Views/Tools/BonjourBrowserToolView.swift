@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct BonjourBrowserToolView: View {
+    @Environment(\.appAccentColor) private var accentColor
     @State private var isScanning = false
     @State private var services: [BonjourService] = []
     @State private var selectedService: BonjourService?
@@ -92,7 +93,7 @@ struct BonjourBrowserToolView: View {
     private func serviceGroupHeader(_ type: String) -> some View {
         HStack {
             Image(systemName: iconForServiceType(type))
-                .foregroundStyle(.cyan)
+                .foregroundStyle(accentColor)
             Text(friendlyServiceName(type))
                 .font(.headline)
             Spacer()
@@ -143,7 +144,7 @@ struct BonjourBrowserToolView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .background(selectedService?.id == service.id ? Color.cyan.opacity(0.2) : Color.clear)
+        .background(selectedService?.id == service.id ? accentColor.opacity(0.2) : Color.clear)
     }
 
     private var detailView: some View {
@@ -165,7 +166,7 @@ struct BonjourBrowserToolView: View {
                 HStack {
                     Image(systemName: iconForServiceType(service.type))
                         .font(.largeTitle)
-                        .foregroundStyle(.cyan)
+                        .foregroundStyle(accentColor)
 
                     VStack(alignment: .leading) {
                         Text(service.name)

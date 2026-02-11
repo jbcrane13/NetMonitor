@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TracerouteToolView: View {
+    @Environment(\.appAccentColor) private var accentColor
     @State private var host = ""
     @State private var maxHops = 30
     @State private var isRunning = false
@@ -128,7 +129,7 @@ struct TracerouteToolView: View {
                     if !hop.latencies.isEmpty {
                         Text(hop.latencies.map { String(format: "%.2f ms", $0) }.joined(separator: "  "))
                             .font(.system(.caption, design: .monospaced))
-                            .foregroundStyle(.cyan)
+                            .foregroundStyle(accentColor)
                     }
                 }
             }

@@ -27,6 +27,7 @@ enum PortPreset: String, CaseIterable {
 }
 
 struct PortScannerToolView: View {
+    @Environment(\.appAccentColor) private var accentColor
     @State private var host = ""
     @State private var preset: PortPreset = .common
     @State private var customPorts = ""
@@ -164,7 +165,7 @@ struct PortScannerToolView: View {
             if result.isOpen {
                 Text(String(format: "%.0f ms", result.latency * 1000))
                     .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(.cyan)
+                    .foregroundStyle(accentColor)
             }
         }
         .padding(.vertical, 2)

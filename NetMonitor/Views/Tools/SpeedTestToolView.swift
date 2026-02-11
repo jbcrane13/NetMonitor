@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SpeedTestToolView: View {
+    @Environment(\.appAccentColor) private var accentColor
     @State private var isRunning = false
     @State private var phase: SpeedTestPhase = .idle
     @State private var pingLatency: Double?
@@ -124,7 +125,7 @@ struct SpeedTestToolView: View {
                 .trim(from: 0.15, to: 0.15 + (0.7 * min(progress, 1.0)))
                 .stroke(
                     LinearGradient(
-                        colors: [.cyan, .green],
+                        colors: [accentColor, .green],
                         startPoint: .leading,
                         endPoint: .trailing
                     ),
@@ -175,7 +176,7 @@ struct SpeedTestToolView: View {
             VStack(spacing: 4) {
                 Image(systemName: "waveform.path")
                     .font(.title2)
-                    .foregroundStyle(.cyan)
+                    .foregroundStyle(accentColor)
 
                 if let ping = pingLatency {
                     Text(String(format: "%.0f", ping))

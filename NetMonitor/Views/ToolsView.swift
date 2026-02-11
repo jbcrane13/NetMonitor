@@ -100,13 +100,14 @@ struct ToolsView: View {
 
 struct ToolCard: View {
     let tool: NetworkTool
+    @Environment(\.appAccentColor) private var accentColor
     @State private var isHovering = false
 
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: tool.iconName)
                 .font(.system(size: 28))
-                .foregroundStyle(.cyan)
+                .foregroundStyle(accentColor)
                 .frame(height: 32)
 
             Text(tool.rawValue)
@@ -126,7 +127,7 @@ struct ToolCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .strokeBorder(isHovering ? Color.cyan.opacity(0.5) : Color.clear, lineWidth: 2)
+                .strokeBorder(isHovering ? accentColor.opacity(0.5) : Color.clear, lineWidth: 2)
         )
         .scaleEffect(isHovering ? 1.02 : 1.0)
         .animation(.easeInOut(duration: 0.15), value: isHovering)

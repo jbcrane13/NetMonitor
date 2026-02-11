@@ -11,6 +11,7 @@ struct ISPInfoCard: View {
 
     // MARK: - Properties
 
+    @Environment(\.appAccentColor) private var accentColor
     @State private var ispInfo: ISPLookupService.ISPInfo?
     @State private var isLoading = true
     @State private var errorMessage: String?
@@ -40,7 +41,7 @@ struct ISPInfoCard: View {
                 } label: {
                     Image(systemName: "arrow.clockwise")
                         .imageScale(.medium)
-                        .foregroundStyle(.cyan)
+                        .foregroundStyle(accentColor)
                 }
                 .buttonStyle(.plain)
                 .disabled(isLoading)
@@ -86,7 +87,7 @@ struct ISPInfoCard: View {
                         Spacer()
                         Text(asn)
                             .font(.system(.body, design: .monospaced))
-                            .foregroundStyle(.cyan)
+                            .foregroundStyle(accentColor)
                     }
                 }
 

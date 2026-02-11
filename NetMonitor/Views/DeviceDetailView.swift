@@ -8,6 +8,7 @@ struct DeviceDetailView: View {
     @Bindable var device: LocalDevice
     @Environment(\.modelContext) private var modelContext
     @Environment(DeviceDiscoveryCoordinator.self) private var discoveryCoordinator: DeviceDiscoveryCoordinator?
+    @Environment(\.appAccentColor) private var accentColor
 
     @State private var isEditing = false
     @State private var editedName: String = ""
@@ -229,7 +230,7 @@ struct DeviceDetailView: View {
                 ForEach(bonjourServices, id: \.self) { service in
                     HStack {
                         Image(systemName: "network")
-                            .foregroundStyle(.cyan)
+                            .foregroundStyle(accentColor)
                         Text(service)
                             .font(.system(.body, design: .monospaced))
                     }

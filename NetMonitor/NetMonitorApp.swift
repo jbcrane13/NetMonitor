@@ -19,6 +19,8 @@ struct NetMonitorApp: App {
     @State private var notificationService: NotificationService?
 
     @AppStorage("autoStartMonitoring") private var autoStartMonitoring = false
+    @AppStorage("netmonitor.appearance.accentColor") private var accentColorHex = "#06B6D4"
+    @AppStorage("netmonitor.appearance.compactMode") private var compactMode = false
 
     /// Check if monitoring should be disabled (for testing)
     private var shouldDisableMonitoring: Bool {
@@ -100,6 +102,9 @@ struct NetMonitorApp: App {
             .task {
                 await setupServices()
             }
+            .tint(Color(hex: accentColorHex))
+            .environment(\.appAccentColor, Color(hex: accentColorHex))
+            .environment(\.compactMode, compactMode)
         }
         .modelContainer(sharedModelContainer)
         .commands {
@@ -115,6 +120,9 @@ struct NetMonitorApp: App {
 
         Settings {
             SettingsView()
+                .tint(Color(hex: accentColorHex))
+                .environment(\.appAccentColor, Color(hex: accentColorHex))
+                .environment(\.compactMode, compactMode)
         }
         .modelContainer(sharedModelContainer)
     }
