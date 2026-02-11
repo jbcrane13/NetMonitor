@@ -122,6 +122,12 @@
 		ISIC0001000000000000001A /* ISPInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ISIC0002000000000000001A /* ISPInfoCard.swift */; };
 		QKSB0001000000000000001A /* QuickStatsBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = QKSB0002000000000000001A /* QuickStatsBar.swift */; };
 		LVDV0001000000000000001A /* LiveDurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = LVDV0002000000000000001A /* LiveDurationView.swift */; };
+		TSTM0003000000000000001A /* NavigationSectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSTM0002000000000000001A /* NavigationSectionTests.swift */; };
+		TSTM0005000000000000001A /* EnumExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSTM0004000000000000001A /* EnumExtensionsTests.swift */; };
+		TSTM0007000000000000001A /* MeasurementResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSTM0006000000000000001A /* MeasurementResultTests.swift */; };
+		TSTM0009000000000000001A /* TargetCheckRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSTM0008000000000000001A /* TargetCheckRequestTests.swift */; };
+		TSTM000B000000000000001A /* CompanionMessageHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSTM000A000000000000001A /* CompanionMessageHandlerTests.swift */; };
+		TSTM000D000000000000001A /* MonitoringSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TSTM000C000000000000001A /* MonitoringSessionTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -250,6 +256,12 @@
 		ISIC0002000000000000001A /* ISPInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISPInfoCard.swift; sourceTree = "<group>"; };
 		QKSB0002000000000000001A /* QuickStatsBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickStatsBar.swift; sourceTree = "<group>"; };
 		LVDV0002000000000000001A /* LiveDurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDurationView.swift; sourceTree = "<group>"; };
+		TSTM0002000000000000001A /* NavigationSectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NavigationSectionTests.swift; path = NetMonitorTests/Models/NavigationSectionTests.swift; sourceTree = "<group>"; };
+		TSTM0004000000000000001A /* EnumExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnumExtensionsTests.swift; path = NetMonitorTests/Models/EnumExtensionsTests.swift; sourceTree = "<group>"; };
+		TSTM0006000000000000001A /* MeasurementResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeasurementResultTests.swift; path = NetMonitorTests/Models/MeasurementResultTests.swift; sourceTree = "<group>"; };
+		TSTM0008000000000000001A /* TargetCheckRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TargetCheckRequestTests.swift; path = NetMonitorTests/Models/TargetCheckRequestTests.swift; sourceTree = "<group>"; };
+		TSTM000A000000000000001A /* CompanionMessageHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanionMessageHandlerTests.swift; path = NetMonitorTests/Services/CompanionMessageHandlerTests.swift; sourceTree = "<group>"; };
+		TSTM000C000000000000001A /* MonitoringSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MonitoringSessionTests.swift; path = NetMonitorTests/Services/MonitoringSessionTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -498,8 +510,21 @@
 				SCRT-00001608006460163725521 /* NotificationServiceTests.swift */,
 				SCRT000006681799204163761225 /* DefaultTargetsProviderTests.swift */,
 				PPST0001000000000000001A /* ProcessPingServiceTests.swift */,
+				TSTM000A000000000000001A /* CompanionMessageHandlerTests.swift */,
+				TSTM000C000000000000001A /* MonitoringSessionTests.swift */,
 			);
 			name = Services;
+			sourceTree = "<group>";
+		};
+		TSTM0001000000000000001A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				TSTM0002000000000000001A /* NavigationSectionTests.swift */,
+				TSTM0004000000000000001A /* EnumExtensionsTests.swift */,
+				TSTM0006000000000000001A /* MeasurementResultTests.swift */,
+				TSTM0008000000000000001A /* TargetCheckRequestTests.swift */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 		MBGR0001000000000000001A /* MenuBar */ = {
@@ -759,6 +784,12 @@
 				SCRT-00002034811960642223842 /* NotificationServiceTests.swift in Sources */,
 				SCRT-00007418570625998133156 /* DefaultTargetsProviderTests.swift in Sources */,
 				PPST0002000000000000001A /* ProcessPingServiceTests.swift in Sources */,
+				TSTM0003000000000000001A /* NavigationSectionTests.swift in Sources */,
+				TSTM0005000000000000001A /* EnumExtensionsTests.swift in Sources */,
+				TSTM0007000000000000001A /* MeasurementResultTests.swift in Sources */,
+				TSTM0009000000000000001A /* TargetCheckRequestTests.swift in Sources */,
+				TSTM000B000000000000001A /* CompanionMessageHandlerTests.swift in Sources */,
+				TSTM000D000000000000001A /* MonitoringSessionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

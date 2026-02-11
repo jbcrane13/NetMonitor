@@ -282,7 +282,7 @@ final class MonitoringSession {
     // MARK: - Measurement Pruning
 
     @MainActor
-    private func pruneOldMeasurements() {
+    func pruneOldMeasurements() {
         let retentionValue = UserDefaults.standard.string(forKey: "netmonitor.data.historyRetention") ?? "7 days"
         guard retentionValue != "Forever" else { return } // Skip pruning when Forever is selected
         let days: Int

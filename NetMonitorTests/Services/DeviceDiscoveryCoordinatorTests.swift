@@ -1,16 +1,17 @@
+import Foundation
 import Testing
 import SwiftData
 @testable import NetMonitor
 
-@Suite("DeviceDiscoveryCoordinator Tests")
+@Suite("DeviceDiscoveryCoordinator Tests", .serialized)
 struct DeviceDiscoveryCoordinatorTests {
 
     @Test("Coordinator initializes with not scanning state")
     @MainActor
     func initialState() throws {
         let container = try ModelContainer(
-            for: LocalDevice.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            for: NetworkTarget.self, TargetMeasurement.self, LocalDevice.self, SessionRecord.self,
+            configurations: ModelConfiguration("test-\(UUID().uuidString)", isStoredInMemoryOnly: true)
         )
         let arpScanner = ARPScannerService()
         let bonjourScanner = BonjourDiscoveryService()
@@ -28,8 +29,8 @@ struct DeviceDiscoveryCoordinatorTests {
     @MainActor
     func mergeUpdatesExisting() throws {
         let container = try ModelContainer(
-            for: LocalDevice.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            for: NetworkTarget.self, TargetMeasurement.self, LocalDevice.self, SessionRecord.self,
+            configurations: ModelConfiguration("test-\(UUID().uuidString)", isStoredInMemoryOnly: true)
         )
         let context = container.mainContext
 
@@ -70,8 +71,8 @@ struct DeviceDiscoveryCoordinatorTests {
     @MainActor
     func mergeCreatesNewDevice() throws {
         let container = try ModelContainer(
-            for: LocalDevice.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            for: NetworkTarget.self, TargetMeasurement.self, LocalDevice.self, SessionRecord.self,
+            configurations: ModelConfiguration("test-\(UUID().uuidString)", isStoredInMemoryOnly: true)
         )
         let context = container.mainContext
 
@@ -105,8 +106,8 @@ struct DeviceDiscoveryCoordinatorTests {
     @MainActor
     func scanProgress() throws {
         let container = try ModelContainer(
-            for: LocalDevice.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            for: NetworkTarget.self, TargetMeasurement.self, LocalDevice.self, SessionRecord.self,
+            configurations: ModelConfiguration("test-\(UUID().uuidString)", isStoredInMemoryOnly: true)
         )
         let arpScanner = ARPScannerService()
         let bonjourScanner = BonjourDiscoveryService()
@@ -124,8 +125,8 @@ struct DeviceDiscoveryCoordinatorTests {
     @MainActor
     func stopScanCancels() throws {
         let container = try ModelContainer(
-            for: LocalDevice.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            for: NetworkTarget.self, TargetMeasurement.self, LocalDevice.self, SessionRecord.self,
+            configurations: ModelConfiguration("test-\(UUID().uuidString)", isStoredInMemoryOnly: true)
         )
         let arpScanner = ARPScannerService()
         let bonjourScanner = BonjourDiscoveryService()
@@ -146,8 +147,8 @@ struct DeviceDiscoveryCoordinatorTests {
     @MainActor
     func markOfflineDevices() async throws {
         let container = try ModelContainer(
-            for: LocalDevice.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+            for: NetworkTarget.self, TargetMeasurement.self, LocalDevice.self, SessionRecord.self,
+            configurations: ModelConfiguration("test-\(UUID().uuidString)", isStoredInMemoryOnly: true)
         )
         let context = container.mainContext
 
