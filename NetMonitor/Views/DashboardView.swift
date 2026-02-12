@@ -134,7 +134,7 @@ struct TargetStatusCard: View {
                             .foregroundStyle(.secondary)
 
                         if let latency = measurement.latency {
-                            Text(String(format: "%.0f ms", latency))
+                            Text(latency < 1 ? "<1 ms" : String(format: "%.0f ms", latency))
                                 .font(.title3)
                                 .fontWeight(.semibold)
                         } else {

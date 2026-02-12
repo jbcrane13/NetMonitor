@@ -3,10 +3,19 @@ import Foundation
 /// Actor-based HTTP/HTTPS monitoring service
 actor HTTPMonitorService: NetworkMonitorService {
 
+    /// Use an ephemeral session to prevent connection reuse from skewing latency measurements.
+    /// URLSession.shared keeps connections alive, making subsequent requests appear as 0ms.
     private let session: URLSession
 
-    init(session: URLSession = .shared) {
-        self.session = session
+    init() {
+        let config = URLSessionConfiguration.ephemeral
+        config.httpShouldSetCookies = false
+        config.urlCache = nil
+        config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        // Disable connection persistence so each check measures a full TCP+TLS round-trip
+        config.httpMaximumConnectionsPerHost = 1
+        config.httpShouldUsePipelining = false
+        self.session = URLSession(configuration: config)
     }
 
     func check(request: TargetCheckRequest) async throws -> MeasurementResult {
@@ -26,6 +35,7 @@ actor HTTPMonitorService: NetworkMonitorService {
         var urlRequest = URLRequest(url: url)
         urlRequest.timeoutInterval = request.timeout
         urlRequest.httpMethod = "HEAD"  // Use HEAD to minimize data transfer
+        urlRequest.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
 
         let startTime = Date()
 
