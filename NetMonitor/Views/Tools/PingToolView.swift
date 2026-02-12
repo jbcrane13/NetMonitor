@@ -185,8 +185,8 @@ struct PingToolView: View {
                 await MainActor.run {
                     // Calculate summary from actual stream data
                     let packetLoss = Double(count - received) / Double(count) * 100
-                    let minLatency = latencies.isEmpty ? 0.0 : latencies.min()!
-                    let maxLatency = latencies.isEmpty ? 0.0 : latencies.max()!
+                    let minLatency = latencies.min() ?? 0.0
+                    let maxLatency = latencies.max() ?? 0.0
                     let avgLatency = latencies.isEmpty ? 0.0 : latencies.reduce(0, +) / Double(latencies.count)
                     let stddevLatency = latencies.isEmpty ? 0.0 : calculateStddev(latencies, mean: avgLatency)
                     

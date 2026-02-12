@@ -106,9 +106,13 @@ actor PortScanService {
     private static func checkPort(host: String, port: UInt16) async -> PortScanResult {
         let startTime = Date()
 
+        guard let nwPort = NWEndpoint.Port(rawValue: port) else {
+            return PortScanResult(port: port, isOpen: false, latency: 0, serviceName: serviceName(for: port))
+        }
+
         let endpoint = NWEndpoint.hostPort(
             host: NWEndpoint.Host(host),
-            port: NWEndpoint.Port(rawValue: port)!
+            port: nwPort
         )
 
         let connection = NWConnection(to: endpoint, using: .tcp)

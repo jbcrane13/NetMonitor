@@ -25,8 +25,11 @@ actor SpeedTestService {
 
     private var isCancelled = false
 
+    // swiftlint:disable:next force_unwrapping
     private let pingURL = URL(string: "https://speed.cloudflare.com")!
+    // swiftlint:disable:next force_unwrapping
     private let downloadURL = URL(string: "https://speed.cloudflare.com/__down?bytes=1000000")!
+    // swiftlint:disable:next force_unwrapping
     private let uploadURL = URL(string: "https://speed.cloudflare.com/__up")!
 
     // MARK: - Public API

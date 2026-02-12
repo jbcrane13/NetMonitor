@@ -32,7 +32,9 @@ actor ISPLookupService {
     private let cacheKey = "netmonitor.isp.cache"
     private let cacheValidityDuration: TimeInterval = 5 * 60 // 5 minutes
 
+    // swiftlint:disable:next force_unwrapping
     private let primaryURL = URL(string: "https://ipapi.co/json/")!
+    // swiftlint:disable:next force_unwrapping
     private let fallbackURL = URL(string: "https://ipinfo.io/json")!
 
     // MARK: - Public API

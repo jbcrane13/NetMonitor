@@ -114,12 +114,20 @@ struct MenuBarPopoverView: View {
 
     // MARK: - Target List
 
+    /// Sorted measurement IDs for stable display order (by target name)
+    private var sortedTargetIDs: [UUID] {
+        session.latestResults
+            .sorted { ($0.value.target?.name ?? "") < ($1.value.target?.name ?? "") }
+            .prefix(5)
+            .map(\.key)
+    }
+
     private var targetList: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
-                ForEach(Array(session.latestResults.keys.prefix(5)), id: \.self) { targetID in
+                ForEach(sortedTargetIDs, id: \.self) { targetID in
                     if let measurement = session.latestResults[targetID] {
-                        targetRow(targetID: targetID, measurement: measurement)
+                        targetRow(measurement: measurement)
                     }
                 }
 
@@ -135,13 +143,13 @@ struct MenuBarPopoverView: View {
         .frame(maxHeight: 200)
     }
 
-    private func targetRow(targetID: UUID, measurement: TargetMeasurement) -> some View {
+    private func targetRow(measurement: TargetMeasurement) -> some View {
         HStack {
             Circle()
                 .fill(measurement.isReachable ? Color.green : Color.red)
                 .frame(width: 8, height: 8)
 
-            Text(targetID.uuidString.prefix(8))
+            Text(measurement.target?.name ?? "Unknown")
                 .font(.caption)
                 .lineLimit(1)
 
