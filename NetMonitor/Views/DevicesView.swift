@@ -306,7 +306,11 @@ struct DevicesView: View {
         Divider()
 
         Button(role: .destructive) {
+            if selectedDevice?.id == device.id {
+                selectedDevice = nil
+            }
             modelContext.delete(device)
+            try? modelContext.save()
         } label: {
             Label("Remove Device", systemImage: "trash")
         }

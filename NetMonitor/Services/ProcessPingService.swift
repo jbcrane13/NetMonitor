@@ -206,11 +206,11 @@ enum PingOutputParser {
             for line in lines {
                 if let pingLine = parseResponseLine(line) {
                     transmitted = max(transmitted, pingLine.sequenceNumber)
-                    if pingLine.latency != nil {
+                    if let latency = pingLine.latency {
                         responseCount += 1
-                        totalLatency += pingLine.latency!
-                        minLatency = minLatency == 0 ? pingLine.latency! : min(minLatency, pingLine.latency!)
-                        maxLatency = max(maxLatency, pingLine.latency!)
+                        totalLatency += latency
+                        minLatency = minLatency == 0 ? latency : min(minLatency, latency)
+                        maxLatency = max(maxLatency, latency)
                     }
                 }
             }
