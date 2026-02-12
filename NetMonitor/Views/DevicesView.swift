@@ -11,11 +11,28 @@ struct DevicesView: View {
     @State private var selectedDevice: LocalDevice?
     @State private var searchText: String = ""
     @State private var filterOnlineOnly: Bool = false
+    @State private var sortOrder: DeviceSortOrder = .lastSeen
     @State private var wolAction = WakeOnLanAction()
 
     // Context menu action state
     @State private var deviceToPing: LocalDevice?
     @State private var deviceToScan: LocalDevice?
+
+    enum DeviceSortOrder: String, CaseIterable {
+        case lastSeen = "Last Seen"
+        case name = "Name"
+        case ipAddress = "IP Address"
+        case status = "Status"
+
+        var icon: String {
+            switch self {
+            case .lastSeen: return "clock"
+            case .name: return "textformat"
+            case .ipAddress: return "number"
+            case .status: return "circle.fill"
+            }
+        }
+    }
 
     var filteredDevices: [LocalDevice] {
         var result = devices
@@ -33,7 +50,29 @@ struct DevicesView: View {
             }
         }
 
+        // Apply sort order
+        switch sortOrder {
+        case .lastSeen:
+            result.sort { ($0.lastSeen ?? .distantPast) > ($1.lastSeen ?? .distantPast) }
+        case .name:
+            result.sort { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
+        case .ipAddress:
+            result.sort { compareIPAddresses($0.ipAddress, $1.ipAddress) }
+        case .status:
+            result.sort { ($0.isOnline ? 0 : 1) < ($1.isOnline ? 0 : 1) }
+        }
+
         return result
+    }
+
+    /// Compare IP addresses numerically (192.168.2.3 < 192.168.2.10)
+    private func compareIPAddresses(_ a: String, _ b: String) -> Bool {
+        let aParts = a.split(separator: ".").compactMap { Int($0) }
+        let bParts = b.split(separator: ".").compactMap { Int($0) }
+        for i in 0..<min(aParts.count, bParts.count) {
+            if aParts[i] != bParts[i] { return aParts[i] < bParts[i] }
+        }
+        return aParts.count < bParts.count
     }
 
     var body: some View {
@@ -149,11 +188,41 @@ struct DevicesView: View {
         }
 
         ToolbarItem(placement: .automatic) {
+            Menu {
+                ForEach(DeviceSortOrder.allCases, id: \.self) { order in
+                    Button {
+                        sortOrder = order
+                    } label: {
+                        HStack {
+                            Label(order.rawValue, systemImage: order.icon)
+                            if sortOrder == order {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                }
+            } label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
+            }
+            .accessibilityIdentifier("devices_menu_sort")
+        }
+
+        ToolbarItem(placement: .automatic) {
             Toggle(isOn: $filterOnlineOnly) {
                 Label("Online Only", systemImage: "circle.fill")
             }
             .toggleStyle(.button)
             .accessibilityIdentifier("devices_toggle_onlineOnly")
+        }
+
+        ToolbarItem(placement: .automatic) {
+            Button {
+                clearDevices()
+            } label: {
+                Label("Clear List", systemImage: "trash")
+            }
+            .disabled(devices.isEmpty)
+            .accessibilityIdentifier("devices_button_clear")
         }
 
         ToolbarItem(placement: .status) {
@@ -164,13 +233,25 @@ struct DevicesView: View {
                     .foregroundStyle(.secondary)
 
                 if let lastScan = coordinator?.lastScanTime {
-                    Text("- Last scan: \(lastScan, style: .relative)")
+                    Text("· Last scan: \(lastScan, style: .relative)")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                 }
             }
             .font(.caption)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
         }
+    }
+
+    // MARK: - Actions
+
+    private func clearDevices() {
+        selectedDevice = nil
+        for device in devices {
+            modelContext.delete(device)
+        }
+        try? modelContext.save()
     }
 
     // MARK: - Context Menu
