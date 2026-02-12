@@ -24,7 +24,12 @@ struct SpeedTestToolView: View {
     @State private var testDuration: TimeInterval = 10 // Default 10 seconds
     @State private var timeRemaining: TimeInterval = 0
 
-    private let uploadURL = URL(string: "https://speed.cloudflare.com/__up")! // Upload endpoint
+    // swiftlint:disable:next force_unwrapping
+    private static let uploadURL = URL(string: "https://speed.cloudflare.com/__up")!
+    // swiftlint:disable:next force_unwrapping
+    private static let pingURL = URL(string: "https://speed.cloudflare.com")!
+    // swiftlint:disable:next force_unwrapping
+    private static let downloadURL = URL(string: "https://speed.cloudflare.com/__down?bytes=1000000")!
 
     var body: some View {
         ToolSheetContainer(
@@ -375,7 +380,7 @@ struct SpeedTestToolView: View {
         let startTime = Date()
 
         do {
-            var request = URLRequest(url: URL(string: "https://speed.cloudflare.com")!)
+            var request = URLRequest(url: Self.pingURL)
             request.httpMethod = "HEAD"
             request.timeoutInterval = 5
 
@@ -394,7 +399,7 @@ struct SpeedTestToolView: View {
     }
 
     private func measureDownload() async -> Double? {
-        let chunkURL = URL(string: "https://speed.cloudflare.com/__down?bytes=1000000")! // 1MB chunks
+        let chunkURL = Self.downloadURL
         let startTime = Date()
         var totalBytes: Int64 = 0
         var samples: [Double] = []
@@ -473,7 +478,7 @@ struct SpeedTestToolView: View {
                     arc4random_buf(baseAddress, chunkSize)
                 }
 
-                var request = URLRequest(url: uploadURL)
+                var request = URLRequest(url: Self.uploadURL)
                 request.httpMethod = "POST"
                 request.httpBody = data
                 request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")

@@ -335,9 +335,9 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
         }
 
         // If we couldn't get IP directly, try a lightweight resolution
-        if ipAddress == nil && hostname != nil {
+        if ipAddress == nil, let resolvedHostname = hostname {
             // Use DNS resolution instead of creating a full connection
-            ipAddress = await resolveHostnameToIP(hostname!)
+            ipAddress = await resolveHostnameToIP(resolvedHostname)
         }
 
         // Create a minimal test connection only if we need to verify connectivity
@@ -400,16 +400,22 @@ actor BonjourDiscoveryService: DeviceDiscoveryService {
     /// Convert sockaddr data to string representation
     private func sockaddrToString(_ data: Data) -> String? {
         return data.withUnsafeBytes { bytes in
-            let sockaddr = bytes.bindMemory(to: sockaddr.self).first!
-            
+            guard let sockaddr = bytes.bindMemory(to: sockaddr.self).first else {
+                return nil
+            }
+
             switch Int32(sockaddr.sa_family) {
             case AF_INET:
-                let sin = bytes.bindMemory(to: sockaddr_in.self).first!
+                guard let sin = bytes.bindMemory(to: sockaddr_in.self).first else {
+                    return nil
+                }
                 return String(cString: inet_ntoa(sin.sin_addr))
                 
             case AF_INET6:
                 var buffer = [CChar](repeating: 0, count: Int(INET6_ADDRSTRLEN))
-                let sin6 = bytes.bindMemory(to: sockaddr_in6.self).first!
+                guard let sin6 = bytes.bindMemory(to: sockaddr_in6.self).first else {
+                    return nil
+                }
                 var addr = sin6.sin6_addr
                 inet_ntop(AF_INET6, &addr, &buffer, socklen_t(INET6_ADDRSTRLEN))
                 return String(cString: buffer)

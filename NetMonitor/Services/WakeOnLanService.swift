@@ -110,7 +110,10 @@ actor WakeOnLanService {
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             let host = NWEndpoint.Host(broadcastAddress)
-            let port = NWEndpoint.Port(rawValue: wolPort)!
+            guard let port = NWEndpoint.Port(rawValue: wolPort) else {
+                continuation.resume(throwing: WakeOnLanError.networkError("Invalid WOL port"))
+                return
+            }
 
             // Create UDP connection with broadcast enabled
             let parameters = NWParameters.udp

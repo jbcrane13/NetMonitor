@@ -53,7 +53,7 @@ struct DevicesView: View {
         // Apply sort order
         switch sortOrder {
         case .lastSeen:
-            result.sort { ($0.lastSeen ?? .distantPast) > ($1.lastSeen ?? .distantPast) }
+            result.sort { $0.lastSeen > $1.lastSeen }
         case .name:
             result.sort { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
         case .ipAddress:
