@@ -357,6 +357,8 @@ struct SpeedTestToolView: View {
         speedTestTask = nil
         isRunning = false
         phase = .idle
+        progress = 0
+        timeRemaining = 0
     }
 
     private func resetTest() {

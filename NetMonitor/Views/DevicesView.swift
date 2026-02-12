@@ -127,7 +127,7 @@ struct DevicesView: View {
                 ContentUnavailableView(
                     "No Devices Found",
                     systemImage: "network",
-                    description: Text("Tap Scan to discover devices on your network")
+                    description: Text("Click Scan to discover devices on your network")
                 )
             } else {
                 List(filteredDevices, selection: $selectedDevice) { device in

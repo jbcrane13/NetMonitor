@@ -51,7 +51,7 @@ struct ToolsView: View {
     @State private var selectedTool: NetworkTool?
 
     private let columns = [
-        GridItem(.adaptive(minimum: 100, maximum: 120), spacing: 16)
+        GridItem(.adaptive(minimum: 130, maximum: 160), spacing: 16)
     ]
 
     var body: some View {

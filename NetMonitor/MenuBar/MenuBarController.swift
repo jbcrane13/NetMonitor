@@ -77,9 +77,9 @@ final class MenuBarController: NSObject {
 
         let symbolName: String
         if !isMonitoring {
-            symbolName = "network.slash"
+            symbolName = "network"
         } else if hasIssues {
-            symbolName = "exclamationmark.triangle"
+            symbolName = "network.slash"
         } else {
             symbolName = "network"
         }
