@@ -129,10 +129,10 @@ struct PingToolView: View {
                     .scaleEffect(0.7)
                 Text("Pinging \(host)...")
                     .foregroundStyle(.secondary)
-            } else if summary != nil {
-                Image(systemName: summary!.isReachable ? "checkmark.circle.fill" : "xmark.circle.fill")
-                    .foregroundStyle(summary!.isReachable ? .green : .red)
-                Text(summary!.isReachable ? "Host is reachable" : "Host unreachable")
+            } else if let summary = summary {
+                Image(systemName: summary.isReachable ? "checkmark.circle.fill" : "xmark.circle.fill")
+                    .foregroundStyle(summary.isReachable ? .green : .red)
+                Text(summary.isReachable ? "Host is reachable" : "Host unreachable")
                     .foregroundStyle(.secondary)
             } else {
                 Text("Enter a hostname or IP address")
