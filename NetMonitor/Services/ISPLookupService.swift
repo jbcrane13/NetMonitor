@@ -33,7 +33,7 @@ actor ISPLookupService {
     private let cacheValidityDuration: TimeInterval = 5 * 60 // 5 minutes
 
     private let primaryURL = URL(string: "https://ipapi.co/json/")!
-    private let fallbackURL = URL(string: "http://ip-api.com/json")!
+    private let fallbackURL = URL(string: "https://ipinfo.io/json")!
 
     // MARK: - Public API
 
@@ -140,21 +140,33 @@ actor ISPLookupService {
 
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
 
-        guard let ip = json?["query"] as? String else {
+        // ipinfo.io uses "ip" key
+        guard let ip = json?["ip"] as? String else {
             throw ISPLookupError.invalidResponse
         }
 
-        let isp = json?["isp"] as? String ?? "Unknown"
-        let asn = json?["as"] as? String
+        let org = json?["org"] as? String
         let city = json?["city"] as? String
-        let region = json?["regionName"] as? String
+        let region = json?["region"] as? String
         let country = json?["country"] as? String
         let timezone = json?["timezone"] as? String
+
+        // Parse ISP name and ASN from org field (format: "AS12345 ISP Name")
+        var isp = org ?? "Unknown"
+        var asn: String?
+
+        if let org = org, org.hasPrefix("AS") {
+            let parts = org.split(separator: " ", maxSplits: 1)
+            if parts.count == 2 {
+                asn = String(parts[0])
+                isp = String(parts[1])
+            }
+        }
 
         return ISPInfo(
             publicIP: ip,
             isp: isp,
-            organization: asn,
+            organization: org,
             asn: asn,
             city: city,
             region: region,
