@@ -473,7 +473,9 @@ struct SpeedTestToolView: View {
         let finalSpeed = (totalBytes > 0 && totalTime > 0) ? Double(totalBytes * 8) / totalTime / 1_000_000 : nil
         let peak = peakAtomic.load()
 
+        // Only update UI if the test wasn't stopped/cancelled
         await MainActor.run {
+            guard isRunning else { return }
             downloadSpeed = finalSpeed
             peakDownloadSpeed = peak
             progress = 1.0
@@ -561,7 +563,9 @@ struct SpeedTestToolView: View {
         let finalSpeed = (totalBytes > 0 && totalTime > 0) ? Double(totalBytes * 8) / totalTime / 1_000_000 : nil
         let peak = peakAtomic.load()
 
+        // Only update UI if the test wasn't stopped/cancelled
         await MainActor.run {
+            guard isRunning else { return }
             uploadSpeed = finalSpeed
             peakUploadSpeed = peak
             progress = 1.0
