@@ -207,12 +207,7 @@ struct NetMonitorApp: App {
             let handler = companionHandler
             do {
                 try await companionService?.start { @Sendable message, clientID in
-                    _ = await MainActor.run {
-                        Task {
-                            _ = await handler?.handle(message, from: clientID)
-                        }
-                    }
-                    return nil
+                    return await handler?.handle(message, from: clientID)
                 }
             } catch {
                 Logger.app.error("Failed to start companion service: \(error)")

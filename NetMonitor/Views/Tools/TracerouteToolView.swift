@@ -292,8 +292,11 @@ struct TracerouteToolView: View {
                     hops.append(hop)
                 }
 
-                // Check if we reached the destination (exit code 0 and received response)
-                if result.exitCode == 0 && output.contains("1 packets received") {
+                // Check if we reached the actual destination (got echo reply, NOT just TTL exceeded)
+                if result.exitCode == 0
+                    && output.contains("1 packets received")
+                    && !output.contains("Time to live exceeded")
+                    && !output.contains("time to live exceeded") {
                     destinationReached = true
                 }
 

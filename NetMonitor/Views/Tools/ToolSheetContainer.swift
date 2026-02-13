@@ -68,6 +68,19 @@ struct ToolSheetContainer<InputArea: View, OutputArea: View, FooterContent: View
             footerAreaContent
         }
         .frame(minWidth: minWidth, minHeight: minHeight)
+        .overlay(alignment: .topTrailing) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title2)
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(.primary.opacity(0.7))
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier(closeAccessibilityID)
+            .padding(12)
+        }
     }
 
     private var header: some View {
@@ -78,17 +91,6 @@ struct ToolSheetContainer<InputArea: View, OutputArea: View, FooterContent: View
             Spacer()
 
             headerTrailingContent
-
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.title3)
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(.primary.opacity(0.6))
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier(closeAccessibilityID)
         }
         .padding()
     }

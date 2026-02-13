@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import libkern
 
 struct SpeedTestToolView: View {
     @Environment(\.appAccentColor) private var accentColor
@@ -401,61 +402,80 @@ struct SpeedTestToolView: View {
     }
 
     private func measureDownload() async -> Double? {
-        let chunkURL = Self.downloadURL
+        let chunkSize = 10_000_000 // 10MB chunks for better throughput
+        let parallelStreams = 6
         let startTime = Date()
-        var totalBytes: Int64 = 0
-        var samples: [Double] = []
-        var peak: Double = 0
+        let totalBytesAtomic = AtomicInt64()
+        let peakAtomic = AtomicDouble()
+        let duration = testDuration
 
-        while Date().timeIntervalSince(startTime) < testDuration && isRunning {
-            let chunkStart = Date()
-            do {
-                var request = URLRequest(url: chunkURL)
-                request.timeoutInterval = 10
-
-                let (data, response) = try await URLSession.shared.data(for: request)
-
-                guard let httpResponse = response as? HTTPURLResponse,
-                      httpResponse.statusCode == 200 else {
-                    throw URLError(.badServerResponse)
-                }
-
-                guard isRunning else { return nil }
-
-                let chunkTime = Date().timeIntervalSince(chunkStart)
-                totalBytes += Int64(data.count)
-                let chunkSpeedMbps = Double(data.count * 8) / chunkTime / 1_000_000
-                samples.append(chunkSpeedMbps)
-                peak = max(peak, chunkSpeedMbps)
-
+        // Progress updater runs alongside the download streams
+        let progressTask = Task {
+            while Date().timeIntervalSince(startTime) < duration && !Task.isCancelled {
                 let elapsed = Date().timeIntervalSince(startTime)
-                let currentAvg = Double(totalBytes * 8) / elapsed / 1_000_000
-                let remaining = max(0, testDuration - elapsed)
+                let bytes = totalBytesAtomic.load()
+                let speed = elapsed > 0 ? Double(bytes * 8) / elapsed / 1_000_000 : 0
+                let peak = peakAtomic.load()
 
                 await MainActor.run {
-                    downloadSpeed = currentAvg
-                    peakDownloadSpeed = peak
-                    downloadSamples = samples
-                    progress = min(elapsed / testDuration, 1.0)
-                    timeRemaining = remaining
+                    self.downloadSpeed = speed
+                    self.peakDownloadSpeed = peak
+                    self.progress = min(elapsed / duration, 1.0)
+                    self.timeRemaining = max(0, duration - elapsed)
                 }
-            } catch {
-                if isRunning {
-                    await MainActor.run {
-                        errorMessage = "Download failed: \(error.localizedDescription)"
-                    }
-                }
-                break
+
+                try? await Task.sleep(for: .milliseconds(200))
             }
         }
 
+        do {
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                for _ in 0..<parallelStreams {
+                    group.addTask {
+                        let session = URLSession(configuration: .ephemeral)
+                        defer { session.invalidateAndCancel() }
+                        let url = URL(string: "https://speed.cloudflare.com/__down?bytes=\(chunkSize)")!
+
+                        while Date().timeIntervalSince(startTime) < duration {
+                            try Task.checkCancellation()
+                            var request = URLRequest(url: url)
+                            request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+                            request.timeoutInterval = 10
+                            let (data, response) = try await session.data(for: request)
+                            guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+                                continue
+                            }
+                            totalBytesAtomic.add(Int64(data.count))
+
+                            let elapsed = Date().timeIntervalSince(startTime)
+                            let currentSpeed = elapsed > 0 ? Double(totalBytesAtomic.load() * 8) / elapsed / 1_000_000 : 0
+                            peakAtomic.updateMax(currentSpeed)
+                        }
+                    }
+                }
+
+                try await group.waitForAll()
+            }
+        } catch is CancellationError {
+            // Test was cancelled
+        } catch {
+            if isRunning {
+                await MainActor.run {
+                    errorMessage = "Download failed: \(error.localizedDescription)"
+                }
+            }
+        }
+
+        progressTask.cancel()
+
         let totalTime = Date().timeIntervalSince(startTime)
-        let finalSpeed = totalBytes > 0 ? Double(totalBytes * 8) / totalTime / 1_000_000 : nil
+        let totalBytes = totalBytesAtomic.load()
+        let finalSpeed = (totalBytes > 0 && totalTime > 0) ? Double(totalBytes * 8) / totalTime / 1_000_000 : nil
+        let peak = peakAtomic.load()
 
         await MainActor.run {
             downloadSpeed = finalSpeed
             peakDownloadSpeed = peak
-            downloadSamples = samples
             progress = 1.0
             timeRemaining = 0
         }
@@ -464,71 +484,86 @@ struct SpeedTestToolView: View {
     }
 
     private func measureUpload() async -> Double? {
-        let chunkSize: Int = 256 * 1024 // 256KB chunks
+        let chunkSize = 1_000_000 // 1MB upload chunks
+        let parallelStreams = 4
         let startTime = Date()
-        var totalBytes: Int64 = 0
-        var samples: [Double] = []
-        var peak: Double = 0
+        let totalBytesAtomic = AtomicInt64()
+        let peakAtomic = AtomicDouble()
+        let duration = testDuration
 
-        while Date().timeIntervalSince(startTime) < testDuration && isRunning {
-            let chunkStart = Date()
-            do {
-                // Generate random data payload
-                var data = Data(count: chunkSize)
-                data.withUnsafeMutableBytes { bytes in
-                    guard let baseAddress = bytes.baseAddress else { return }
-                    arc4random_buf(baseAddress, chunkSize)
-                }
+        // Pre-generate upload payload once (reused across streams)
+        let uploadData = Data(count: chunkSize)
 
-                var request = URLRequest(url: Self.uploadURL)
-                request.httpMethod = "POST"
-                request.httpBody = data
-                request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
-                request.timeoutInterval = 10
-
-                let (_, response) = try await URLSession.shared.data(for: request)
-
-                guard let httpResponse = response as? HTTPURLResponse,
-                      (200...299).contains(httpResponse.statusCode) else {
-                    throw URLError(.badServerResponse)
-                }
-
-                guard isRunning else { return nil }
-
-                let chunkTime = Date().timeIntervalSince(chunkStart)
-                totalBytes += Int64(chunkSize)
-                let chunkSpeedMbps = Double(chunkSize * 8) / chunkTime / 1_000_000
-                samples.append(chunkSpeedMbps)
-                peak = max(peak, chunkSpeedMbps)
-
+        // Progress updater runs alongside the upload streams
+        let progressTask = Task {
+            while Date().timeIntervalSince(startTime) < duration && !Task.isCancelled {
                 let elapsed = Date().timeIntervalSince(startTime)
-                let currentAvg = Double(totalBytes * 8) / elapsed / 1_000_000
-                let remaining = max(0, testDuration - elapsed)
+                let bytes = totalBytesAtomic.load()
+                let speed = elapsed > 0 ? Double(bytes * 8) / elapsed / 1_000_000 : 0
+                let peak = peakAtomic.load()
 
                 await MainActor.run {
-                    uploadSpeed = currentAvg
-                    peakUploadSpeed = peak
-                    uploadSamples = samples
-                    progress = min(elapsed / testDuration, 1.0)
-                    timeRemaining = remaining
+                    self.uploadSpeed = speed
+                    self.peakUploadSpeed = peak
+                    self.progress = min(elapsed / duration, 1.0)
+                    self.timeRemaining = max(0, duration - elapsed)
                 }
-            } catch {
-                if isRunning {
-                    await MainActor.run {
-                        errorMessage = "Upload failed: \(error.localizedDescription)"
-                    }
-                }
-                break
+
+                try? await Task.sleep(for: .milliseconds(200))
             }
         }
 
+        do {
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                for _ in 0..<parallelStreams {
+                    group.addTask {
+                        let session = URLSession(configuration: .ephemeral)
+                        defer { session.invalidateAndCancel() }
+                        let url = URL(string: "https://speed.cloudflare.com/__up")!
+
+                        while Date().timeIntervalSince(startTime) < duration {
+                            try Task.checkCancellation()
+                            var request = URLRequest(url: url)
+                            request.httpMethod = "POST"
+                            request.httpBody = uploadData
+                            request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+                            request.timeoutInterval = 10
+                            let (_, response) = try await session.upload(for: request, from: uploadData)
+                            guard let http = response as? HTTPURLResponse,
+                                  (200...299).contains(http.statusCode) else {
+                                continue
+                            }
+                            totalBytesAtomic.add(Int64(chunkSize))
+
+                            let elapsed = Date().timeIntervalSince(startTime)
+                            let currentSpeed = elapsed > 0 ? Double(totalBytesAtomic.load() * 8) / elapsed / 1_000_000 : 0
+                            peakAtomic.updateMax(currentSpeed)
+                        }
+                    }
+                }
+
+                try await group.waitForAll()
+            }
+        } catch is CancellationError {
+            // Test was cancelled
+        } catch {
+            if isRunning {
+                await MainActor.run {
+                    errorMessage = "Upload failed: \(error.localizedDescription)"
+                }
+            }
+        }
+
+        progressTask.cancel()
+
         let totalTime = Date().timeIntervalSince(startTime)
-        let finalSpeed = totalBytes > 0 ? Double(totalBytes * 8) / totalTime / 1_000_000 : nil
+        let totalBytes = totalBytesAtomic.load()
+        let finalSpeed = (totalBytes > 0 && totalTime > 0) ? Double(totalBytes * 8) / totalTime / 1_000_000 : nil
+        let peak = peakAtomic.load()
 
         await MainActor.run {
             uploadSpeed = finalSpeed
             peakUploadSpeed = peak
-            uploadSamples = samples
             progress = 1.0
             timeRemaining = 0
         }
@@ -566,6 +601,42 @@ enum SpeedTestPhase {
         case .upload: return "Testing upload..."
         case .complete: return "Complete"
         }
+    }
+}
+
+// MARK: - Thread-Safe Counters
+
+/// Lock-free atomic counter for parallel stream byte tracking
+private final class AtomicInt64: @unchecked Sendable {
+    private let value = UnsafeMutablePointer<Int64>.allocate(capacity: 1)
+
+    init() { value.initialize(to: 0) }
+    deinit { value.deallocate() }
+
+    func add(_ delta: Int64) {
+        OSAtomicAdd64(delta, value)
+    }
+
+    func load() -> Int64 {
+        OSAtomicAdd64(0, value)
+    }
+}
+
+/// Thread-safe atomic double for tracking peak speeds
+private final class AtomicDouble: @unchecked Sendable {
+    private var lock = os_unfair_lock()
+    private var _value: Double = 0
+
+    func updateMax(_ newValue: Double) {
+        os_unfair_lock_lock(&lock)
+        if newValue > _value { _value = newValue }
+        os_unfair_lock_unlock(&lock)
+    }
+
+    func load() -> Double {
+        os_unfair_lock_lock(&lock)
+        defer { os_unfair_lock_unlock(&lock) }
+        return _value
     }
 }
 
