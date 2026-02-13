@@ -114,21 +114,23 @@ struct MenuBarPopoverView: View {
 
     // MARK: - Target List
 
-    /// Sorted measurement IDs for stable display order (by target name)
-    private var sortedTargetIDs: [UUID] {
+    /// Sorted measurement entries for stable display order (by target name, then host)
+    private var sortedEntries: [(id: UUID, measurement: TargetMeasurement)] {
         session.latestResults
-            .sorted { ($0.value.target?.name ?? "") < ($1.value.target?.name ?? "") }
+            .sorted { lhs, rhs in
+                let lName = lhs.value.target?.name ?? lhs.value.target?.host ?? ""
+                let rName = rhs.value.target?.name ?? rhs.value.target?.host ?? ""
+                return lName.localizedCaseInsensitiveCompare(rName) == .orderedAscending
+            }
             .prefix(5)
-            .map(\.key)
+            .map { (id: $0.key, measurement: $0.value) }
     }
 
     private var targetList: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
-                ForEach(sortedTargetIDs, id: \.self) { targetID in
-                    if let measurement = session.latestResults[targetID] {
-                        targetRow(measurement: measurement)
-                    }
+                ForEach(sortedEntries, id: \.id) { entry in
+                    targetRow(measurement: entry.measurement)
                 }
 
                 if session.latestResults.isEmpty {
@@ -143,13 +145,24 @@ struct MenuBarPopoverView: View {
         .frame(maxHeight: 200)
     }
 
+    /// Display name for a measurement: prefer target name, fall back to host
+    private func displayName(for measurement: TargetMeasurement) -> String {
+        if let name = measurement.target?.name, !name.isEmpty {
+            return name
+        }
+        if let host = measurement.target?.host, !host.isEmpty {
+            return host
+        }
+        return "Unknown"
+    }
+
     private func targetRow(measurement: TargetMeasurement) -> some View {
         HStack {
             Circle()
                 .fill(measurement.isReachable ? Color.green : Color.red)
                 .frame(width: 8, height: 8)
 
-            Text(measurement.target?.name ?? "Unknown")
+            Text(displayName(for: measurement))
                 .font(.caption)
                 .lineLimit(1)
 

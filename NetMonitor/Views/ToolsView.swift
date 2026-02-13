@@ -51,7 +51,7 @@ struct ToolsView: View {
     @State private var selectedTool: NetworkTool?
 
     private let columns = [
-        GridItem(.adaptive(minimum: 130, maximum: 160), spacing: 16)
+        GridItem(.adaptive(minimum: 140, maximum: 180), spacing: 16)
     ]
 
     var body: some View {
@@ -112,8 +112,9 @@ struct ToolCard: View {
 
             Text(tool.rawValue)
                 .font(.headline)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
+                .lineLimit(2)
+                .minimumScaleFactor(0.75)
+                .multilineTextAlignment(.center)
 
             Text(tool.description)
                 .font(.caption)
@@ -121,8 +122,8 @@ struct ToolCard: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
         }
-        .frame(width: 100, height: 100)
-        .padding(8)
+        .frame(minWidth: 110, maxWidth: 160, minHeight: 110)
+        .padding(10)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(

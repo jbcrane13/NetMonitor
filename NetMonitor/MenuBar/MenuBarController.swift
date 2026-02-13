@@ -23,6 +23,9 @@ final class MenuBarController: NSObject {
         self.monitoringSession = monitoringSession
     }
 
+    /// Observation task for auto-updating the icon
+    private var observationTask: Task<Void, Never>?
+
     func setup() {
         // Create status item
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -45,9 +48,28 @@ final class MenuBarController: NSObject {
             onClose: { [weak self] in self?.closePopover() }
         )
         popover?.contentViewController = NSHostingController(rootView: contentView)
+
+        // Start observing monitoring state to keep the icon updated
+        startIconObservation()
+    }
+
+    /// Periodically update the menu bar icon based on monitoring state
+    private func startIconObservation() {
+        observationTask?.cancel()
+        observationTask = Task { [weak self] in
+            while !Task.isCancelled {
+                guard let self else { return }
+                let isMonitoring = self.monitoringSession.isMonitoring
+                let hasIssues = self.monitoringSession.latestResults.values.contains { !$0.isReachable }
+                self.updateIcon(isMonitoring: isMonitoring, hasIssues: isMonitoring && hasIssues)
+                try? await Task.sleep(for: .seconds(2))
+            }
+        }
     }
 
     func teardown() {
+        observationTask?.cancel()
+        observationTask = nil
         if let statusItem = statusItem {
             NSStatusBar.system.removeStatusItem(statusItem)
         }
