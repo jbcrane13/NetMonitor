@@ -93,6 +93,7 @@
 		CTRK0001000000000000001A /* ContinuationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CTRK0002000000000000001A /* ContinuationTracker.swift */; };
 		WOLA0001000000000000001A /* WakeOnLanAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = WOLA0002000000000000001A /* WakeOnLanAction.swift */; };
 		SHCR0001000000000000001A /* ShellCommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHCR0002000000000000001A /* ShellCommandRunner.swift */; };
+		TRCS0001000000000000001A /* TracerouteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRCS0002000000000000001A /* TracerouteService.swift */; };
 		DVNR47E99A898BDB9F015F2E /* DeviceNameResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DVNR77E1846C42E3A8B46056 /* DeviceNameResolver.swift */; };
 		PPNG0001000000000000001A /* ProcessPingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = PPNG0002000000000000001A /* ProcessPingService.swift */; };
 		TCPM0002000000000000001A /* TCPMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = TCPM0001000000000000001A /* TCPMonitorService.swift */; };
@@ -231,6 +232,7 @@
 		SHCR0002000000000000001A /* ShellCommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShellCommandRunner.swift; path = NetMonitor/Services/ShellCommandRunner.swift; sourceTree = "<group>"; };
 		DVNR77E1846C42E3A8B46056 /* DeviceNameResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceNameResolver.swift; path = NetMonitor/Services/DeviceNameResolver.swift; sourceTree = "<group>"; };
 		PPNG0002000000000000001A /* ProcessPingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProcessPingService.swift; path = NetMonitor/Services/ProcessPingService.swift; sourceTree = "<group>"; };
+		TRCS0002000000000000001A /* TracerouteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TracerouteService.swift; path = NetMonitor/Services/TracerouteService.swift; sourceTree = "<group>"; };
 		TCPM0001000000000000001A /* TCPMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TCPMonitorService.swift; path = NetMonitor/Services/TCPMonitorService.swift; sourceTree = "<group>"; };
 		PNGT0001000000000000001A /* PingToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingToolView.swift; sourceTree = "<group>"; };
 		DNST0001000000000000001A /* DNSLookupToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DNSLookupToolView.swift; sourceTree = "<group>"; };
@@ -492,6 +494,7 @@
 				NTFS0002000000000000001A /* NotificationService.swift */,
 				ISPL0002000000000000001A /* ISPLookupService.swift */,
 				STTS0002000000000000001A /* StatisticsService.swift */,
+				TRCS0002000000000000001A /* TracerouteService.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -734,6 +737,7 @@
 				DVNR47E99A898BDB9F015F2E /* DeviceNameResolver.swift in Sources */,
 				PPNG0001000000000000001A /* ProcessPingService.swift in Sources */,
 				TCPM0002000000000000001A /* TCPMonitorService.swift in Sources */,
+				TRCS0001000000000000001A /* TracerouteService.swift in Sources */,
 				CTRK0001000000000000001A /* ContinuationTracker.swift in Sources */,
 				WOLA0001000000000000001A /* WakeOnLanAction.swift in Sources */,
 				PNGT0002000000000000001A /* PingToolView.swift in Sources */,

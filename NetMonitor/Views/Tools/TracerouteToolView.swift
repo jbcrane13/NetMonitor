@@ -2,7 +2,8 @@
 //  TracerouteToolView.swift
 //  NetMonitor
 //
-//  Traceroute tool using /usr/sbin/traceroute.
+//  Traceroute tool using TCP-based route estimation.
+//  Works within App Sandbox (no Process/shell commands).
 //
 
 import SwiftUI
@@ -16,7 +17,7 @@ struct TracerouteToolView: View {
     @State private var errorMessage: String?
     @State private var tracerouteTask: Task<Void, Never>?
 
-    private let runner = ShellCommandRunner()
+    private let service = TracerouteService()
 
     var body: some View {
         ToolSheetContainer(
@@ -185,127 +186,17 @@ struct TracerouteToolView: View {
         errorMessage = nil
 
         tracerouteTask = Task {
-            // Try standard traceroute first, fall back to ping-based if it fails
-            let success = await tryStandardTraceroute()
-            if !success {
-                await runPingBasedTraceroute()
+            let stream = await service.trace(
+                host: host.trimmingCharacters(in: .whitespacesAndNewlines),
+                maxHops: maxHops
+            )
+
+            for await hop in stream {
+                guard !Task.isCancelled else { break }
+                hops.append(hop)
             }
 
-            await MainActor.run {
-                isRunning = false
-            }
-        }
-    }
-
-    private func tryStandardTraceroute() async -> Bool {
-        do {
-            for try await line in await runner.stream(
-                "/usr/sbin/traceroute",
-                arguments: ["-m", String(maxHops), host]
-            ) {
-                if let hop = parseTracerouteLine(line) {
-                    await MainActor.run {
-                        hops.append(hop)
-                    }
-                }
-            }
-            return true
-        } catch {
-            // Check if it's a permission error - if so, fall back to ping-based
-            let message = error.localizedDescription
-            if message.contains("not permitted") || message.contains("Operation not permitted") {
-                return false
-            }
-
-            // For other errors, if we got some results, consider it a success
-            if !hops.isEmpty {
-                return true
-            }
-
-            // Otherwise, show the error and don't fall back
-            await MainActor.run {
-                errorMessage = message
-            }
-            return true // Don't fall back for non-permission errors
-        }
-    }
-
-    private func runPingBasedTraceroute() async {
-        await MainActor.run {
-            hops.removeAll()
-        }
-
-        let target = host.trimmingCharacters(in: .whitespacesAndNewlines)
-        var destinationReached = false
-
-        for ttl in 1...maxHops {
-            guard isRunning else { break }
-            guard !destinationReached else { break }
-
-            do {
-                // Use ping with specific TTL: -c 1 (one packet), -t TTL, -W 2000 (2 sec timeout)
-                let result = try await runner.run(
-                    "/sbin/ping",
-                    arguments: ["-c", "1", "-t", "\(ttl)", "-W", "2000", target],
-                    timeout: 5
-                )
-
-                let output = result.stdout + result.stderr
-                var hop = TracerouteHop(hopNumber: ttl, isTimeout: true)
-
-                // Parse response - check for "Time to live exceeded" (intermediate hop) or normal response (destination)
-                if output.contains("Time to live exceeded") || output.contains("from") {
-                    // Extract source IP from "Time to live exceeded from X" or "bytes from X"
-                    if let fromRange = output.range(of: "from ") {
-                        let afterFrom = String(output[fromRange.upperBound...])
-
-                        // Extract hostname/IP part before colon
-                        if let colonRange = afterFrom.range(of: ":") {
-                            let hostPart = String(afterFrom[..<colonRange.lowerBound]).trimmingCharacters(in: .whitespaces)
-
-                            // Check for format "hostname (ip)" or just "ip"
-                            if let parenStart = hostPart.range(of: "("),
-                               let parenEnd = hostPart.range(of: ")") {
-                                hop.hostname = String(hostPart[..<parenStart.lowerBound]).trimmingCharacters(in: .whitespaces)
-                                hop.ipAddress = String(hostPart[parenStart.upperBound..<parenEnd.lowerBound])
-                            } else {
-                                hop.ipAddress = hostPart
-                                hop.hostname = hostPart
-                            }
-                            hop.isTimeout = false
-                        }
-                    }
-
-                    // Extract latency from "time=X.XX ms" if present
-                    if let timeRange = output.range(of: "time=") {
-                        let afterTime = String(output[timeRange.upperBound...])
-                        if let msRange = afterTime.range(of: " ms") {
-                            let latencyStr = String(afterTime[..<msRange.lowerBound])
-                            if let latency = Double(latencyStr) {
-                                hop.latencies = [latency]
-                            }
-                        }
-                    }
-                }
-
-                await MainActor.run {
-                    hops.append(hop)
-                }
-
-                // Check if we reached the actual destination (got echo reply, NOT just TTL exceeded)
-                if result.exitCode == 0
-                    && output.contains("1 packets received")
-                    && !output.contains("Time to live exceeded")
-                    && !output.contains("time to live exceeded") {
-                    destinationReached = true
-                }
-
-            } catch {
-                // Timeout or error for this hop
-                await MainActor.run {
-                    hops.append(TracerouteHop(hopNumber: ttl, isTimeout: true))
-                }
-            }
+            isRunning = false
         }
     }
 
@@ -313,76 +204,15 @@ struct TracerouteToolView: View {
         tracerouteTask?.cancel()
         tracerouteTask = nil
         Task {
-            await runner.cancel()
-            await MainActor.run {
-                isRunning = false
-            }
+            await service.stop()
         }
-    }
-
-    // MARK: - Parsing
-
-    private func parseTracerouteLine(_ line: String) -> TracerouteHop? {
-        // Skip header line
-        if line.hasPrefix("traceroute to") { return nil }
-
-        // Pattern: " 1  router.local (192.168.1.1)  1.234 ms  1.456 ms  1.789 ms"
-        // Or timeout: " 2  * * *"
-        let trimmed = line.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return nil }
-
-        // Extract hop number
-        let components = trimmed.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
-        guard let hopNumber = Int(components.first ?? "") else { return nil }
-
-        // Check for timeout
-        if components.contains("*") && components.filter({ $0 == "*" }).count >= 3 {
-            return TracerouteHop(hopNumber: hopNumber, isTimeout: true)
-        }
-
-        // Parse hostname, IP, and latencies
-        var hostname: String?
-        var ipAddress: String?
-        var latencies: [Double] = []
-
-        for (index, component) in components.enumerated() {
-            if index == 0 { continue } // Skip hop number
-
-            if component.hasPrefix("(") && component.hasSuffix(")") {
-                // IP address in parentheses
-                ipAddress = String(component.dropFirst().dropLast())
-            } else if component == "ms" {
-                // Previous component was a latency
-                if index > 1, let latency = Double(components[index - 1]) {
-                    latencies.append(latency)
-                }
-            } else if hostname == nil && Double(component) == nil && component != "*" && !component.hasPrefix("(") {
-                // First non-numeric component is hostname - look for domain names or host identifiers
-                if component.contains(".") || component.contains("-") || component.count > 3 {
-                    hostname = component
-                }
-            }
-        }
-
-        // If no hostname but we have IP, use IP as hostname
-        if hostname == nil && ipAddress != nil {
-            hostname = ipAddress
-            ipAddress = nil
-        }
-
-        return TracerouteHop(
-            hopNumber: hopNumber,
-            hostname: hostname,
-            ipAddress: ipAddress,
-            latencies: latencies,
-            isTimeout: false
-        )
+        isRunning = false
     }
 }
 
 // MARK: - Models
 
-struct TracerouteHop: Identifiable {
+struct TracerouteHop: Identifiable, Sendable {
     let id = UUID()
     let hopNumber: Int
     var hostname: String?
