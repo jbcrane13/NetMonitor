@@ -23,25 +23,23 @@ actor CompanionService {
     private var listener: NWListener?
     private var messageHandler: ((CompanionMessage, UUID) async -> CompanionMessage?)?
 
+    /// Per-client receive buffers for length-prefixed frame reassembly
+    private var receiveBuffers: [UUID: Data] = [:]
+
     /// Start the Bonjour service
     func start(messageHandler: @escaping (CompanionMessage, UUID) async -> CompanionMessage?) throws {
         guard !isRunning else { return }
 
         self.messageHandler = messageHandler
 
-        // Create listener
+        // Create listener — plain TCP, no custom framer
         let parameters = NWParameters.tcp
         parameters.includePeerToPeer = true
 
-        // Add Bonjour service advertisement
-        let txtRecord = NWTXTRecord()
-        parameters.defaultProtocolStack.applicationProtocols.insert(
-            NWProtocolFramer.Options(definition: CompanionFramer.definition),
-            at: 0
-        )
-
         listener = try NWListener(using: parameters, on: NWEndpoint.Port(rawValue: port)!)
 
+        // Advertise via Bonjour
+        let txtRecord = NWTXTRecord()
         listener?.service = NWListener.Service(
             name: serviceName,
             type: serviceType,
@@ -74,6 +72,7 @@ actor CompanionService {
             connection.cancel()
         }
         connectedClients.removeAll()
+        receiveBuffers.removeAll()
 
         isRunning = false
     }
@@ -114,6 +113,7 @@ actor CompanionService {
     private func handleNewConnection(_ connection: NWConnection) {
         let clientID = UUID()
         connectedClients[clientID] = connection
+        receiveBuffers[clientID] = Data()
 
         Logger.companion.info("New connection from client \(clientID)")
 
@@ -131,7 +131,7 @@ actor CompanionService {
         switch state {
         case .ready:
             Logger.companion.info("Client \(clientID) connected")
-            // Send initial status
+            // Send initial heartbeat
             Task {
                 await send(
                     .heartbeat(HeartbeatPayload()),
@@ -141,38 +141,33 @@ actor CompanionService {
         case .failed(let error):
             Logger.companion.error("Client \(clientID) failed: \(error, privacy: .public)")
             connectedClients.removeValue(forKey: clientID)
+            receiveBuffers.removeValue(forKey: clientID)
         case .cancelled:
             Logger.companion.info("Client \(clientID) disconnected")
             connectedClients.removeValue(forKey: clientID)
+            receiveBuffers.removeValue(forKey: clientID)
         default:
             break
         }
     }
 
     private nonisolated func receiveMessage(from connection: NWConnection, clientID: UUID) {
-        // Capture values before closure to avoid actor isolation issues
         let capturedClientID = clientID
         let capturedConnection = connection
 
         connection.receive(minimumIncompleteLength: 1, maximumLength: 65536) { [weak self] data, _, isComplete, error in
-            // Capture values BEFORE Task block
-            let capturedData = data
-            let capturedIsComplete = isComplete
-            let capturedError = error
-
-            if let data = capturedData, !data.isEmpty {
+            if let data = data, !data.isEmpty {
                 Task { [weak self] in
-                    await self?.processReceivedData(data, clientID: capturedClientID)
+                    await self?.appendAndProcess(data, clientID: capturedClientID)
                 }
             }
 
-            if let error = capturedError {
+            if let error = error {
                 Logger.companion.error("Receive error: \(error, privacy: .public)")
                 return
             }
 
-            if !capturedIsComplete {
-                // Use Task to safely call back into actor context
+            if !isComplete {
                 Task { [weak self] in
                     self?.receiveMessage(from: capturedConnection, clientID: capturedClientID)
                 }
@@ -180,32 +175,47 @@ actor CompanionService {
         }
     }
 
-    private func processReceivedData(_ data: Data, clientID: UUID) async {
-        do {
-            let message = try JSONDecoder().decode(CompanionMessage.self, from: data)
-            Logger.companion.debug("Received \(String(describing: message)) from \(clientID)")
+    /// Append received data to the client's buffer and process complete frames.
+    /// Wire format: 4-byte big-endian length prefix + JSON payload.
+    private func appendAndProcess(_ data: Data, clientID: UUID) async {
+        receiveBuffers[clientID, default: Data()].append(data)
 
-            // Handle message and get response
-            if let response = await messageHandler?(message, clientID) {
-                await send(response, to: clientID)
+        while var buffer = receiveBuffers[clientID], buffer.count >= 4 {
+            let length = buffer.prefix(4).withUnsafeBytes { $0.load(as: UInt32.self).bigEndian }
+            let totalFrameSize = 4 + Int(length)
+
+            guard buffer.count >= totalFrameSize else {
+                break  // Need more data
             }
-        } catch {
-            Logger.companion.error("Failed to decode message: \(error, privacy: .public)")
-            await send(
-                .error(ErrorPayload(
-                    code: "DECODE_ERROR",
-                    message: "Failed to decode message: \(error.localizedDescription)"
-                )),
-                to: clientID
-            )
+
+            let jsonData = buffer.subdata(in: 4..<totalFrameSize)
+            buffer.removeFirst(totalFrameSize)
+            receiveBuffers[clientID] = buffer
+
+            do {
+                let message = try JSONDecoder().decode(CompanionMessage.self, from: jsonData)
+                Logger.companion.debug("Received \(String(describing: message)) from \(clientID)")
+
+                if let response = await messageHandler?(message, clientID) {
+                    await send(response, to: clientID)
+                }
+            } catch {
+                Logger.companion.error("Failed to decode message: \(error, privacy: .public)")
+                await send(
+                    .error(ErrorPayload(
+                        code: "DECODE_ERROR",
+                        message: "Failed to decode message: \(error.localizedDescription)"
+                    )),
+                    to: clientID
+                )
+            }
         }
     }
 
+    /// Send length-prefixed JSON data to a client.
     private nonisolated func send(data: Data, to connection: NWConnection, clientID: UUID) async {
-        // Capture values before closure to avoid actor isolation issues
         let capturedClientID = clientID
 
-        // Prefix with length for framing
         var length = UInt32(data.count).bigEndian
         var framedData = Data(bytes: &length, count: 4)
         framedData.append(data)
@@ -216,36 +226,4 @@ actor CompanionService {
             }
         })
     }
-}
-
-// MARK: - Protocol Framer
-
-/// Custom framer for length-prefixed JSON messages
-final class CompanionFramer: NWProtocolFramerImplementation {
-    static let definition = NWProtocolFramer.Definition(implementation: CompanionFramer.self)
-    static let label = "NetMonitor"
-
-    required init(framer: NWProtocolFramer.Instance) {}
-
-    func start(framer: NWProtocolFramer.Instance) -> NWProtocolFramer.StartResult {
-        .ready
-    }
-
-    func handleInput(framer: NWProtocolFramer.Instance) -> Int {
-        // Simple length-prefixed framing
-        return 0
-    }
-
-    func handleOutput(framer: NWProtocolFramer.Instance, message: NWProtocolFramer.Message, messageLength: Int, isComplete: Bool) {
-        // Pass through
-        do {
-            try framer.writeOutputNoCopy(length: messageLength)
-        } catch {
-            Logger.companion.error("Framer output error: \(error, privacy: .public)")
-        }
-    }
-
-    func wakeup(framer: NWProtocolFramer.Instance) {}
-    func stop(framer: NWProtocolFramer.Instance) -> Bool { true }
-    func cleanup(framer: NWProtocolFramer.Instance) {}
 }
