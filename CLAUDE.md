@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Key Documents
+
+- **`docs/ADR.md`** — Architecture Decision Records. Read before making structural changes. Append when making new decisions.
+- **`docs/Companion-Protocol-API.md`** — Companion protocol between macOS and iOS apps.
+- **`docs/NetMonitor for macOS - Product Requirements Document.md`** — PRD.
+
 ## Project Overview
 
 NetMonitor is a professional network monitoring application for macOS that provides real-time network diagnostics, target monitoring, local device discovery, and network utilities. It communicates with an iOS companion app and serves as the primary monitoring hub.
