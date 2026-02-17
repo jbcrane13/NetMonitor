@@ -14,7 +14,7 @@ struct MenuBarCommands: Commands {
 
     var body: some Commands {
         CommandGroup(after: .appInfo) {
-            Button(isMonitoring ? "Stop Monitoring" : "Start Monitoring") {
+            Button(isMonitoring ? "Stop Scanning" : "Start Scanning") {
                 if isMonitoring {
                     stopMonitoring()
                 } else {

@@ -50,17 +50,14 @@ final class CompanionMessageHandler {
 
     /// Generate current status update message
     func generateStatusUpdate() -> CompanionMessage {
-        let results = monitoringSession.latestResults.values
-        let online = results.filter { $0.isReachable }.count
-        let offline = results.filter { !$0.isReachable }.count
-        let latencies = results.compactMap { $0.latency }
-        let avgLatency = latencies.isEmpty ? nil : latencies.reduce(0, +) / Double(latencies.count)
+        let online = monitoringSession.onlineTargetCount
+        let offline = monitoringSession.offlineTargetCount
 
         return .statusUpdate(StatusUpdatePayload(
             isMonitoring: monitoringSession.isMonitoring,
             onlineTargets: online,
             offlineTargets: offline,
-            averageLatency: avgLatency
+            averageLatency: nil
         ))
     }
 

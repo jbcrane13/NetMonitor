@@ -60,7 +60,7 @@ final class MenuBarController: NSObject {
             while !Task.isCancelled {
                 guard let self else { return }
                 let isMonitoring = self.monitoringSession.isMonitoring
-                let hasIssues = self.monitoringSession.latestResults.values.contains { !$0.isReachable }
+                let hasIssues = self.monitoringSession.hasOfflineDevices
                 self.updateIcon(isMonitoring: isMonitoring, hasIssues: isMonitoring && hasIssues)
                 try? await Task.sleep(for: .seconds(2))
             }

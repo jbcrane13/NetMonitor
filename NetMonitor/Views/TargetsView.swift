@@ -4,7 +4,6 @@ import os
 
 struct TargetsView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(MonitoringSession.self) private var monitoringSession: MonitoringSession?
     @Query(sort: \NetworkTarget.name) private var targets: [NetworkTarget]
 
     @State private var showingAddSheet = false
@@ -17,15 +16,6 @@ struct TargetsView: View {
         switch sortOption {
         case .name:
             return targets.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
-        case .status:
-            return targets.sorted { lhs, rhs in
-                let lhsOnline = monitoringSession?.latestMeasurement(for: lhs.id)?.isReachable ?? false
-                let rhsOnline = monitoringSession?.latestMeasurement(for: rhs.id)?.isReachable ?? false
-                if lhsOnline != rhsOnline {
-                    return lhsOnline  // Online first
-                }
-                return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
-            }
         case .protocol:
             return targets.sorted { lhs, rhs in
                 if lhs.targetProtocol != rhs.targetProtocol {
@@ -40,14 +30,14 @@ struct TargetsView: View {
         VStack {
             if targets.isEmpty {
                 ContentUnavailableView(
-                    "No Targets",
-                    systemImage: "target",
-                    description: Text("Add network targets to monitor")
+                    "No Bookmarks",
+                    systemImage: "bookmark",
+                    description: Text("Add network hosts here to quickly pre-fill them in network tools")
                 )
             } else {
                 List(selection: $selectedTarget) {
                     ForEach(sortedTargets) { target in
-                        TargetRow(target: target, monitoringSession: monitoringSession)
+                        TargetRow(target: target)
                             .tag(target)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button {
@@ -64,11 +54,25 @@ struct TargetsView: View {
                                 .tint(target.isEnabled ? .orange : .green)
                             }
                             .contextMenu {
+                                Button {
+                                    useInTool(target)
+                                } label: {
+                                    Label("Use in Ping Tool", systemImage: "network")
+                                }
+
+                                Button {
+                                    copyAddress(target)
+                                } label: {
+                                    Label("Copy Address", systemImage: "doc.on.doc")
+                                }
+
+                                Divider()
+
                                 Button(role: .destructive) {
                                     targetToDelete = target
                                     showDeleteConfirmation = true
                                 } label: {
-                                    Label("Delete Target", systemImage: "trash")
+                                    Label("Delete", systemImage: "trash")
                                 }
                             }
                     }
@@ -76,11 +80,11 @@ struct TargetsView: View {
                 }
             }
         }
-        .navigationTitle("Targets")
+        .navigationTitle("Bookmarks")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { showingAddSheet = true }) {
-                    Label("Add Target", systemImage: "plus")
+                    Label("Add Bookmark", systemImage: "plus")
                 }
                 .accessibilityIdentifier("targets_button_add")
             }
@@ -114,14 +118,35 @@ struct TargetsView: View {
         .sheet(isPresented: $showingAddSheet) {
             AddTargetSheet()
         }
-        .confirmationDialog("Delete Target?", isPresented: $showDeleteConfirmation, presenting: targetToDelete) { target in
+        .confirmationDialog("Delete Bookmark?", isPresented: $showDeleteConfirmation, presenting: targetToDelete) { target in
             Button("Delete", role: .destructive) {
                 deleteTarget(target)
             }
             Button("Cancel", role: .cancel) { }
         } message: { target in
-            Text("This will permanently delete '\(target.name)' and all its measurement history.")
+            Text("This will permanently delete '\(target.name)'.")
         }
+    }
+
+    // MARK: - Actions
+
+    private func useInTool(_ target: NetworkTarget) {
+        NotificationCenter.default.post(
+            name: .useTargetInTool,
+            object: nil,
+            userInfo: ["host": target.host, "port": target.port as Any, "name": target.name]
+        )
+    }
+
+    private func copyAddress(_ target: NetworkTarget) {
+        let address: String
+        if let port = target.port {
+            address = "\(target.host):\(port)"
+        } else {
+            address = target.host
+        }
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(address, forType: .string)
     }
 
     private func deleteTargets(at offsets: IndexSet) {
@@ -138,7 +163,6 @@ struct TargetsView: View {
     private func deleteTarget(_ target: NetworkTarget) {
         modelContext.delete(target)
 
-        // Clear selection if deleted target was selected
         if selectedTarget?.id == target.id {
             selectedTarget = nil
         }
@@ -151,9 +175,10 @@ struct TargetsView: View {
     }
 }
 
+// MARK: - Sort Options
+
 enum TargetSortOption: String, CaseIterable, Identifiable {
     case name = "Name"
-    case status = "Status"
     case `protocol` = "Protocol"
 
     var id: String { rawValue }
@@ -161,30 +186,19 @@ enum TargetSortOption: String, CaseIterable, Identifiable {
     var iconName: String {
         switch self {
         case .name: return "textformat"
-        case .status: return "checkmark.circle"
         case .protocol: return "network"
         }
     }
 }
 
+// MARK: - Target Row
+
 struct TargetRow: View {
     @Bindable var target: NetworkTarget
-    var monitoringSession: MonitoringSession?
     @Environment(\.compactMode) private var compactMode
-
-    var statusColor: Color {
-        guard let measurement = monitoringSession?.latestMeasurement(for: target.id) else {
-            return .gray
-        }
-        return measurement.isReachable ? .green : .red
-    }
 
     var body: some View {
         HStack {
-            Circle()
-                .fill(statusColor)
-                .frame(width: 8, height: 8)
-
             VStack(alignment: .leading, spacing: compactMode ? 2 : 4) {
                 Text(target.name)
                     .font(.headline)
@@ -207,6 +221,12 @@ struct TargetRow: View {
         }
         .padding(.vertical, compactMode ? 2 : 4)
     }
+}
+
+// MARK: - Notification Names
+
+extension Notification.Name {
+    static let useTargetInTool = Notification.Name("useTargetInTool")
 }
 
 #if DEBUG

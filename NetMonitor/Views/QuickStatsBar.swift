@@ -2,14 +2,13 @@
 //  QuickStatsBar.swift
 //  NetMonitor
 //
-//  Created by Claude on 1/28/26.
-//
 
 import SwiftUI
 
-/// Displays real-time monitoring statistics in a horizontal bar
+/// Displays real-time network scanning statistics in a horizontal bar
 struct QuickStatsBar: View {
     @Environment(MonitoringSession.self) private var session: MonitoringSession?
+    @Environment(DeviceDiscoveryCoordinator.self) private var discovery: DeviceDiscoveryCoordinator?
     @Environment(\.appAccentColor) private var accentColor
     @Environment(\.compactMode) private var compactMode
 
@@ -37,23 +36,23 @@ struct QuickStatsBar: View {
             Divider()
                 .frame(height: 20)
 
-            // Average latency
+            // Total devices
             StatItem(
-                icon: "clock.arrow.circlepath",
+                icon: "desktopcomputer",
                 color: accentColor,
-                label: "Avg Latency",
-                value: latencyString
+                label: "Devices",
+                value: "\(totalCount)"
             )
 
             Divider()
                 .frame(height: 20)
 
-            // Last check
+            // Last scan
             StatItem(
                 icon: "clock.fill",
                 color: .secondary,
-                label: "Last Check",
-                value: lastCheckString
+                label: "Last Scan",
+                value: lastScanString
             )
         }
         .padding(compactMode ? 8 : 16)
@@ -63,33 +62,29 @@ struct QuickStatsBar: View {
 
     // MARK: - Computed Properties
 
+    private var devices: [LocalDevice] {
+        discovery?.discoveredDevices ?? session?.discoveredDevices ?? []
+    }
+
     private var onlineCount: Int {
-        session?.latestResults.values.filter { $0.isReachable }.count ?? 0
+        devices.filter { $0.isOnline }.count
     }
 
     private var offlineCount: Int {
-        session?.latestResults.values.filter { !$0.isReachable }.count ?? 0
+        devices.filter { !$0.isOnline }.count
     }
 
-    private var averageLatency: Double? {
-        let latencies = session?.latestResults.values.compactMap { $0.latency } ?? []
-        guard !latencies.isEmpty else { return nil }
-        return latencies.reduce(0, +) / Double(latencies.count)
+    private var totalCount: Int {
+        devices.count
     }
 
-    private var latencyString: String {
-        guard let avgLatency = averageLatency else {
-            return "—"
-        }
-        return String(format: "%.1f ms", avgLatency)
-    }
-
-    private var lastCheckString: String {
-        guard let latestTimestamp = session?.latestResults.values.map({ $0.timestamp }).max() else {
+    private var lastScanString: String {
+        let scanTime = discovery?.lastScanTime ?? session?.lastScanTime
+        guard let lastScan = scanTime else {
             return "—"
         }
 
-        let interval = Date().timeIntervalSince(latestTimestamp)
+        let interval = Date().timeIntervalSince(lastScan)
 
         if interval < 60 {
             return "Just now"

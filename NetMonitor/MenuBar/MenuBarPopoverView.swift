@@ -24,8 +24,8 @@ struct MenuBarPopoverView: View {
 
             Divider()
 
-            // Target status list
-            targetList
+            // Device list
+            deviceList
 
             Divider()
 
@@ -48,7 +48,7 @@ struct MenuBarPopoverView: View {
                         .fill(session.isMonitoring ? Color.green : Color.gray)
                         .frame(width: 8, height: 8)
 
-                    Text(session.isMonitoring ? "Monitoring" : "Stopped")
+                    Text(session.isMonitoring ? "Scanning Network" : "Idle")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -68,7 +68,7 @@ struct MenuBarPopoverView: View {
                     .foregroundStyle(session.isMonitoring ? .red : .green)
             }
             .buttonStyle(.borderless)
-            .help(session.isMonitoring ? "Stop Monitoring" : "Start Monitoring")
+            .help(session.isMonitoring ? "Stop Scanning" : "Start Scanning")
         }
         .padding()
     }
@@ -78,20 +78,20 @@ struct MenuBarPopoverView: View {
     private var quickStats: some View {
         HStack(spacing: 16) {
             statItem(
-                value: "\(onlineTargetCount)",
+                value: "\(onlineCount)",
                 label: "Online",
                 color: .green
             )
 
             statItem(
-                value: "\(offlineTargetCount)",
+                value: "\(offlineCount)",
                 label: "Offline",
                 color: .red
             )
 
             statItem(
-                value: averageLatencyString,
-                label: "Avg Latency",
+                value: "\(totalCount)",
+                label: "Devices",
                 color: .blue
             )
         }
@@ -112,29 +112,25 @@ struct MenuBarPopoverView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Target List
+    // MARK: - Device List
 
-    /// Sorted measurement entries for stable display order (by target name, then host)
-    private var sortedEntries: [(id: UUID, measurement: TargetMeasurement)] {
-        session.latestResults
-            .sorted { lhs, rhs in
-                let lName = lhs.value.target?.name ?? lhs.value.target?.host ?? ""
-                let rName = rhs.value.target?.name ?? rhs.value.target?.host ?? ""
-                return lName.localizedCaseInsensitiveCompare(rName) == .orderedAscending
-            }
+    /// Most recently seen devices for display
+    private var recentDevices: [LocalDevice] {
+        session.discoveredDevices
+            .sorted { ($0.lastSeen ?? .distantPast) > ($1.lastSeen ?? .distantPast) }
             .prefix(5)
-            .map { (id: $0.key, measurement: $0.value) }
+            .map { $0 }
     }
 
-    private var targetList: some View {
+    private var deviceList: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
-                ForEach(sortedEntries, id: \.id) { entry in
-                    targetRow(measurement: entry.measurement)
+                ForEach(recentDevices) { device in
+                    deviceRow(device: device)
                 }
 
-                if session.latestResults.isEmpty {
-                    Text("No targets configured")
+                if session.discoveredDevices.isEmpty {
+                    Text(session.isMonitoring ? "Scanning…" : "No devices found")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                         .padding()
@@ -145,41 +141,43 @@ struct MenuBarPopoverView: View {
         .frame(maxHeight: 200)
     }
 
-    /// Display name for a measurement: prefer target name, fall back to host
-    private func displayName(for measurement: TargetMeasurement) -> String {
-        if let name = measurement.target?.name, !name.isEmpty {
-            return name
-        }
-        if let host = measurement.target?.host, !host.isEmpty {
-            return host
-        }
-        return "Unknown"
-    }
-
-    private func targetRow(measurement: TargetMeasurement) -> some View {
+    private func deviceRow(device: LocalDevice) -> some View {
         HStack {
             Circle()
-                .fill(measurement.isReachable ? Color.green : Color.red)
+                .fill(device.isOnline ? Color.green : Color.secondary.opacity(0.5))
                 .frame(width: 8, height: 8)
 
-            Text(displayName(for: measurement))
-                .font(.caption)
-                .lineLimit(1)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(deviceDisplayName(device))
+                    .font(.caption)
+                    .lineLimit(1)
+                Text(device.ipAddress)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                    .fontDesign(.monospaced)
+            }
 
             Spacer()
 
-            if measurement.isReachable, let latency = measurement.latency {
-                Text("\(Int(latency))ms")
-                    .font(.caption)
-                    .fontDesign(.monospaced)
+            if let vendor = device.vendor, !vendor.isEmpty {
+                Text(vendor)
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
             } else {
-                Text("Offline")
+                Text(device.isOnline ? "Online" : "Offline")
                     .font(.caption)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(device.isOnline ? .green : .secondary)
             }
         }
         .padding(.vertical, 4)
+    }
+
+    private func deviceDisplayName(_ device: LocalDevice) -> String {
+        if let hostname = device.hostname, !hostname.isEmpty {
+            return hostname
+        }
+        return device.ipAddress
     }
 
     // MARK: - Footer
@@ -203,15 +201,16 @@ struct MenuBarPopoverView: View {
         .padding()
     }
 
-    // MARK: - Computed Properties (delegated to MonitoringSession for testability)
+    // MARK: - Computed Properties
 
-    private var onlineTargetCount: Int { session.onlineTargetCount }
-    private var offlineTargetCount: Int { session.offlineTargetCount }
-    private var averageLatencyString: String { session.averageLatencyString }
+    private var onlineCount: Int { session.onlineTargetCount }
+    private var offlineCount: Int { session.offlineTargetCount }
+    private var totalCount: Int { session.discoveredDevices.count }
 }
 
 // MARK: - Preview
 
+#if DEBUG
 #Preview {
     let container = try! ModelContainer(
         for: NetworkTarget.self, TargetMeasurement.self,
@@ -227,6 +226,7 @@ struct MenuBarPopoverView: View {
         icmpService: icmpService,
         tcpService: tcpService
     )
-    
+
     return MenuBarPopoverView(session: session, onClose: {})
 }
+#endif

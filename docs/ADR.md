@@ -120,4 +120,23 @@ A running log of significant architecture and design decisions. Both Daneel (Ope
 
 ---
 
+---
+
+## ADR-010: Repurpose monitoring from target pinging to network device scanning
+**Date:** 2026-02-17  
+**Status:** Active  
+**Decision:** "Start Monitoring" now triggers periodic local network device discovery (via `DeviceDiscoveryCoordinator`) instead of pinging user-configured `NetworkTarget` hosts. The Dashboard shows local network health (device online/offline counts, recent devices). The Targets page becomes a "bookmarks" quick-launcher for pre-filling network tool inputs.  
+**Context:** The original target-pinging model required users to manually configure hosts before getting any value. Device discovery provides immediate ambient awareness of all LAN devices without configuration, which is a better Day 1 experience and more aligned with "network monitor" semantics. Targets still have value as saved bookmarks for frequently-used hosts.  
+**Consequences:**
+- `MonitoringSession.startMonitoring()` no longer fetches `NetworkTarget` rows or validates that any exist; it calls `DeviceDiscoveryCoordinator.startScan()` on a 60-second timer.
+- `MonitoringSession.onlineTargetCount / offlineTargetCount` now count discovered `LocalDevice` rows, not target measurements.
+- `MonitoringSession.latestResults` and `updateMeasurement(_:for:)` are kept as dead code to avoid breaking the `MonitoringSessionConcurrencyTests` suite, which tests the concurrency safety of the dictionary update pattern.
+- `QuickStatsBar` now shows Devices/Online/Offline/Last Scan sourced from `DeviceDiscoveryCoordinator`.
+- `DashboardView` replaces the `TargetStatusCard` grid with `DeviceSummarySection` (stat pills + compact device rows).
+- `TargetsView` no longer shows monitoring status dots; context menu adds "Use in Ping Tool" (posts `useTargetInTool` notification) and "Copy Address".
+- `MenuBarPopoverView` replaces the measurement list with a discovered-device list; status shows "Scanning Network" / "Idle".
+- `SidebarView` badge now applies to `.dashboard` and `.devices` sections (not `.targets`).
+- `CompanionMessageHandler.generateStatusUpdate()` sources online/offline counts from `MonitoringSession.onlineTargetCount / offlineTargetCount` (which delegate to the coordinator).
+- `NetworkTarget` and `TargetMeasurement` SwiftData models are unchanged — targets persist as bookmarks, measurements can still be pruned by `pruneOldMeasurements()`.
+
 *To add a new ADR: append with the next number, include date, status, decision, context, and consequences.*

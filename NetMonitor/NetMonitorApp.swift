@@ -171,22 +171,23 @@ struct NetMonitorApp: App {
         let bonjourScanner = BonjourDiscoveryService()
         let wakeOnLanService = WakeOnLanService()
 
-        // 1. Set up monitoring session with injected services
-        if monitoringSession == nil {
-            monitoringSession = MonitoringSession(
-                modelContext: context,
-                httpService: httpService,
-                icmpService: icmpService,
-                tcpService: tcpService
-            )
-        }
-
-        // 2. Set up device discovery with injected services
+        // 1. Set up device discovery FIRST — MonitoringSession depends on it
         if deviceDiscovery == nil {
             deviceDiscovery = DeviceDiscoveryCoordinator(
                 modelContext: context,
                 arpScanner: arpScanner,
                 bonjourScanner: bonjourScanner
+            )
+        }
+
+        // 2. Set up monitoring session with injected services and discovery coordinator
+        if monitoringSession == nil {
+            monitoringSession = MonitoringSession(
+                modelContext: context,
+                httpService: httpService,
+                icmpService: icmpService,
+                tcpService: tcpService,
+                discoveryCoordinator: deviceDiscovery
             )
         }
 

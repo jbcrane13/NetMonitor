@@ -4,9 +4,8 @@ import SwiftData
 struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(MonitoringSession.self) private var session: MonitoringSession?
+    @Environment(DeviceDiscoveryCoordinator.self) private var discovery: DeviceDiscoveryCoordinator?
     @Environment(\.compactMode) private var compactMode
-
-    @Query(sort: \NetworkTarget.name) private var targets: [NetworkTarget]
 
     var body: some View {
         ScrollView {
@@ -15,7 +14,7 @@ struct DashboardView: View {
                 HStack {
                     Spacer()
 
-                    // Start/Stop Button
+                    // Start/Stop Scanning Button
                     if let session = session {
                         Button(action: {
                             if session.isMonitoring {
@@ -25,7 +24,7 @@ struct DashboardView: View {
                             }
                         }) {
                             Label(
-                                session.isMonitoring ? "Stop Monitoring" : "Start Monitoring",
+                                session.isMonitoring ? "Stop Scanning" : "Start Scanning",
                                 systemImage: session.isMonitoring ? "stop.circle.fill" : "play.circle.fill"
                             )
                         }
@@ -65,28 +64,13 @@ struct DashboardView: View {
                 ISPInfoCard()
                     .padding(.horizontal)
 
-                // Monitoring Status
-                if targets.isEmpty {
-                    ContentUnavailableView(
-                        "No Targets Configured",
-                        systemImage: "target",
-                        description: Text("Add network targets in the Targets section to start monitoring")
-                    )
-                } else {
-                    // Target Status Cards
-                    LazyVGrid(columns: [
-                        GridItem(.flexible()),
-                        GridItem(.flexible())
-                    ], spacing: 16) {
-                        ForEach(targets) { target in
-                            TargetStatusCard(
-                                target: target,
-                                measurement: session?.latestMeasurement(for: target.id)
-                            )
-                        }
-                    }
-                    .padding(.horizontal)
-                }
+                // Device Summary Section
+                DeviceSummarySection(
+                    devices: discovery?.discoveredDevices ?? session?.discoveredDevices ?? [],
+                    isScanning: discovery?.isScanning ?? false,
+                    lastScanTime: discovery?.lastScanTime ?? session?.lastScanTime
+                )
+                .padding(.horizontal)
             }
             .padding(.vertical, compactMode ? 8 : 16)
         }
@@ -94,85 +78,167 @@ struct DashboardView: View {
     }
 }
 
-// MARK: - Target Status Card
+// MARK: - Device Summary Section
 
-struct TargetStatusCard: View {
-    let target: NetworkTarget
-    let measurement: TargetMeasurement?
+struct DeviceSummarySection: View {
+    let devices: [LocalDevice]
+    let isScanning: Bool
+    let lastScanTime: Date?
+
+    private var recentDevices: [LocalDevice] {
+        devices
+            .sorted { ($0.lastSeen ?? .distantPast) > ($1.lastSeen ?? .distantPast) }
+            .prefix(5)
+            .map { $0 }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Header
+            // Section header
             HStack {
-                Image(systemName: target.targetProtocol.iconName)
-                    .foregroundStyle(.secondary)
-
-                Text(target.name)
+                Label("Local Network", systemImage: "network")
                     .font(.headline)
 
                 Spacer()
 
-                // Status Indicator
-                Circle()
-                    .fill(statusColor)
-                    .frame(width: 8, height: 8)
+                if isScanning {
+                    HStack(spacing: 6) {
+                        ProgressView()
+                            .scaleEffect(0.7)
+                        Text("Scanning…")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } else if let lastScan = lastScanTime {
+                    Text(lastScan, style: .relative)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
             }
 
-            // Host
-            Text(target.host)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Divider()
-
-            // Metrics
-            if let measurement = measurement {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Latency")
+            if devices.isEmpty {
+                // Empty state
+                VStack(spacing: 8) {
+                    Image(systemName: "wifi.slash")
+                        .font(.title2)
+                        .foregroundStyle(.tertiary)
+                    Text(isScanning ? "Scanning network…" : "No devices found yet")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    if !isScanning {
+                        Text("Tap 'Start Scanning' to discover local devices")
                             .font(.caption2)
-                            .foregroundStyle(.secondary)
-
-                        if let latency = measurement.latency {
-                            Text(latency < 1 ? "<1 ms" : String(format: "%.0f ms", latency))
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                        } else {
-                            Text("—")
-                                .font(.title3)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-
-                    Spacer()
-
-                    VStack(alignment: .trailing, spacing: 4) {
-                        Text("Status")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-
-                        Text(measurement.isReachable ? "Online" : "Offline")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundStyle(measurement.isReachable ? .green : .red)
+                            .foregroundStyle(.tertiary)
                     }
                 }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
             } else {
-                Text("Click 'Start Monitoring' to check status")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                // Summary stats row
+                HStack(spacing: 0) {
+                    DeviceStatPill(
+                        count: devices.filter { $0.isOnline }.count,
+                        label: "Online",
+                        color: .green
+                    )
+                    Spacer()
+                    DeviceStatPill(
+                        count: devices.filter { !$0.isOnline }.count,
+                        label: "Offline",
+                        color: .secondary
+                    )
+                    Spacer()
+                    DeviceStatPill(
+                        count: devices.count,
+                        label: "Total",
+                        color: .blue
+                    )
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                // Recent devices
+                VStack(spacing: 0) {
+                    ForEach(recentDevices) { device in
+                        DeviceRowCompact(device: device)
+
+                        if device.id != recentDevices.last?.id {
+                            Divider()
+                                .padding(.leading, 40)
+                        }
+                    }
+                }
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                if devices.count > 5 {
+                    Text("+ \(devices.count - 5) more devices — see Devices tab")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
             }
         }
-        .padding()
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
+}
 
-    private var statusColor: Color {
-        guard let measurement = measurement else {
-            return .gray
+// MARK: - Device Stat Pill
+
+private struct DeviceStatPill: View {
+    let count: Int
+    let label: String
+    let color: Color
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Text("\(count)")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundStyle(color)
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
         }
-        return measurement.isReachable ? .green : .red
+    }
+}
+
+// MARK: - Compact Device Row
+
+private struct DeviceRowCompact: View {
+    let device: LocalDevice
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Circle()
+                .fill(device.isOnline ? Color.green : Color.secondary.opacity(0.4))
+                .frame(width: 8, height: 8)
+                .padding(.leading, 12)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(device.displayName)
+                    .font(.callout)
+                    .lineLimit(1)
+
+                Text(device.ipAddress)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fontDesign(.monospaced)
+            }
+
+            Spacer()
+
+            if let vendor = device.vendor, !vendor.isEmpty {
+                Text(vendor)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                    .lineLimit(1)
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.trailing, 12)
     }
 }
 
@@ -191,7 +257,7 @@ struct TargetStatusCard: View {
         icmpService: icmpService,
         tcpService: tcpService
     )
-    
+
     return DashboardView()
         .modelContainer(container)
         .environment(session)

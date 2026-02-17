@@ -34,11 +34,10 @@ struct SidebarView: View {
 
     private func badgeText(for section: NavigationSection) -> String? {
         switch section {
-        case .dashboard, .targets:
+        case .dashboard, .devices:
             guard let monitoringSession else { return nil }
             let online = monitoringSession.onlineTargetCount
-            let offline = monitoringSession.offlineTargetCount
-            let total = online + offline
+            let total = online + monitoringSession.offlineTargetCount
             guard total > 0 else { return nil }
             return "\(online)/\(total)"
         default:
@@ -48,7 +47,7 @@ struct SidebarView: View {
 
     private func badgeColor(for section: NavigationSection) -> Color {
         switch section {
-        case .dashboard, .targets:
+        case .dashboard, .devices:
             guard let monitoringSession else { return .gray }
             let online = monitoringSession.onlineTargetCount
             let total = online + monitoringSession.offlineTargetCount
