@@ -187,10 +187,7 @@ struct MenuBarPopoverView: View {
     private var footer: some View {
         HStack {
             Button("Open NetMonitor") {
-                NSApp.activate(ignoringOtherApps: true)
-                if let window = NSApp.windows.first(where: { $0.title.contains("NetMonitor") || $0.isMainWindow }) {
-                    window.makeKeyAndOrderFront(nil)
-                }
+                WindowOpener.shared.openMainWindow()
                 onClose()
             }
             .buttonStyle(.borderless)

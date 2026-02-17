@@ -88,7 +88,7 @@ struct NetMonitorApp: App {
     }()
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup(id: "main") {
             Group {
                 if let monitoringSession, let deviceDiscovery {
                     ContentView()
@@ -105,6 +105,7 @@ struct NetMonitorApp: App {
             .tint(Color(hex: accentColorHex))
             .environment(\.appAccentColor, Color(hex: accentColorHex))
             .environment(\.compactMode, compactMode)
+            .captureOpenWindow()
         }
         .modelContainer(sharedModelContainer)
         .commands {
