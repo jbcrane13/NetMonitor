@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		416971A1BED518E422502B7D /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79ADE190569667B1C49C175E /* ModelTests.swift */; };
+		7A3B4DB9BA9A9B4D897E3BF8 /* WHOISInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E567FADD82E6BEFB0EBDD2D0 /* WHOISInfoTests.swift */; };
+		7BF9514EDD13A28EF17F4B26 /* ReleaseValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F31BDB3A80621EC9EEEFA42 /* ReleaseValidationTests.swift */; };
+		5A3229B7BD0A47A45FAF84F9 /* ICMPSocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01031CF59693CD72A3DBC54B /* ICMPSocketTests.swift */; };
+		CA3999DC49BC21FCC46F6671 /* TracerouteServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B431CCE301B99036A0979814 /* TracerouteServiceTests.swift */; };
+		BDECC0C75C1B8726286C6EB2 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E027AE4B689B84E69C6543 /* SmokeTests.swift */; };
 		063CF5C1823A4BAAA96F8B7B /* NetworkMonitorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653444EE323D4714923EB389 /* NetworkMonitorServiceTests.swift */; };
 		2510D9A12F12D19400C8C91B /* NetMonitorShared in Frameworks */ = {isa = PBXBuildFile; productRef = 2510D9A02F12D19400C8C91B /* NetMonitorShared */; };
 		2510D9A62F13024300C8C91B /* MonitoringSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2510D9A32F13024300C8C91B /* MonitoringSession.swift */; };
@@ -142,6 +148,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		79ADE190569667B1C49C175E /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ModelTests.swift; path = NetMonitorTests/Models/ModelTests.swift; sourceTree = "<group>"; };
+		E567FADD82E6BEFB0EBDD2D0 /* WHOISInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WHOISInfoTests.swift; path = NetMonitorTests/Models/WHOISInfoTests.swift; sourceTree = "<group>"; };
+		8F31BDB3A80621EC9EEEFA42 /* ReleaseValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReleaseValidationTests.swift; path = NetMonitorTests/ReleaseValidationTests.swift; sourceTree = "<group>"; };
+		01031CF59693CD72A3DBC54B /* ICMPSocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ICMPSocketTests.swift; path = NetMonitorTests/Services/ICMPSocketTests.swift; sourceTree = "<group>"; };
+		B431CCE301B99036A0979814 /* TracerouteServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TracerouteServiceTests.swift; path = NetMonitorTests/Services/TracerouteServiceTests.swift; sourceTree = "<group>"; };
+		14E027AE4B689B84E69C6543 /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SmokeTests.swift; path = NetMonitorTests/SmokeTests.swift; sourceTree = "<group>"; };
 		1C2EE437C2354DEEB66E0A25 /* NetMonitorError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetMonitorError.swift; path = NetMonitor/Models/NetMonitorError.swift; sourceTree = "<group>"; };
 		1FE7F7F545EA38B3B8F9DE02 /* NetMonitor/Services/MonitoringSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetMonitor/Services/MonitoringSession.swift; sourceTree = "<group>"; };
 		2510D9A22F13024300C8C91B /* LocalDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalDevice.swift; path = NetMonitor/Models/LocalDevice.swift; sourceTree = "<group>"; };
@@ -406,6 +418,12 @@
 				PPST0001000000000000001A,
 				TSTM000A000000000000001A,
 				TSTM000C000000000000001A,
+				01031CF59693CD72A3DBC54B /* ICMPSocketTests.swift */,
+				B431CCE301B99036A0979814 /* TracerouteServiceTests.swift */,
+				79ADE190569667B1C49C175E /* ModelTests.swift */,
+				E567FADD82E6BEFB0EBDD2D0 /* WHOISInfoTests.swift */,
+				8F31BDB3A80621EC9EEEFA42 /* ReleaseValidationTests.swift */,
+				14E027AE4B689B84E69C6543 /* SmokeTests.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -796,6 +814,12 @@
 				TSTM0009000000000000001A,
 				TSTM000B000000000000001A,
 				TSTM000D000000000000001A,
+				416971A1BED518E422502B7D /* ModelTests.swift in Sources */,
+				7A3B4DB9BA9A9B4D897E3BF8 /* WHOISInfoTests.swift in Sources */,
+				7BF9514EDD13A28EF17F4B26 /* ReleaseValidationTests.swift in Sources */,
+				5A3229B7BD0A47A45FAF84F9 /* ICMPSocketTests.swift in Sources */,
+				CA3999DC49BC21FCC46F6671 /* TracerouteServiceTests.swift in Sources */,
+				BDECC0C75C1B8726286C6EB2 /* SmokeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
