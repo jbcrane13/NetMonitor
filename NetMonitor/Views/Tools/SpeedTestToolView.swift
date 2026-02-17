@@ -10,6 +10,7 @@ import libkern
 
 struct SpeedTestToolView: View {
     @Environment(\.appAccentColor) private var accentColor
+    @Environment(\.compactMode) private var compactMode
     @State private var isRunning = false
     @State private var phase: SpeedTestPhase = .idle
     @State private var pingLatency: Double?
@@ -51,9 +52,9 @@ struct SpeedTestToolView: View {
     // MARK: - Content Area
 
     private var contentArea: some View {
-        VStack(spacing: 32) {
+        VStack(spacing: compactMode ? 20 : 32) {
             // Duration picker
-            VStack(spacing: 8) {
+            VStack(spacing: compactMode ? 5 : 8) {
                 Text("Test Duration")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -113,7 +114,7 @@ struct SpeedTestToolView: View {
 
             Spacer()
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
         .background(Color.black.opacity(0.2))
     }
 
@@ -188,9 +189,9 @@ struct SpeedTestToolView: View {
     }
 
     private var resultsView: some View {
-        HStack(spacing: 48) {
+        HStack(spacing: compactMode ? 28 : 48) {
             // Ping
-            VStack(spacing: 4) {
+            VStack(spacing: compactMode ? 2 : 4) {
                 Image(systemName: "waveform.path")
                     .font(.title2)
                     .foregroundStyle(accentColor)
@@ -212,7 +213,7 @@ struct SpeedTestToolView: View {
             }
 
             // Download
-            VStack(spacing: 4) {
+            VStack(spacing: compactMode ? 2 : 4) {
                 Image(systemName: "arrow.down.circle")
                     .font(.title2)
                     .foregroundStyle(.green)
@@ -239,7 +240,7 @@ struct SpeedTestToolView: View {
             }
 
             // Upload
-            VStack(spacing: 4) {
+            VStack(spacing: compactMode ? 2 : 4) {
                 Image(systemName: "arrow.up.circle")
                     .font(.title2)
                     .foregroundStyle(.blue)
@@ -266,7 +267,7 @@ struct SpeedTestToolView: View {
             }
 
             // Server
-            VStack(spacing: 4) {
+            VStack(spacing: compactMode ? 2 : 4) {
                 Image(systemName: "server.rack")
                     .font(.title2)
                     .foregroundStyle(.orange)
@@ -311,7 +312,7 @@ struct SpeedTestToolView: View {
                 .accessibilityIdentifier("speedtest_button_reset")
             }
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Actions

@@ -16,6 +16,7 @@ struct PingToolView: View {
     @State private var errorMessage: String?
     @State private var pingTask: Task<Void, Never>?
     @State private var pingService = ProcessPingService()
+    @Environment(\.compactMode) private var compactMode
 
     var body: some View {
         ToolSheetContainer(
@@ -35,7 +36,7 @@ struct PingToolView: View {
     // MARK: - Input Area
 
     private var inputArea: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: compactMode ? 8 : 12) {
             TextField("Hostname or IP address", text: $host)
                 .textFieldStyle(.roundedBorder)
                 .onSubmit { runPing() }
@@ -63,7 +64,7 @@ struct PingToolView: View {
             .disabled(host.isEmpty && !isRunning)
             .accessibilityIdentifier("ping_button_run")
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Output Area
@@ -90,7 +91,7 @@ struct PingToolView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
+                .padding(compactMode ? 8 : 16)
             }
             .background(Color.black.opacity(0.2))
             .onChange(of: output.count) { _, _ in
@@ -150,7 +151,7 @@ struct PingToolView: View {
                 .accessibilityIdentifier("ping_button_clear")
             }
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Actions

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TracerouteToolView: View {
     @Environment(\.appAccentColor) private var accentColor
+    @Environment(\.compactMode) private var compactMode
     @State private var host = ""
     @State private var maxHops = 30
     @State private var isRunning = false
@@ -37,7 +38,7 @@ struct TracerouteToolView: View {
     // MARK: - Input Area
 
     private var inputArea: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: compactMode ? 8 : 12) {
             TextField("Hostname or IP address", text: $host)
                 .textFieldStyle(.roundedBorder)
                 .onSubmit { runTraceroute() }
@@ -64,7 +65,7 @@ struct TracerouteToolView: View {
             .disabled(host.isEmpty && !isRunning)
             .accessibilityIdentifier("traceroute_button_run")
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Output Area
@@ -72,7 +73,7 @@ struct TracerouteToolView: View {
     private var outputArea: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 4) {
+                LazyVStack(alignment: .leading, spacing: compactMode ? 2 : 4) {
                     if hops.isEmpty && errorMessage == nil && !isRunning {
                         Text("Enter a hostname to trace the network path")
                             .foregroundStyle(.tertiary)
@@ -92,7 +93,7 @@ struct TracerouteToolView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
+                .padding(compactMode ? 8 : 16)
             }
             .background(Color.black.opacity(0.2))
             .onChange(of: hops.count) { _, _ in
@@ -180,7 +181,7 @@ struct TracerouteToolView: View {
                 .accessibilityIdentifier("traceroute_button_clear")
             }
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Actions

@@ -64,7 +64,7 @@ struct AppearanceSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .padding()
+        .padding(compactMode ? 8 : 20)
         .navigationTitle("Appearance")
         .onAppear {
             // Sync color from stored hex

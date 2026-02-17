@@ -9,6 +9,7 @@ struct DeviceDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(DeviceDiscoveryCoordinator.self) private var discoveryCoordinator: DeviceDiscoveryCoordinator?
     @Environment(\.appAccentColor) private var accentColor
+    @Environment(\.compactMode) private var compactMode
 
     @State private var isEditing = false
     @State private var editedName: String = ""
@@ -31,7 +32,7 @@ struct DeviceDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: compactMode ? 14 : 24) {
                 headerCard
                 networkInfoCard
                 manufacturerSection
@@ -40,7 +41,7 @@ struct DeviceDetailView: View {
                 notesCard
                 actionsSection
             }
-            .padding()
+            .padding(compactMode ? 10 : 16)
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -75,7 +76,7 @@ struct DeviceDetailView: View {
     // MARK: - Header Card
 
     private var headerCard: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: compactMode ? 10 : 16) {
             ZStack {
                 Circle()
                     .fill(device.isOnline ? Color.green.opacity(0.2) : Color.gray.opacity(0.2))
@@ -86,7 +87,7 @@ struct DeviceDetailView: View {
                     .foregroundStyle(device.isOnline ? .green : .gray)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: compactMode ? 2 : 4) {
                 if isEditing {
                     TextField("Device Name", text: $editedName)
                         .textFieldStyle(.roundedBorder)
@@ -128,7 +129,7 @@ struct DeviceDetailView: View {
                 .accessibilityIdentifier("device_detail_picker_type")
             }
         }
-        .padding()
+        .padding(compactMode ? 10 : 16)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -136,7 +137,7 @@ struct DeviceDetailView: View {
     // MARK: - Network Info Card
 
     private var networkInfoCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: compactMode ? 8 : 12) {
             Label("Network Information", systemImage: "network")
                 .font(.headline)
 
@@ -152,7 +153,7 @@ struct DeviceDetailView: View {
                 infoRow(label: "Hostname", value: hostname, monospace: true)
             }
         }
-        .padding()
+        .padding(compactMode ? 10 : 16)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -160,7 +161,7 @@ struct DeviceDetailView: View {
     // MARK: - Manufacturer Section
 
     private var manufacturerSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: compactMode ? 8 : 12) {
             Label("Hardware", systemImage: "cpu")
                 .font(.headline)
 
@@ -180,7 +181,7 @@ struct DeviceDetailView: View {
                 )
             }
         }
-        .padding()
+        .padding(compactMode ? 10 : 16)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -188,7 +189,7 @@ struct DeviceDetailView: View {
     // MARK: - Timeline Section
 
     private var timelineSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: compactMode ? 8 : 12) {
             Label("Timeline", systemImage: "clock")
                 .font(.headline)
 
@@ -208,7 +209,7 @@ struct DeviceDetailView: View {
 
             infoRow(label: "Total Time Tracked", value: totalTimeTracked)
         }
-        .padding()
+        .padding(compactMode ? 10 : 16)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -216,7 +217,7 @@ struct DeviceDetailView: View {
     // MARK: - Services Section
 
     private var servicesSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: compactMode ? 8 : 12) {
             Label("Discovered Services", systemImage: "server.rack")
                 .font(.headline)
 
@@ -237,7 +238,7 @@ struct DeviceDetailView: View {
                 }
             }
         }
-        .padding()
+        .padding(compactMode ? 10 : 16)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -245,7 +246,7 @@ struct DeviceDetailView: View {
     // MARK: - Notes Card
 
     private var notesCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: compactMode ? 8 : 12) {
             Label("Notes", systemImage: "note.text")
                 .font(.headline)
 
@@ -271,7 +272,7 @@ struct DeviceDetailView: View {
                 }
             }
         }
-        .padding()
+        .padding(compactMode ? 10 : 16)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -279,13 +280,13 @@ struct DeviceDetailView: View {
     // MARK: - Actions Section
 
     private var actionsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: compactMode ? 8 : 12) {
             Label("Actions", systemImage: "bolt")
                 .font(.headline)
 
             Divider()
 
-            HStack(spacing: 12) {
+            HStack(spacing: compactMode ? 8 : 12) {
                 actionButton(
                     title: "Ping",
                     systemImage: "waveform.path",
@@ -321,7 +322,7 @@ struct DeviceDetailView: View {
                 .accessibilityIdentifier("device_detail_button_addToTargets")
             }
         }
-        .padding()
+        .padding(compactMode ? 10 : 16)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -348,14 +349,14 @@ struct DeviceDetailView: View {
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            VStack(spacing: 4) {
+            VStack(spacing: compactMode ? 2 : 4) {
                 Image(systemName: systemImage)
                     .font(.title3)
                 Text(title)
                     .font(.caption)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, compactMode ? 8 : 12)
         }
         .buttonStyle(.bordered)
     }

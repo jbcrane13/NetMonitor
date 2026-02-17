@@ -11,6 +11,7 @@ struct CompanionSettingsView: View {
     @AppStorage("netmonitor.companion.enabled") private var companionEnabled = true
     @AppStorage("netmonitor.companion.port") private var servicePort = "8849"
 
+    @Environment(\.compactMode) private var compactMode
     @State private var connectedDevices: [ConnectedDevice] = []
 
     var body: some View {
@@ -72,7 +73,7 @@ struct CompanionSettingsView: View {
             }
 
             SwiftUI.Section {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: compactMode ? 5 : 8) {
                     Label("How to connect", systemImage: "questionmark.circle")
                         .font(.headline)
 
@@ -87,7 +88,7 @@ struct CompanionSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .padding()
+        .padding(compactMode ? 8 : 20)
         .navigationTitle("Companion")
     }
 }

@@ -16,6 +16,7 @@ enum PreferredInterface: String, CaseIterable {
 struct NetworkSettingsView: View {
     @AppStorage("netmonitor.network.preferredInterface") private var preferredInterface = PreferredInterface.auto.rawValue
     @AppStorage("netmonitor.network.useSystemProxy") private var useSystemProxy = true
+    @Environment(\.compactMode) private var compactMode
 
     var body: some View {
         Form {
@@ -42,7 +43,7 @@ struct NetworkSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .padding()
+        .padding(compactMode ? 8 : 20)
         .navigationTitle("Network")
     }
 }

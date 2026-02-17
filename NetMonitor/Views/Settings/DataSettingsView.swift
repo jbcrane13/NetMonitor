@@ -30,6 +30,7 @@ struct DataSettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage("netmonitor.data.historyRetention") private var historyRetention = HistoryRetention.sevenDays.rawValue
 
+    @Environment(\.compactMode) private var compactMode
     @State private var showExportDialog = false
     @State private var showClearConfirmation = false
     @State private var exportURL: URL?
@@ -64,7 +65,7 @@ struct DataSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .padding()
+        .padding(compactMode ? 8 : 20)
         .navigationTitle("Data")
         .fileExporter(
             isPresented: $showExportDialog,

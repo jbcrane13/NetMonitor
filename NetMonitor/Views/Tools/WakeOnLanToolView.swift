@@ -10,6 +10,7 @@ import SwiftData
 
 struct WakeOnLanToolView: View {
     @Query private var devices: [LocalDevice]
+    @Environment(\.compactMode) private var compactMode
 
     @State private var selectedDeviceID: UUID?
     @State private var macAddress = ""
@@ -48,7 +49,7 @@ struct WakeOnLanToolView: View {
     // MARK: - Input Area
 
     private var inputArea: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: compactMode ? 10 : 16) {
             // Device selector
             HStack {
                 Text("Device:")
@@ -128,10 +129,10 @@ struct WakeOnLanToolView: View {
 
                     Spacer()
                 }
-                .padding(.top, 8)
+                .padding(.top, compactMode ? 4 : 8)
             }
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Footer
@@ -147,7 +148,7 @@ struct WakeOnLanToolView: View {
 
             Spacer()
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Actions

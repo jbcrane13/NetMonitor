@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BonjourBrowserToolView: View {
     @Environment(\.appAccentColor) private var accentColor
+    @Environment(\.compactMode) private var compactMode
     @State private var isScanning = false
     @State private var services: [BonjourService] = []
     @State private var selectedService: BonjourService?
@@ -42,7 +43,7 @@ struct BonjourBrowserToolView: View {
             },
             inputArea: { contentArea },
             footerContent: { footer }
-        )
+        )  
         .task {
             startScan()
         }
@@ -100,13 +101,13 @@ struct BonjourBrowserToolView: View {
             Text("\(groupedServices.first { $0.type == type }?.services.count ?? 0)")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 2)
+                .padding(.horizontal, compactMode ? 6 : 8)
+                .padding(.vertical, compactMode ? 1 : 2)
                 .background(Color.gray.opacity(0.2))
                 .clipShape(Capsule())
         }
         .padding(.horizontal)
-        .padding(.vertical, 8)
+        .padding(.vertical, compactMode ? 5 : 8)
         .background(Color.gray.opacity(0.1))
     }
 
@@ -115,7 +116,7 @@ struct BonjourBrowserToolView: View {
             selectedService = service
         } label: {
             HStack {
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: compactMode ? 1 : 2) {
                     Text(service.name)
                         .font(.body)
                         .foregroundStyle(.primary)
@@ -140,7 +141,7 @@ struct BonjourBrowserToolView: View {
                     .foregroundStyle(.tertiary)
             }
             .padding(.horizontal)
-            .padding(.vertical, 8)
+            .padding(.vertical, compactMode ? 5 : 8)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -161,7 +162,7 @@ struct BonjourBrowserToolView: View {
 
     private func serviceDetailView(_ service: BonjourService) -> some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: compactMode ? 10 : 16) {
                 // Header
                 HStack {
                     Image(systemName: iconForServiceType(service.type))
@@ -180,7 +181,7 @@ struct BonjourBrowserToolView: View {
                 Divider()
 
                 // Connection info
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: compactMode ? 5 : 8) {
                     Label("Connection", systemImage: "network")
                         .font(.headline)
 
@@ -202,7 +203,7 @@ struct BonjourBrowserToolView: View {
                 if !service.txtRecord.isEmpty {
                     Divider()
 
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: compactMode ? 5 : 8) {
                         Label("TXT Records", systemImage: "doc.text")
                             .font(.headline)
 
@@ -214,7 +215,7 @@ struct BonjourBrowserToolView: View {
 
                 Spacer()
             }
-            .padding()
+            .padding(compactMode ? 10 : 16)
         }
     }
 
@@ -258,7 +259,7 @@ struct BonjourBrowserToolView: View {
 
             Spacer()
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Actions

@@ -13,6 +13,7 @@ struct GeneralSettingsView: View {
     @AppStorage("netmonitor.general.launchAtLogin") private var launchAtLogin = false
     @AppStorage("netmonitor.general.showInMenuBar") private var showInMenuBar = true
     @AppStorage("netmonitor.general.showInDock") private var showInDock = true
+    @Environment(\.compactMode) private var compactMode
 
     var body: some View {
         Form {
@@ -49,7 +50,7 @@ struct GeneralSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .padding()
+        .padding(compactMode ? 8 : 20)
         .navigationTitle("General")
     }
 

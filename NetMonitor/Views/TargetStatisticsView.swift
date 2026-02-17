@@ -5,6 +5,7 @@ import Charts
 struct TargetStatisticsView: View {
     let target: NetworkTarget
     @Environment(\.appAccentColor) private var accentColor
+    @Environment(\.compactMode) private var compactMode
 
     @Query private var measurements: [TargetMeasurement]
 
@@ -25,7 +26,7 @@ struct TargetStatisticsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: compactMode ? 10 : 16) {
             Text("Recent Measurements")
                 .font(.headline)
 
@@ -35,7 +36,7 @@ struct TargetStatisticsView: View {
                     .foregroundStyle(.secondary)
             } else {
                 // Statistics
-                HStack(spacing: 32) {
+                HStack(spacing: compactMode ? 20 : 32) {
                     StatisticItem(
                         title: "Avg Latency",
                         value: averageLatency,
@@ -76,7 +77,7 @@ struct TargetStatisticsView: View {
                 .frame(height: 150)
             }
         }
-        .padding()
+        .padding(compactMode ? 10 : 16)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -97,9 +98,10 @@ struct StatisticItem: View {
     let title: String
     let value: String
     let unit: String
+    @Environment(\.compactMode) private var compactMode
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: compactMode ? 2 : 4) {
             Text(title)
                 .font(.caption)
                 .foregroundStyle(.secondary)

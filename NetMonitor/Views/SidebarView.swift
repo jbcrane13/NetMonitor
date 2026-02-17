@@ -4,6 +4,7 @@ import SwiftData
 struct SidebarView: View {
     @Binding var selection: NavigationSection?
     @Environment(MonitoringSession.self) private var monitoringSession: MonitoringSession?
+    @Environment(\.compactMode) private var compactMode
     @Query private var targets: [NetworkTarget]
 
     var body: some View {
@@ -19,8 +20,8 @@ struct SidebarView: View {
                         .font(.caption2)
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
+                        .padding(.horizontal, compactMode ? 4 : 6)
+                        .padding(.vertical, compactMode ? 1 : 2)
                         .background(badgeColor(for: section), in: Capsule())
                 }
             }

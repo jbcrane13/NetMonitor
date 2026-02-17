@@ -6,6 +6,7 @@ import Darwin
 struct DevicesView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(DeviceDiscoveryCoordinator.self) private var coordinator: DeviceDiscoveryCoordinator?
+    @Environment(\.compactMode) private var compactMode
     @Query(sort: \LocalDevice.lastSeen, order: .reverse) private var devices: [LocalDevice]
 
     @State private var selectedDevice: LocalDevice?
@@ -150,7 +151,7 @@ struct DevicesView: View {
     // MARK: - Scanning Overlay
 
     private var scanningOverlay: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: compactMode ? 10 : 16) {
             ProgressView(value: coordinator?.scanProgress ?? 0)
                 .progressViewStyle(.linear)
                 .frame(width: 200)
@@ -168,7 +169,7 @@ struct DevicesView: View {
             .buttonStyle(.bordered)
             .accessibilityIdentifier("devices_button_stopScan")
         }
-        .padding(24)
+        .padding(compactMode ? 16 : 24)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }

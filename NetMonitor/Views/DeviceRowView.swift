@@ -3,9 +3,10 @@ import NetMonitorShared
 
 struct DeviceRowView: View {
     let device: LocalDevice
+    @Environment(\.compactMode) private var compactMode
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: compactMode ? 8 : 12) {
             // Status indicator
             Circle()
                 .fill(device.isOnline ? Color.green : Color.gray)
@@ -18,7 +19,7 @@ struct DeviceRowView: View {
                 .frame(width: 32)
 
             // Device info
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: compactMode ? 1 : 2) {
                 Text(device.displayName)
                     .font(.headline)
 
@@ -48,6 +49,6 @@ struct DeviceRowView: View {
                     .fontDesign(.monospaced)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, compactMode ? 2 : 4)
     }
 }

@@ -12,6 +12,7 @@ struct MonitoringSettingsView: View {
     @AppStorage("netmonitor.monitoring.defaultTimeout") private var defaultTimeout = 5
     @AppStorage("netmonitor.monitoring.retryEnabled") private var retryEnabled = false
     @AppStorage("netmonitor.monitoring.retryCount") private var retryCount = 3
+    @Environment(\.compactMode) private var compactMode
 
     private let intervalOptions = [5, 10, 30, 60]
     private let timeoutOptions = [3, 5, 10, 30]
@@ -53,7 +54,7 @@ struct MonitoringSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .padding()
+        .padding(compactMode ? 8 : 20)
         .navigationTitle("Monitoring")
     }
 }

@@ -26,6 +26,7 @@ struct ToolSheetContainer<InputArea: View, OutputArea: View, FooterContent: View
     private let outputAreaContent: OutputArea
     private let footerAreaContent: FooterContent
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.compactMode) private var compactMode
 
     /// Full initializer with all four generic parameters.
     init(
@@ -92,7 +93,7 @@ struct ToolSheetContainer<InputArea: View, OutputArea: View, FooterContent: View
 
             headerTrailingContent
         }
-        .padding()
+        .padding(compactMode ? 10 : 16)
     }
 }
 

@@ -69,6 +69,7 @@ struct WHOISInfo {
 
 struct WHOISToolView: View {
     @Environment(\.appAccentColor) private var accentColor
+    @Environment(\.compactMode) private var compactMode
     @State private var domain = ""
     @State private var isRunning = false
     @State private var output = ""
@@ -97,7 +98,7 @@ struct WHOISToolView: View {
     // MARK: - Input Area
 
     private var inputArea: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: compactMode ? 8 : 12) {
             TextField("Domain name (e.g., example.com)", text: $domain)
                 .textFieldStyle(.roundedBorder)
                 .onSubmit { runWhois() }
@@ -111,7 +112,7 @@ struct WHOISToolView: View {
             .disabled(domain.isEmpty || isRunning)
             .accessibilityIdentifier("whois_button_lookup")
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Output Area
@@ -132,7 +133,7 @@ struct WHOISToolView: View {
                     Spacer()
                 }
                 .padding(.horizontal)
-                .padding(.vertical, 8)
+                .padding(.vertical, compactMode ? 5 : 8)
                 .background(Color.black.opacity(0.1))
             }
 
@@ -175,7 +176,7 @@ struct WHOISToolView: View {
 
     private var parsedView: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: compactMode ? 10 : 16) {
                 // Domain section
                 if let domain = parsedInfo?.domainName {
                     sectionView(title: "Domain", icon: "globe") {
@@ -238,17 +239,17 @@ struct WHOISToolView: View {
     }
 
     private func sectionView<Content: View>(title: String, icon: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: compactMode ? 5 : 8) {
             Label(title, systemImage: icon)
                 .font(.headline)
                 .foregroundStyle(accentColor)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: compactMode ? 2 : 4) {
                 content()
             }
             .padding(.leading, 4)
         }
-        .padding()
+        .padding(compactMode ? 10 : 16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(nsColor: .controlBackgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -300,7 +301,7 @@ struct WHOISToolView: View {
                 .accessibilityIdentifier("whois_button_clear")
             }
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Actions

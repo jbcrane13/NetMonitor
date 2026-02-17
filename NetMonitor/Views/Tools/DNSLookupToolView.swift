@@ -21,6 +21,7 @@ enum DNSRecordType: String, CaseIterable {
 
 struct DNSLookupToolView: View {
     @Environment(\.appAccentColor) private var accentColor
+    @Environment(\.compactMode) private var compactMode
     @State private var hostname = ""
     @State private var recordType: DNSRecordType = .a
     @State private var isRunning = false
@@ -48,7 +49,7 @@ struct DNSLookupToolView: View {
     // MARK: - Input Area
 
     private var inputArea: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: compactMode ? 8 : 12) {
             TextField("Hostname (e.g., example.com)", text: $hostname)
                 .textFieldStyle(.roundedBorder)
                 .onSubmit { runLookup() }
@@ -71,14 +72,14 @@ struct DNSLookupToolView: View {
             .disabled(hostname.isEmpty || isRunning)
             .accessibilityIdentifier("dns_button_lookup")
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Output Area
 
     private var outputArea: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: compactMode ? 2 : 4) {
                 if results.isEmpty && errorMessage == nil && !isRunning {
                     Text("Enter a hostname and select a record type to query")
                         .foregroundStyle(.tertiary)
@@ -97,7 +98,7 @@ struct DNSLookupToolView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
+            .padding(compactMode ? 8 : 16)
         }
         .background(Color.black.opacity(0.2))
     }
@@ -168,7 +169,7 @@ struct DNSLookupToolView: View {
                 .accessibilityIdentifier("dns_button_clear")
             }
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Actions

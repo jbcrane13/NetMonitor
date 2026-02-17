@@ -170,6 +170,7 @@ enum TargetSortOption: String, CaseIterable, Identifiable {
 struct TargetRow: View {
     @Bindable var target: NetworkTarget
     var monitoringSession: MonitoringSession?
+    @Environment(\.compactMode) private var compactMode
 
     var statusColor: Color {
         guard let measurement = monitoringSession?.latestMeasurement(for: target.id) else {
@@ -184,7 +185,7 @@ struct TargetRow: View {
                 .fill(statusColor)
                 .frame(width: 8, height: 8)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: compactMode ? 2 : 4) {
                 Text(target.name)
                     .font(.headline)
 
@@ -195,7 +196,7 @@ struct TargetRow: View {
 
             Spacer()
 
-            HStack(spacing: 12) {
+            HStack(spacing: compactMode ? 8 : 12) {
                 Label(target.targetProtocol.rawValue, systemImage: target.targetProtocol.iconName)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -204,7 +205,7 @@ struct TargetRow: View {
                     .labelsHidden()
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, compactMode ? 2 : 4)
     }
 }
 

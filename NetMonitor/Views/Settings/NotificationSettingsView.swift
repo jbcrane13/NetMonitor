@@ -12,6 +12,7 @@ struct NotificationSettingsView: View {
     @AppStorage("netmonitor.notifications.targetDown") private var notifyTargetDown = true
     @AppStorage("netmonitor.notifications.targetRecovery") private var notifyTargetRecovery = true
     @AppStorage("netmonitor.notifications.latencyThreshold") private var latencyThreshold = 500.0
+    @Environment(\.compactMode) private var compactMode
 
     var body: some View {
         Form {
@@ -35,7 +36,7 @@ struct NotificationSettingsView: View {
             }
 
             SwiftUI.Section {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: compactMode ? 5 : 8) {
                     Text("Latency threshold: \(Int(latencyThreshold)) ms")
 
                     Slider(value: $latencyThreshold, in: 100...1000, step: 50) {
@@ -53,7 +54,7 @@ struct NotificationSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .padding()
+        .padding(compactMode ? 8 : 20)
         .navigationTitle("Notifications")
     }
 }

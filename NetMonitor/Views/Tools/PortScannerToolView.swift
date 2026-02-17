@@ -28,6 +28,7 @@ enum PortPreset: String, CaseIterable {
 
 struct PortScannerToolView: View {
     @Environment(\.appAccentColor) private var accentColor
+    @Environment(\.compactMode) private var compactMode
     @State private var host = ""
     @State private var preset: PortPreset = .common
     @State private var customPorts = ""
@@ -57,8 +58,8 @@ struct PortScannerToolView: View {
     // MARK: - Input Area
 
     private var inputArea: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 12) {
+        VStack(spacing: compactMode ? 8 : 12) {
+            HStack(spacing: compactMode ? 8 : 12) {
                 TextField("Hostname or IP address", text: $host)
                     .textFieldStyle(.roundedBorder)
                     .disabled(isRunning)
@@ -92,14 +93,14 @@ struct PortScannerToolView: View {
                     .accessibilityIdentifier("portscan_textfield_custom")
             }
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Output Area
 
     private var outputArea: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 4) {
+            LazyVStack(alignment: .leading, spacing: compactMode ? 2 : 4) {
                 if results.isEmpty && errorMessage == nil && !isRunning {
                     Text("Enter a hostname and select ports to scan")
                         .foregroundStyle(.tertiary)
@@ -143,13 +144,13 @@ struct PortScannerToolView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
+            .padding(compactMode ? 8 : 16)
         }
         .background(Color.black.opacity(0.2))
     }
 
     private func portRow(_ result: PortResult) -> some View {
-        HStack(spacing: 12) {
+        HStack(spacing: compactMode ? 8 : 12) {
             Image(systemName: result.isOpen ? "checkmark.circle.fill" : "xmark.circle")
                 .foregroundStyle(result.isOpen ? .green : .secondary)
 
@@ -168,7 +169,7 @@ struct PortScannerToolView: View {
                     .foregroundStyle(accentColor)
             }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, compactMode ? 1 : 2)
     }
 
     // MARK: - Footer
@@ -210,7 +211,7 @@ struct PortScannerToolView: View {
                 .accessibilityIdentifier("portscan_button_clear")
             }
         }
-        .padding()
+        .padding(compactMode ? 8 : 16)
     }
 
     // MARK: - Actions
