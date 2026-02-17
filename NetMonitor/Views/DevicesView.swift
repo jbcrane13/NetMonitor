@@ -189,22 +189,15 @@ struct DevicesView: View {
         }
 
         ToolbarItem(placement: .automatic) {
-            Menu {
+            Picker(selection: $sortOrder) {
                 ForEach(DeviceSortOrder.allCases, id: \.self) { order in
-                    Button {
-                        sortOrder = order
-                    } label: {
-                        HStack {
-                            Label(order.rawValue, systemImage: order.icon)
-                            if sortOrder == order {
-                                Image(systemName: "checkmark")
-                            }
-                        }
-                    }
+                    Label(order.rawValue, systemImage: order.icon)
+                        .tag(order)
                 }
             } label: {
                 Label("Sort", systemImage: "arrow.up.arrow.down")
             }
+            .pickerStyle(.menu)
             .accessibilityIdentifier("devices_menu_sort")
         }
 
