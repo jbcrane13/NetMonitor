@@ -1,44 +1,33 @@
-//
-//  TracerouteService.swift
-//  NetMonitor
-//
-//  TCP-based route estimation using raw sockets.
-//  Works within App Sandbox since it uses POSIX sockets (not Process/NSTask).
-//
-
 import Foundation
+import Network
 
-/// Service for performing TCP-based route estimation
+/// Service for performing real ICMP traceroute using non-privileged BSD sockets.
 ///
-/// Since App Sandbox prevents executing system binaries like /usr/sbin/traceroute,
-/// this service uses TCP connect probes with varying timeouts to estimate the
-/// network path to a destination.
+/// Uses `SOCK_DGRAM/IPPROTO_ICMP` with incrementing TTL values. When a router
+/// decrements TTL to zero, it returns an ICMP Time Exceeded message revealing
+/// its IP address. When the destination is reached, it returns an Echo Reply.
 ///
-/// The approach:
-/// 1. Resolve the target hostname to an IP address
-/// 2. Perform an initial full-timeout TCP probe to measure actual RTT
-/// 3. If successful, generate synthetic intermediate hops with progressive latencies
-/// 4. If the initial probe fails, fall back to progressive-timeout probing
-/// 5. Each "hop" uses progressively longer connection timeouts
+/// Falls back to a single TCP probe if ICMP socket creation fails.
 actor TracerouteService {
 
     // MARK: - Configuration
 
     let defaultMaxHops: Int = 30
     let defaultTimeout: TimeInterval = 2.0
+    /// Number of probes sent per hop (standard traceroute uses 3).
+    private let probesPerHop: Int = 3
 
     // MARK: - State
 
     private var isRunning = false
 
+    // MARK: - Initialization
+
+    init() {}
+
     // MARK: - Public API
 
-    /// Performs a TCP-based route estimation to the specified host
-    /// - Parameters:
-    ///   - host: Target hostname or IP address
-    ///   - maxHops: Maximum number of hops (default 30)
-    ///   - timeout: Timeout per hop in seconds (default 2.0)
-    /// - Returns: AsyncStream of TracerouteHop results
+    /// Performs a traceroute to the specified host.
     func trace(
         host: String,
         maxHops: Int? = nil,
@@ -59,12 +48,12 @@ actor TracerouteService {
         }
     }
 
-    /// Stops the current traceroute operation
-    func stop() {
+    /// Stops the current traceroute operation.
+    func stop() async {
         isRunning = false
     }
 
-    /// Returns whether a traceroute is currently running
+    /// Returns whether a traceroute is currently running.
     var running: Bool {
         isRunning
     }
@@ -84,162 +73,154 @@ actor TracerouteService {
         }
 
         // Resolve hostname to IP
-        guard let targetIP = resolveHostname(host) else {
+        let resolvedIP = resolveHostname(host)
+        guard let targetIP = resolvedIP else {
             continuation.yield(TracerouteHop(
                 hopNumber: 1,
+                hostname: host,
+                ipAddress: nil,
+                latencies: [],
                 isTimeout: true
             ))
             return
         }
 
-        // Try port 443 first (most hosts accept HTTPS)
-        let port: UInt16 = 443
+        // Try ICMP traceroute first; fall back to TCP probe if unavailable
+        if let socket = try? ICMPSocket() {
+            await performICMPTrace(
+                socket: socket,
+                host: host,
+                targetIP: targetIP,
+                maxHops: maxHops,
+                timeout: timeout,
+                continuation: continuation
+            )
+        } else {
+            await performTCPFallback(
+                host: host,
+                targetIP: targetIP,
+                timeout: timeout,
+                continuation: continuation
+            )
+        }
+    }
 
-        // First, probe with full timeout to measure actual RTT
-        let initialResult = await tcpProbe(
-            host: targetIP,
-            port: port,
-            timeout: timeout
-        )
+    // MARK: - Real ICMP Traceroute
 
-        switch initialResult {
-        case .connected(let rtt), .refused(let rtt):
-            // We have real RTT. Emit synthetic intermediate hops.
-            let hopCount: Int
-            if rtt < 10 {
-                hopCount = Int.random(in: 2...3)
-            } else if rtt < 50 {
-                hopCount = Int.random(in: 4...8)
-            } else if rtt < 200 {
-                hopCount = Int.random(in: 8...15)
-            } else {
-                hopCount = Int.random(in: 10...20)
-            }
+    private func performICMPTrace(
+        socket: ICMPSocket,
+        host: String,
+        targetIP: String,
+        maxHops: Int,
+        timeout: TimeInterval,
+        continuation: AsyncStream<TracerouteHop>.Continuation
+    ) async {
+        for ttl in 1...maxHops {
+            guard isRunning else { break }
 
-            let syntheticIPs = generateIntermediateIPs(target: targetIP, count: hopCount - 1)
+            var probeTimes: [Double] = []
+            var hopIP: String?
+            var destinationReached = false
 
-            // Emit synthetic intermediate hops with progressive latencies
-            for i in 1..<hopCount {
+            for _ in 0..<probesPerHop {
                 guard isRunning else { break }
 
-                let fraction = Double(i) / Double(hopCount)
-                let hopRTT = rtt * pow(fraction, 1.5)
+                let response = await socket.sendProbe(
+                    to: targetIP,
+                    ttl: Int32(ttl),
+                    timeout: timeout
+                )
 
-                continuation.yield(TracerouteHop(
-                    hopNumber: i,
-                    hostname: nil,
-                    ipAddress: syntheticIPs[i - 1],
-                    latencies: [hopRTT],
-                    isTimeout: false
-                ))
+                switch response.kind {
+                case .echoReply:
+                    probeTimes.append(response.rtt)
+                    hopIP = response.sourceIP ?? targetIP
+                    destinationReached = true
 
-                // Small delay for progressive UI appearance
-                try? await Task.sleep(for: .milliseconds(100))
+                case .timeExceeded(let routerIP, _):
+                    probeTimes.append(response.rtt)
+                    if hopIP == nil {
+                        hopIP = routerIP
+                    }
+
+                case .timeout:
+                    break
+
+                case .error:
+                    break
+                }
             }
 
-            guard isRunning else { return }
+            let allTimeout = probeTimes.isEmpty
 
-            // Emit the real destination as final hop
+            // Reverse DNS lookup for the hop IP
+            var hostname: String?
+            if let ip = hopIP {
+                hostname = await reverseDNS(ip)
+                if hostname == host { hostname = nil }
+            }
+
             continuation.yield(TracerouteHop(
-                hopNumber: hopCount,
+                hopNumber: ttl,
+                hostname: hostname,
+                ipAddress: hopIP,
+                latencies: probeTimes,
+                isTimeout: allTimeout
+            ))
+
+            if destinationReached { break }
+        }
+    }
+
+    // MARK: - TCP Fallback
+
+    private nonisolated func performTCPFallback(
+        host: String,
+        targetIP: String,
+        timeout: TimeInterval,
+        continuation: AsyncStream<TracerouteHop>.Continuation
+    ) async {
+        let result = tcpProbe(host: targetIP, port: 443, timeout: timeout)
+
+        switch result {
+        case .connected(let rtt), .refused(let rtt):
+            continuation.yield(TracerouteHop(
+                hopNumber: 1,
                 hostname: host == targetIP ? nil : host,
                 ipAddress: targetIP,
                 latencies: [rtt],
                 isTimeout: false
             ))
-
         case .timeout, .error:
-            // Initial probe failed - fall back to progressive-timeout probing
-            let probeCount = min(maxHops, 30)
-            var hopNumber = 0
-            var destinationReached = false
-
-            for i in 1...probeCount {
-                guard isRunning else { break }
-
-                hopNumber = i
-
-                let fraction = Double(i) / Double(probeCount)
-                let hopTimeout = max(0.01, timeout * fraction)
-
-                let result = await tcpProbe(
-                    host: targetIP,
-                    port: port,
-                    timeout: hopTimeout
-                )
-
-                switch result {
-                case .connected(let rtt), .refused(let rtt):
-                    continuation.yield(TracerouteHop(
-                        hopNumber: i,
-                        hostname: host == targetIP ? nil : host,
-                        ipAddress: targetIP,
-                        latencies: [rtt],
-                        isTimeout: false
-                    ))
-                    destinationReached = true
-
-                case .timeout, .error:
-                    continuation.yield(TracerouteHop(
-                        hopNumber: i,
-                        isTimeout: true
-                    ))
-                }
-
-                if destinationReached { break }
-            }
-
-            // If we never reached the destination, try one final full-timeout probe
-            if !destinationReached && isRunning {
-                hopNumber += 1
-                let finalResult = await tcpProbe(
-                    host: targetIP,
-                    port: port,
-                    timeout: timeout
-                )
-                switch finalResult {
-                case .connected(let rtt), .refused(let rtt):
-                    continuation.yield(TracerouteHop(
-                        hopNumber: hopNumber,
-                        hostname: host == targetIP ? nil : host,
-                        ipAddress: targetIP,
-                        latencies: [rtt],
-                        isTimeout: false
-                    ))
-                case .timeout, .error:
-                    continuation.yield(TracerouteHop(
-                        hopNumber: hopNumber,
-                        hostname: host == targetIP ? nil : host,
-                        ipAddress: targetIP,
-                        latencies: [],
-                        isTimeout: true
-                    ))
-                }
-            }
+            continuation.yield(TracerouteHop(
+                hopNumber: 1,
+                hostname: host == targetIP ? nil : host,
+                ipAddress: targetIP,
+                latencies: [],
+                isTimeout: true
+            ))
         }
     }
 
     // MARK: - TCP Probe
 
     private enum ProbeResult: Sendable {
-        case connected(Double)   // RTT in milliseconds
-        case refused(Double)     // Host responded with RST (still reachable)
+        case connected(Double)
+        case refused(Double)
         case timeout
         case error
     }
 
-    /// Attempts a TCP connection to measure reachability and latency
     private nonisolated func tcpProbe(
         host: String,
         port: UInt16,
         timeout: TimeInterval
-    ) async -> ProbeResult {
+    ) -> ProbeResult {
         let startTime = ContinuousClock.now
 
         let fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)
         guard fd >= 0 else { return .error }
 
-        // Set non-blocking
         let flags = fcntl(fd, F_GETFL, 0)
         _ = fcntl(fd, F_SETFL, flags | O_NONBLOCK)
 
@@ -251,18 +232,15 @@ actor TracerouteService {
             return .error
         }
 
-        // Initiate non-blocking connect
         let connectResult = withUnsafePointer(to: &addr) { ptr in
             ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) { sockaddrPtr in
-                Darwin.connect(fd, sockaddrPtr, socklen_t(MemoryLayout<sockaddr_in>.size))
+                connect(fd, sockaddrPtr, socklen_t(MemoryLayout<sockaddr_in>.size))
             }
         }
 
         if connectResult == 0 {
-            // Immediate connect (localhost)
             let elapsed = ContinuousClock.now - startTime
-            let rtt = Double(elapsed.components.seconds) * 1000.0
-                + Double(elapsed.components.attoseconds) / 1e15
+            let rtt = Double(elapsed.components.seconds) * 1000.0 + Double(elapsed.components.attoseconds) / 1e15
             close(fd)
             return .connected(rtt)
         }
@@ -272,21 +250,18 @@ actor TracerouteService {
             return .error
         }
 
-        // Use poll to wait for connect with timeout
         let timeoutMs = Int32(timeout * 1000)
         var pollFd = pollfd(fd: fd, events: Int16(POLLOUT), revents: 0)
         let pollResult = poll(&pollFd, 1, timeoutMs)
 
         let elapsed = ContinuousClock.now - startTime
-        let rtt = Double(elapsed.components.seconds) * 1000.0
-            + Double(elapsed.components.attoseconds) / 1e15
+        let rtt = Double(elapsed.components.seconds) * 1000.0 + Double(elapsed.components.attoseconds) / 1e15
 
         if pollResult <= 0 {
             close(fd)
             return .timeout
         }
 
-        // Check if connection succeeded or was refused
         var connectError: Int32 = 0
         var errorLen = socklen_t(MemoryLayout<Int32>.size)
         getsockopt(fd, SOL_SOCKET, SO_ERROR, &connectError, &errorLen)
@@ -301,44 +276,14 @@ actor TracerouteService {
         }
     }
 
-    // MARK: - Synthetic Hop IP Generation
-
-    /// Generates plausible intermediate IP addresses for synthetic hops.
-    private nonisolated func generateIntermediateIPs(target: String, count: Int) -> [String] {
-        let parts = target.split(separator: ".").compactMap { Int($0) }
-        var ips: [String] = []
-
-        // First hop is typically the local gateway
-        if count > 0 {
-            if let first = parts.first {
-                ips.append("\(first).168.1.1")
-            } else {
-                ips.append("192.168.1.1")
-            }
-        }
-
-        // Middle hops use common carrier/ISP ranges
-        let carrierPrefixes = ["10.0", "10.1", "10.2", "172.16", "172.17", "100.64", "100.65"]
-        for i in 1..<count {
-            let prefix = carrierPrefixes[i % carrierPrefixes.count]
-            let octet3 = (i * 17 + (parts.last ?? 0)) % 256
-            let octet4 = (i * 31 + (parts.first ?? 0)) % 254 + 1
-            ips.append("\(prefix).\(octet3).\(octet4)")
-        }
-
-        return ips
-    }
-
     // MARK: - DNS Resolution
 
     private nonisolated func resolveHostname(_ hostname: String) -> String? {
-        // Check if already an IP address
         var testAddr = in_addr()
         if inet_pton(AF_INET, hostname, &testAddr) == 1 {
             return hostname
         }
 
-        // Resolve via DNS
         var hints = addrinfo()
         hints.ai_family = AF_INET
         hints.ai_socktype = SOCK_STREAM
@@ -351,21 +296,50 @@ actor TracerouteService {
         }
         defer { freeaddrinfo(result) }
 
-        var hostnameBuffer = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-        if getnameinfo(
-            info.pointee.ai_addr,
-            socklen_t(info.pointee.ai_addrlen),
-            &hostnameBuffer,
-            socklen_t(hostnameBuffer.count),
-            nil,
-            0,
-            NI_NUMERICHOST
-        ) == 0 {
-            let length = strnlen(hostnameBuffer, hostnameBuffer.count)
-            let bytes = hostnameBuffer.prefix(length).map { UInt8(bitPattern: $0) }
-            return String(decoding: bytes, as: UTF8.self)
+        if let addr = info.pointee.ai_addr {
+            let sockAddr = addr.withMemoryRebound(to: sockaddr_in.self, capacity: 1) { $0.pointee }
+            var ipBuffer = [CChar](repeating: 0, count: Int(INET_ADDRSTRLEN))
+            var sinAddr = sockAddr.sin_addr
+            inet_ntop(AF_INET, &sinAddr, &ipBuffer, socklen_t(INET_ADDRSTRLEN))
+            return String(cString: ipBuffer)
         }
 
         return nil
+    }
+
+    /// Reverse DNS lookup for a hop IP address.
+    private func reverseDNS(_ ipAddress: String) async -> String? {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .utility).async {
+                var addr = sockaddr_in()
+                addr.sin_family = sa_family_t(AF_INET)
+                inet_pton(AF_INET, ipAddress, &addr.sin_addr)
+
+                var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+
+                let result = withUnsafePointer(to: &addr) { ptr in
+                    ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) { sockaddrPtr in
+                        getnameinfo(
+                            sockaddrPtr,
+                            socklen_t(MemoryLayout<sockaddr_in>.size),
+                            &hostname,
+                            socklen_t(hostname.count),
+                            nil, 0, 0
+                        )
+                    }
+                }
+
+                if result == 0 {
+                    let name = String(cString: hostname)
+                    if name != ipAddress {
+                        continuation.resume(returning: name)
+                    } else {
+                        continuation.resume(returning: nil)
+                    }
+                } else {
+                    continuation.resume(returning: nil)
+                }
+            }
+        }
     }
 }
