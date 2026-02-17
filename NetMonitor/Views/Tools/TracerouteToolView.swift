@@ -49,7 +49,7 @@ struct TracerouteToolView: View {
                 Text("30").tag(30)
                 Text("64").tag(64)
             }
-            .frame(width: 100)
+            .fixedSize()
             .disabled(isRunning)
             .accessibilityIdentifier("traceroute_picker_hops")
 
