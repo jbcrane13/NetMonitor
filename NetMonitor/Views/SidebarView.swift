@@ -65,9 +65,11 @@ struct SidebarView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     @Previewable @State var selection: NavigationSection? = .dashboard
 
     SidebarView(selection: $selection)
         .modelContainer(PreviewContainer().container)
 }
+#endif
