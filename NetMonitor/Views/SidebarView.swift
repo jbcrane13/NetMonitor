@@ -4,8 +4,10 @@ import SwiftData
 struct SidebarView: View {
     @Binding var selection: NavigationSection?
     @Environment(MonitoringSession.self) private var monitoringSession: MonitoringSession?
+    @Environment(DeviceDiscoveryCoordinator.self) private var coordinator: DeviceDiscoveryCoordinator?
     @Environment(\.compactMode) private var compactMode
-    @Query private var targets: [NetworkTarget]
+
+    @Query private var allDevices: [LocalDevice]
 
     var body: some View {
         List(NavigationSection.allCases, selection: $selection) { section in
@@ -34,12 +36,15 @@ struct SidebarView: View {
 
     private func badgeText(for section: NavigationSection) -> String? {
         switch section {
-        case .dashboard, .devices:
-            guard let monitoringSession else { return nil }
-            let online = monitoringSession.onlineTargetCount
-            let total = online + monitoringSession.offlineTargetCount
+        case .dashboard:
+            let online = allDevices.filter { $0.isOnline }.count
+            let total = allDevices.count
             guard total > 0 else { return nil }
             return "\(online)/\(total)"
+        case .devices:
+            let total = allDevices.count
+            guard total > 0 else { return nil }
+            return "\(total)"
         default:
             return nil
         }
@@ -47,12 +52,13 @@ struct SidebarView: View {
 
     private func badgeColor(for section: NavigationSection) -> Color {
         switch section {
-        case .dashboard, .devices:
-            guard let monitoringSession else { return .gray }
-            let online = monitoringSession.onlineTargetCount
-            let total = online + monitoringSession.offlineTargetCount
+        case .dashboard:
+            let online = allDevices.filter { $0.isOnline }.count
+            let total = allDevices.count
             if total == 0 { return .gray }
             return online == total ? .green : (online > 0 ? .orange : .red)
+        case .devices:
+            return .blue
         default:
             return .blue
         }
@@ -63,4 +69,5 @@ struct SidebarView: View {
     @Previewable @State var selection: NavigationSection? = .dashboard
 
     SidebarView(selection: $selection)
+        .modelContainer(PreviewContainer().container)
 }

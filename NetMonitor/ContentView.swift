@@ -10,6 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(MonitoringSession.self) private var session: MonitoringSession?
+    @Environment(DeviceDiscoveryCoordinator.self) private var coordinator: DeviceDiscoveryCoordinator?
+
     @State private var selectedSection: NavigationSection? = .dashboard
     @State private var localSession: MonitoringSession?
 
@@ -45,18 +47,20 @@ struct ContentView: View {
         }
         .frame(minWidth: 1000, minHeight: 600)
         .task {
-            // Create local session only if not provided via environment
+            // Create local session only if not provided via environment (e.g., previews)
             if session == nil && localSession == nil {
-                let httpService = HTTPMonitorService()
-                let icmpService = ICMPMonitorService()
-                let tcpService = TCPMonitorService()
                 localSession = MonitoringSession(
                     modelContext: modelContext,
-                    httpService: httpService,
-                    icmpService: icmpService,
-                    tcpService: tcpService
+                    coordinator: coordinator,
+                    httpService: HTTPMonitorService(),
+                    icmpService: ICMPMonitorService(),
+                    tcpService: TCPMonitorService()
                 )
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .quickLaunchTool)) { _ in
+            // Switch to Tools section when a quick-launch action fires from TargetsView
+            selectedSection = .tools
         }
     }
 }

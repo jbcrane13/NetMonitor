@@ -2,19 +2,26 @@
 //  QuickStatsBar.swift
 //  NetMonitor
 //
+//  Displays real-time network-scan statistics.
+//  Driven by DeviceDiscoveryCoordinator / @Query LocalDevice instead of
+//  target-based TargetMeasurement results.
+//
 
 import SwiftUI
+import SwiftData
 
-/// Displays real-time network scanning statistics in a horizontal bar
+/// Displays real-time scan statistics in a horizontal bar
 struct QuickStatsBar: View {
+    @Environment(DeviceDiscoveryCoordinator.self) private var coordinator: DeviceDiscoveryCoordinator?
     @Environment(MonitoringSession.self) private var session: MonitoringSession?
-    @Environment(DeviceDiscoveryCoordinator.self) private var discovery: DeviceDiscoveryCoordinator?
     @Environment(\.appAccentColor) private var accentColor
     @Environment(\.compactMode) private var compactMode
 
+    @Query private var allDevices: [LocalDevice]
+
     var body: some View {
         HStack(spacing: compactMode ? 12 : 20) {
-            // Online count
+            // Online device count
             StatItem(
                 icon: "checkmark.circle.fill",
                 color: .green,
@@ -25,7 +32,7 @@ struct QuickStatsBar: View {
             Divider()
                 .frame(height: 20)
 
-            // Offline count
+            // Offline device count
             StatItem(
                 icon: "xmark.circle.fill",
                 color: .red,
@@ -36,18 +43,18 @@ struct QuickStatsBar: View {
             Divider()
                 .frame(height: 20)
 
-            // Total devices
+            // Total device count
             StatItem(
-                icon: "desktopcomputer",
+                icon: "laptopcomputer.and.iphone",
                 color: accentColor,
                 label: "Devices",
-                value: "\(totalCount)"
+                value: "\(allDevices.count)"
             )
 
             Divider()
                 .frame(height: 20)
 
-            // Last scan
+            // Last scan time
             StatItem(
                 icon: "clock.fill",
                 color: .secondary,
@@ -62,30 +69,19 @@ struct QuickStatsBar: View {
 
     // MARK: - Computed Properties
 
-    private var devices: [LocalDevice] {
-        discovery?.discoveredDevices ?? session?.discoveredDevices ?? []
-    }
-
     private var onlineCount: Int {
-        devices.filter { $0.isOnline }.count
+        allDevices.filter { $0.isOnline }.count
     }
 
     private var offlineCount: Int {
-        devices.filter { !$0.isOnline }.count
-    }
-
-    private var totalCount: Int {
-        devices.count
+        allDevices.filter { !$0.isOnline }.count
     }
 
     private var lastScanString: String {
-        let scanTime = discovery?.lastScanTime ?? session?.lastScanTime
-        guard let lastScan = scanTime else {
-            return "—"
-        }
+        let scanTime = coordinator?.lastScanTime ?? session?.lastScanTime
+        guard let scanTime else { return "—" }
 
-        let interval = Date().timeIntervalSince(lastScan)
-
+        let interval = Date().timeIntervalSince(scanTime)
         if interval < 60 {
             return "Just now"
         } else if interval < 3600 {
@@ -130,19 +126,23 @@ private struct StatItem: View {
 #Preview {
     let container = PreviewContainer().container
     let context = container.mainContext
-    let httpService = HTTPMonitorService()
-    let icmpService = ICMPMonitorService()
-    let tcpService = TCPMonitorService()
+    let coordinator = DeviceDiscoveryCoordinator(
+        modelContext: context,
+        arpScanner: ARPScannerService(),
+        bonjourScanner: BonjourDiscoveryService()
+    )
     let session = MonitoringSession(
         modelContext: context,
-        httpService: httpService,
-        icmpService: icmpService,
-        tcpService: tcpService
+        coordinator: coordinator,
+        httpService: HTTPMonitorService(),
+        icmpService: ICMPMonitorService(),
+        tcpService: TCPMonitorService()
     )
 
     return QuickStatsBar()
         .padding()
         .modelContainer(container)
         .environment(session)
+        .environment(coordinator)
 }
 #endif

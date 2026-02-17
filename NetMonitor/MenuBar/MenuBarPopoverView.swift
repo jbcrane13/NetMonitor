@@ -10,6 +10,7 @@ import SwiftData
 
 struct MenuBarPopoverView: View {
     @Bindable var session: MonitoringSession
+    @Environment(DeviceDiscoveryCoordinator.self) private var coordinator: DeviceDiscoveryCoordinator?
     let onClose: () -> Void
 
     var body: some View {
@@ -48,9 +49,15 @@ struct MenuBarPopoverView: View {
                         .fill(session.isMonitoring ? Color.green : Color.gray)
                         .frame(width: 8, height: 8)
 
-                    Text(session.isMonitoring ? "Scanning Network" : "Idle")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    if session.isMonitoring && (coordinator?.isScanning == true) {
+                        Text("Scanning…")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text(session.isMonitoring ? "Monitoring" : "Stopped")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
 
@@ -114,10 +121,13 @@ struct MenuBarPopoverView: View {
 
     // MARK: - Device List
 
-    /// Most recently seen devices for display
-    private var recentDevices: [LocalDevice] {
-        session.discoveredDevices
-            .sorted { ($0.lastSeen ?? .distantPast) > ($1.lastSeen ?? .distantPast) }
+    private var sortedDevices: [LocalDevice] {
+        (coordinator?.discoveredDevices ?? [])
+            .sorted { lhs, rhs in
+                // Online first, then by lastSeen descending
+                if lhs.isOnline != rhs.isOnline { return lhs.isOnline }
+                return lhs.lastSeen > rhs.lastSeen
+            }
             .prefix(5)
             .map { $0 }
     }
@@ -125,12 +135,12 @@ struct MenuBarPopoverView: View {
     private var deviceList: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
-                ForEach(recentDevices) { device in
+                ForEach(sortedDevices) { device in
                     deviceRow(device: device)
                 }
 
-                if session.discoveredDevices.isEmpty {
-                    Text(session.isMonitoring ? "Scanning…" : "No devices found")
+                if sortedDevices.isEmpty {
+                    Text(session.isMonitoring ? "Scanning for devices…" : "No devices discovered")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                         .padding()
@@ -144,40 +154,21 @@ struct MenuBarPopoverView: View {
     private func deviceRow(device: LocalDevice) -> some View {
         HStack {
             Circle()
-                .fill(device.isOnline ? Color.green : Color.secondary.opacity(0.5))
+                .fill(device.isOnline ? Color.green : Color.red)
                 .frame(width: 8, height: 8)
 
-            VStack(alignment: .leading, spacing: 1) {
-                Text(deviceDisplayName(device))
-                    .font(.caption)
-                    .lineLimit(1)
-                Text(device.ipAddress)
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
-                    .fontDesign(.monospaced)
-            }
+            Text(device.customName ?? device.hostname ?? device.vendor ?? device.ipAddress)
+                .font(.caption)
+                .lineLimit(1)
 
             Spacer()
 
-            if let vendor = device.vendor, !vendor.isEmpty {
-                Text(vendor)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-            } else {
-                Text(device.isOnline ? "Online" : "Offline")
-                    .font(.caption)
-                    .foregroundStyle(device.isOnline ? .green : .secondary)
-            }
+            Text(device.ipAddress)
+                .font(.caption)
+                .fontDesign(.monospaced)
+                .foregroundStyle(.secondary)
         }
         .padding(.vertical, 4)
-    }
-
-    private func deviceDisplayName(_ device: LocalDevice) -> String {
-        if let hostname = device.hostname, !hostname.isEmpty {
-            return hostname
-        }
-        return device.ipAddress
     }
 
     // MARK: - Footer
@@ -203,30 +194,40 @@ struct MenuBarPopoverView: View {
 
     // MARK: - Computed Properties
 
-    private var onlineCount: Int { session.onlineTargetCount }
-    private var offlineCount: Int { session.offlineTargetCount }
-    private var totalCount: Int { session.discoveredDevices.count }
+    private var onlineCount: Int {
+        coordinator?.discoveredDevices.filter { $0.isOnline }.count ?? 0
+    }
+
+    private var offlineCount: Int {
+        coordinator?.discoveredDevices.filter { !$0.isOnline }.count ?? 0
+    }
+
+    private var totalCount: Int {
+        coordinator?.discoveredDevices.count ?? 0
+    }
 }
 
 // MARK: - Preview
 
-#if DEBUG
 #Preview {
     let container = try! ModelContainer(
-        for: NetworkTarget.self, TargetMeasurement.self,
+        for: NetworkTarget.self, TargetMeasurement.self, LocalDevice.self,
         configurations: ModelConfiguration(isStoredInMemoryOnly: true)
     )
     let context = container.mainContext
-    let httpService = HTTPMonitorService()
-    let icmpService = ICMPMonitorService()
-    let tcpService = TCPMonitorService()
+    let coordinator = DeviceDiscoveryCoordinator(
+        modelContext: context,
+        arpScanner: ARPScannerService(),
+        bonjourScanner: BonjourDiscoveryService()
+    )
     let session = MonitoringSession(
         modelContext: context,
-        httpService: httpService,
-        icmpService: icmpService,
-        tcpService: tcpService
+        coordinator: coordinator,
+        httpService: HTTPMonitorService(),
+        icmpService: ICMPMonitorService(),
+        tcpService: TCPMonitorService()
     )
 
     return MenuBarPopoverView(session: session, onClose: {})
+        .environment(coordinator)
 }
-#endif

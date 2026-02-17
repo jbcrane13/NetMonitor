@@ -2,6 +2,11 @@ import SwiftUI
 import SwiftData
 import os
 
+/// Quick-launch bookmarks for network hosts.
+///
+/// The Targets list is no longer wired to active monitoring. Instead it acts
+/// as a curated bookmark list: selecting a target pre-fills tool inputs.
+/// Add, edit, enable/disable and delete targets here.
 struct TargetsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \NetworkTarget.name) private var targets: [NetworkTarget]
@@ -30,14 +35,14 @@ struct TargetsView: View {
         VStack {
             if targets.isEmpty {
                 ContentUnavailableView(
-                    "No Bookmarks",
+                    "No Saved Hosts",
                     systemImage: "bookmark",
-                    description: Text("Add network hosts here to quickly pre-fill them in network tools")
+                    description: Text("Add network hosts as bookmarks to quickly launch tools like Ping and Traceroute")
                 )
             } else {
                 List(selection: $selectedTarget) {
                     ForEach(sortedTargets) { target in
-                        TargetRow(target: target)
+                        TargetRow(target: target, onQuickLaunch: handleQuickLaunch)
                             .tag(target)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button {
@@ -54,17 +59,7 @@ struct TargetsView: View {
                                 .tint(target.isEnabled ? .orange : .green)
                             }
                             .contextMenu {
-                                Button {
-                                    useInTool(target)
-                                } label: {
-                                    Label("Use in Ping Tool", systemImage: "network")
-                                }
-
-                                Button {
-                                    copyAddress(target)
-                                } label: {
-                                    Label("Copy Address", systemImage: "doc.on.doc")
-                                }
+                                quickLaunchMenu(for: target)
 
                                 Divider()
 
@@ -72,7 +67,7 @@ struct TargetsView: View {
                                     targetToDelete = target
                                     showDeleteConfirmation = true
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Label("Delete Target", systemImage: "trash")
                                 }
                             }
                     }
@@ -80,11 +75,11 @@ struct TargetsView: View {
                 }
             }
         }
-        .navigationTitle("Bookmarks")
+        .navigationTitle("Targets")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { showingAddSheet = true }) {
-                    Label("Add Bookmark", systemImage: "plus")
+                    Label("Add Target", systemImage: "plus")
                 }
                 .accessibilityIdentifier("targets_button_add")
             }
@@ -118,35 +113,44 @@ struct TargetsView: View {
         .sheet(isPresented: $showingAddSheet) {
             AddTargetSheet()
         }
-        .confirmationDialog("Delete Bookmark?", isPresented: $showDeleteConfirmation, presenting: targetToDelete) { target in
+        .confirmationDialog("Delete Target?", isPresented: $showDeleteConfirmation, presenting: targetToDelete) { target in
             Button("Delete", role: .destructive) {
                 deleteTarget(target)
             }
             Button("Cancel", role: .cancel) { }
         } message: { target in
-            Text("This will permanently delete '\(target.name)'.")
+            Text("This will permanently delete '\(target.name)' and all its history.")
         }
     }
 
-    // MARK: - Actions
+    @ViewBuilder
+    private func quickLaunchMenu(for target: NetworkTarget) -> some View {
+        Button {
+            handleQuickLaunch(tool: "ping", host: target.host)
+        } label: {
+            Label("Ping \(target.host)", systemImage: "waveform.path")
+        }
 
-    private func useInTool(_ target: NetworkTarget) {
+        Button {
+            handleQuickLaunch(tool: "traceroute", host: target.host)
+        } label: {
+            Label("Traceroute to \(target.host)", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
+        }
+
+        Button {
+            handleQuickLaunch(tool: "portScanner", host: target.host)
+        } label: {
+            Label("Port Scan \(target.host)", systemImage: "network")
+        }
+    }
+
+    private func handleQuickLaunch(tool: String, host: String) {
+        UserDefaults.standard.set(host, forKey: "netmonitor.tools.launchHost")
         NotificationCenter.default.post(
-            name: .useTargetInTool,
+            name: .quickLaunchTool,
             object: nil,
-            userInfo: ["host": target.host, "port": target.port as Any, "name": target.name]
+            userInfo: ["tool": tool, "host": host]
         )
-    }
-
-    private func copyAddress(_ target: NetworkTarget) {
-        let address: String
-        if let port = target.port {
-            address = "\(target.host):\(port)"
-        } else {
-            address = target.host
-        }
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(address, forType: .string)
     }
 
     private func deleteTargets(at offsets: IndexSet) {
@@ -162,11 +166,9 @@ struct TargetsView: View {
 
     private func deleteTarget(_ target: NetworkTarget) {
         modelContext.delete(target)
-
         if selectedTarget?.id == target.id {
             selectedTarget = nil
         }
-
         do {
             try modelContext.save()
         } catch {
@@ -195,6 +197,7 @@ enum TargetSortOption: String, CaseIterable, Identifiable {
 
 struct TargetRow: View {
     @Bindable var target: NetworkTarget
+    let onQuickLaunch: (String, String) -> Void
     @Environment(\.compactMode) private var compactMode
 
     var body: some View {
@@ -211,6 +214,25 @@ struct TargetRow: View {
             Spacer()
 
             HStack(spacing: compactMode ? 8 : 12) {
+                // Quick-launch buttons
+                Button {
+                    onQuickLaunch("ping", target.host)
+                } label: {
+                    Image(systemName: "waveform.path")
+                        .imageScale(.small)
+                }
+                .buttonStyle(.borderless)
+                .help("Ping \(target.host)")
+
+                Button {
+                    onQuickLaunch("traceroute", target.host)
+                } label: {
+                    Image(systemName: "point.topleft.down.to.point.bottomright.curvepath")
+                        .imageScale(.small)
+                }
+                .buttonStyle(.borderless)
+                .help("Traceroute to \(target.host)")
+
                 Label(target.targetProtocol.rawValue, systemImage: target.targetProtocol.iconName)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -223,10 +245,10 @@ struct TargetRow: View {
     }
 }
 
-// MARK: - Notification Names
+// MARK: - Notifications
 
 extension Notification.Name {
-    static let useTargetInTool = Notification.Name("useTargetInTool")
+    static let quickLaunchTool = Notification.Name("netmonitor.quickLaunchTool")
 }
 
 #if DEBUG

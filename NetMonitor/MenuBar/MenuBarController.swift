@@ -18,13 +18,15 @@ final class MenuBarController: NSObject {
     var isVisible: Bool = false
 
     private let monitoringSession: MonitoringSession
-
-    init(monitoringSession: MonitoringSession) {
-        self.monitoringSession = monitoringSession
-    }
+    private let deviceDiscovery: DeviceDiscoveryCoordinator
 
     /// Observation task for auto-updating the icon
     private var observationTask: Task<Void, Never>?
+
+    init(monitoringSession: MonitoringSession, deviceDiscovery: DeviceDiscoveryCoordinator) {
+        self.monitoringSession = monitoringSession
+        self.deviceDiscovery = deviceDiscovery
+    }
 
     func setup() {
         // Create status item
@@ -42,26 +44,28 @@ final class MenuBarController: NSObject {
         popover?.behavior = .transient
         popover?.animates = true
 
-        // Set SwiftUI content
+        // Set SwiftUI content — inject both session and coordinator
         let contentView = MenuBarPopoverView(
             session: monitoringSession,
             onClose: { [weak self] in self?.closePopover() }
         )
+        .environment(deviceDiscovery)
+
         popover?.contentViewController = NSHostingController(rootView: contentView)
 
         // Start observing monitoring state to keep the icon updated
         startIconObservation()
     }
 
-    /// Periodically update the menu bar icon based on monitoring state
+    /// Periodically update the menu bar icon based on scanning / device state
     private func startIconObservation() {
         observationTask?.cancel()
         observationTask = Task { [weak self] in
             while !Task.isCancelled {
                 guard let self else { return }
                 let isMonitoring = self.monitoringSession.isMonitoring
-                let hasIssues = self.monitoringSession.hasOfflineDevices
-                self.updateIcon(isMonitoring: isMonitoring, hasIssues: isMonitoring && hasIssues)
+                let hasOfflineDevices = self.deviceDiscovery.discoveredDevices.contains { !$0.isOnline }
+                self.updateIcon(isMonitoring: isMonitoring, hasIssues: isMonitoring && hasOfflineDevices)
                 try? await Task.sleep(for: .seconds(2))
             }
         }
@@ -93,7 +97,7 @@ final class MenuBarController: NSObject {
         isVisible = false
     }
 
-    /// Update the status item icon based on monitoring state
+    /// Update the status item icon based on scanning state
     func updateIcon(isMonitoring: Bool, hasIssues: Bool) {
         guard let button = statusItem?.button else { return }
 
@@ -108,7 +112,6 @@ final class MenuBarController: NSObject {
 
         button.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: "NetMonitor")
 
-        // Color the icon
         if hasIssues {
             button.contentTintColor = .systemRed
         } else if isMonitoring {

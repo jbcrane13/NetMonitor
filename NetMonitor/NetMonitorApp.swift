@@ -30,15 +30,13 @@ struct NetMonitorApp: App {
     /// Check if running in UI test mode
     private var isUITesting: Bool {
         let arguments = ProcessInfo.processInfo.arguments
-        
-        // Check launch arguments
+
         if arguments.contains("--uitesting") ||
            arguments.contains("--disable-local-auth") ||
            arguments.contains("--disable-keychain-access") {
             return true
         }
-        
-        // Check environment variables (used by CI/CD and test runners)
+
         let environment = ProcessInfo.processInfo.environment
         if environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" ||
            environment["XCUITest"] == "1" ||
@@ -47,12 +45,11 @@ struct NetMonitorApp: App {
            environment["CI"] == "true" {
             return true
         }
-        
-        // Check if we're running under XCTest (unit tests or UI tests)
+
         if NSClassFromString("XCTest") != nil {
             return true
         }
-        
+
         return false
     }
 
@@ -71,7 +68,6 @@ struct NetMonitorApp: App {
                 configurations: [modelConfiguration]
             )
         } catch {
-            // Fall back to in-memory container if persistent storage fails
             Logger.app.warning("Could not create persistent ModelContainer: \(error)")
             Logger.app.warning("Falling back to in-memory storage")
 
@@ -132,38 +128,34 @@ struct NetMonitorApp: App {
     private func setupServices() async {
         let context = sharedModelContainer.mainContext
 
-        // Add startup delay for UI tests to avoid auth race conditions
         if isUITesting {
-            // Add a small delay to let any pending system authentication complete
-            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
-
-            // Configure other test-specific settings
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
             UserDefaults.standard.set(false, forKey: "autoStartMonitoring")
         }
 
-        // In UI testing mode, create minimal services for rendering but skip heavy setup
         if isUITesting {
-            let httpService = HTTPMonitorService()
-            let icmpService = ICMPMonitorService()
-            let tcpService = TCPMonitorService()
-            monitoringSession = MonitoringSession(
-                modelContext: context,
-                httpService: httpService,
-                icmpService: icmpService,
-                tcpService: tcpService
-            )
-            deviceDiscovery = DeviceDiscoveryCoordinator(
+            // Minimal setup for UI tests
+            let coordinator = DeviceDiscoveryCoordinator(
                 modelContext: context,
                 arpScanner: ARPScannerService(),
                 bonjourScanner: BonjourDiscoveryService()
             )
+            deviceDiscovery = coordinator
+
+            monitoringSession = MonitoringSession(
+                modelContext: context,
+                coordinator: coordinator,
+                httpService: HTTPMonitorService(),
+                icmpService: ICMPMonitorService(),
+                tcpService: TCPMonitorService()
+            )
             return
         }
 
-        // CRITICAL: Seed default targets FIRST, before any services that depend on targets
+        // CRITICAL: Seed default targets FIRST
         await DefaultTargetsProvider.seedIfNeeded(modelContext: context)
 
-        // Create all services first (centralized service instantiation)
+        // Create services
         let httpService = HTTPMonitorService()
         let icmpService = ICMPMonitorService()
         let tcpService = TCPMonitorService()
@@ -171,7 +163,7 @@ struct NetMonitorApp: App {
         let bonjourScanner = BonjourDiscoveryService()
         let wakeOnLanService = WakeOnLanService()
 
-        // 1. Set up device discovery FIRST — MonitoringSession depends on it
+        // 1. Set up device discovery coordinator (created first so session can reference it)
         if deviceDiscovery == nil {
             deviceDiscovery = DeviceDiscoveryCoordinator(
                 modelContext: context,
@@ -180,14 +172,14 @@ struct NetMonitorApp: App {
             )
         }
 
-        // 2. Set up monitoring session with injected services and discovery coordinator
+        // 2. Set up monitoring session, injecting the coordinator
         if monitoringSession == nil {
             monitoringSession = MonitoringSession(
                 modelContext: context,
+                coordinator: deviceDiscovery,
                 httpService: httpService,
                 icmpService: icmpService,
-                tcpService: tcpService,
-                discoveryCoordinator: deviceDiscovery
+                tcpService: tcpService
             )
         }
 
@@ -205,7 +197,6 @@ struct NetMonitorApp: App {
 
             companionService = CompanionService()
 
-            // Create a local reference that can be safely captured
             let handler = companionHandler
             do {
                 try await companionService?.start { @Sendable message, clientID in
@@ -216,17 +207,18 @@ struct NetMonitorApp: App {
             }
         }
 
-        // 4. Set up menu bar
-        if let session = monitoringSession, menuBarController == nil {
-            menuBarController = MenuBarController(monitoringSession: session)
+        // 4. Set up menu bar (needs both session and coordinator)
+        if let session = monitoringSession, let discovery = deviceDiscovery, menuBarController == nil {
+            menuBarController = MenuBarController(
+                monitoringSession: session,
+                deviceDiscovery: discovery
+            )
             menuBarController?.setup()
         }
 
-        // 5. Set up notification service and request permission (skip in UI tests)
+        // 5. Set up notification service
         if notificationService == nil {
             notificationService = NotificationService()
-
-            // Skip authorization request during UI tests to avoid auth prompts
             if !isUITesting {
                 Task {
                     _ = await notificationService?.requestAuthorization()
@@ -234,7 +226,7 @@ struct NetMonitorApp: App {
             }
         }
 
-        // 6. Auto-start monitoring if enabled in settings (skip during testing)
+        // 6. Auto-start monitoring (now means: start network scanning)
         if autoStartMonitoring && !shouldDisableMonitoring,
            let session = monitoringSession, !session.isMonitoring {
             session.startMonitoring()

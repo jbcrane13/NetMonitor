@@ -4,8 +4,10 @@ import SwiftData
 struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(MonitoringSession.self) private var session: MonitoringSession?
-    @Environment(DeviceDiscoveryCoordinator.self) private var discovery: DeviceDiscoveryCoordinator?
+    @Environment(DeviceDiscoveryCoordinator.self) private var coordinator: DeviceDiscoveryCoordinator?
     @Environment(\.compactMode) private var compactMode
+
+    @Query(sort: \LocalDevice.lastSeen, order: .reverse) private var allDevices: [LocalDevice]
 
     var body: some View {
         ScrollView {
@@ -14,7 +16,7 @@ struct DashboardView: View {
                 HStack {
                     Spacer()
 
-                    // Start/Stop Scanning Button
+                    // Start/Stop Button
                     if let session = session {
                         Button(action: {
                             if session.isMonitoring {
@@ -64,13 +66,19 @@ struct DashboardView: View {
                 ISPInfoCard()
                     .padding(.horizontal)
 
-                // Device Summary Section
-                DeviceSummarySection(
-                    devices: discovery?.discoveredDevices ?? session?.discoveredDevices ?? [],
-                    isScanning: discovery?.isScanning ?? false,
-                    lastScanTime: discovery?.lastScanTime ?? session?.lastScanTime
+                // Network Health Summary
+                NetworkHealthCard(
+                    devices: allDevices,
+                    isScanning: coordinator?.isScanning ?? false,
+                    lastScanTime: coordinator?.lastScanTime
                 )
                 .padding(.horizontal)
+
+                // Recently seen devices
+                if !allDevices.isEmpty {
+                    RecentDevicesCard(devices: Array(allDevices.prefix(8)))
+                        .padding(.horizontal)
+                }
             }
             .padding(.vertical, compactMode ? 8 : 16)
         }
@@ -78,25 +86,20 @@ struct DashboardView: View {
     }
 }
 
-// MARK: - Device Summary Section
+// MARK: - Network Health Card
 
-struct DeviceSummarySection: View {
+private struct NetworkHealthCard: View {
     let devices: [LocalDevice]
     let isScanning: Bool
     let lastScanTime: Date?
 
-    private var recentDevices: [LocalDevice] {
-        devices
-            .sorted { ($0.lastSeen ?? .distantPast) > ($1.lastSeen ?? .distantPast) }
-            .prefix(5)
-            .map { $0 }
-    }
+    private var onlineCount: Int { devices.filter { $0.isOnline }.count }
+    private var offlineCount: Int { devices.filter { !$0.isOnline }.count }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Section header
             HStack {
-                Label("Local Network", systemImage: "network")
+                Label("Network Health", systemImage: "network")
                     .font(.headline)
 
                 Spacer()
@@ -104,141 +107,125 @@ struct DeviceSummarySection: View {
                 if isScanning {
                     HStack(spacing: 6) {
                         ProgressView()
-                            .scaleEffect(0.7)
+                            .controlSize(.small)
                         Text("Scanning…")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
-                } else if let lastScan = lastScanTime {
-                    Text(lastScan, style: .relative)
+                } else if let last = lastScanTime {
+                    Text("Last scan \(last, style: .relative) ago")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                        .monospacedDigit()
+                } else {
+                    Text("No scan yet")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
 
-            if devices.isEmpty {
-                // Empty state
-                VStack(spacing: 8) {
-                    Image(systemName: "wifi.slash")
-                        .font(.title2)
-                        .foregroundStyle(.tertiary)
-                    Text(isScanning ? "Scanning network…" : "No devices found yet")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    if !isScanning {
-                        Text("Tap 'Start Scanning' to discover local devices")
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 24)
-            } else {
-                // Summary stats row
-                HStack(spacing: 0) {
-                    DeviceStatPill(
-                        count: devices.filter { $0.isOnline }.count,
-                        label: "Online",
-                        color: .green
-                    )
-                    Spacer()
-                    DeviceStatPill(
-                        count: devices.filter { !$0.isOnline }.count,
-                        label: "Offline",
-                        color: .secondary
-                    )
-                    Spacer()
-                    DeviceStatPill(
-                        count: devices.count,
-                        label: "Total",
-                        color: .blue
-                    )
-                }
-                .padding(.horizontal)
-                .padding(.vertical, 8)
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+            Divider()
 
-                // Recent devices
-                VStack(spacing: 0) {
-                    ForEach(recentDevices) { device in
-                        DeviceRowCompact(device: device)
+            HStack(spacing: 24) {
+                HealthMetric(
+                    value: "\(devices.count)",
+                    label: "Devices Found",
+                    icon: "laptopcomputer.and.iphone",
+                    color: .blue
+                )
 
-                        if device.id != recentDevices.last?.id {
-                            Divider()
-                                .padding(.leading, 40)
-                        }
-                    }
-                }
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                HealthMetric(
+                    value: "\(onlineCount)",
+                    label: "Online",
+                    icon: "checkmark.circle.fill",
+                    color: .green
+                )
 
-                if devices.count > 5 {
-                    Text("+ \(devices.count - 5) more devices — see Devices tab")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }
+                HealthMetric(
+                    value: "\(offlineCount)",
+                    label: "Offline",
+                    icon: "xmark.circle.fill",
+                    color: offlineCount > 0 ? .red : .secondary
+                )
             }
         }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
-// MARK: - Device Stat Pill
-
-private struct DeviceStatPill: View {
-    let count: Int
+private struct HealthMetric: View {
+    let value: String
     let label: String
+    let icon: String
     let color: Color
 
     var body: some View {
-        VStack(spacing: 2) {
-            Text("\(count)")
-                .font(.title2)
-                .fontWeight(.semibold)
+        HStack(spacing: 8) {
+            Image(systemName: icon)
                 .foregroundStyle(color)
-            Text(label)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+                .font(.title2)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(value)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+
+                Text(label)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }
 
-// MARK: - Compact Device Row
+// MARK: - Recent Devices Card
 
-private struct DeviceRowCompact: View {
+private struct RecentDevicesCard: View {
+    let devices: [LocalDevice]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Recent Devices", systemImage: "clock.arrow.circlepath")
+                .font(.headline)
+
+            Divider()
+
+            ForEach(devices) { device in
+                RecentDeviceRow(device: device)
+            }
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+private struct RecentDeviceRow: View {
     let device: LocalDevice
+
+    private var displayName: String {
+        device.customName ?? device.hostname ?? device.vendor ?? device.ipAddress
+    }
 
     var body: some View {
         HStack(spacing: 10) {
             Circle()
-                .fill(device.isOnline ? Color.green : Color.secondary.opacity(0.4))
-                .frame(width: 8, height: 8)
-                .padding(.leading, 12)
+                .fill(device.isOnline ? Color.green : Color.red)
+                .frame(width: 7, height: 7)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(device.displayName)
-                    .font(.callout)
-                    .lineLimit(1)
-
-                Text(device.ipAddress)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fontDesign(.monospaced)
-            }
+            Text(displayName)
+                .font(.callout)
+                .lineLimit(1)
 
             Spacer()
 
-            if let vendor = device.vendor, !vendor.isEmpty {
-                Text(vendor)
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
-            }
+            Text(device.ipAddress)
+                .font(.caption)
+                .fontDesign(.monospaced)
+                .foregroundStyle(.secondary)
         }
-        .padding(.vertical, 8)
-        .padding(.trailing, 12)
+        .padding(.vertical, 2)
     }
 }
 
@@ -248,18 +235,22 @@ private struct DeviceRowCompact: View {
 #Preview {
     let container = PreviewContainer().container
     let context = container.mainContext
-    let httpService = HTTPMonitorService()
-    let icmpService = ICMPMonitorService()
-    let tcpService = TCPMonitorService()
+    let coordinator = DeviceDiscoveryCoordinator(
+        modelContext: context,
+        arpScanner: ARPScannerService(),
+        bonjourScanner: BonjourDiscoveryService()
+    )
     let session = MonitoringSession(
         modelContext: context,
-        httpService: httpService,
-        icmpService: icmpService,
-        tcpService: tcpService
+        coordinator: coordinator,
+        httpService: HTTPMonitorService(),
+        icmpService: ICMPMonitorService(),
+        tcpService: TCPMonitorService()
     )
 
     return DashboardView()
         .modelContainer(container)
         .environment(session)
+        .environment(coordinator)
 }
 #endif
