@@ -165,7 +165,8 @@ actor TracerouteService {
                 hostname: hostname,
                 ipAddress: hopIP,
                 latencies: probeTimes,
-                isTimeout: allTimeout
+                isTimeout: allTimeout,
+                isDestination: destinationReached
             ))
 
             if destinationReached { break }
@@ -189,7 +190,8 @@ actor TracerouteService {
                 hostname: host == targetIP ? nil : host,
                 ipAddress: targetIP,
                 latencies: [rtt],
-                isTimeout: false
+                isTimeout: false,
+                isDestination: true
             ))
         case .timeout, .error:
             continuation.yield(TracerouteHop(

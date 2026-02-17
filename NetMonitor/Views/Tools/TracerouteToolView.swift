@@ -119,11 +119,18 @@ struct TracerouteToolView: View {
                     HStack(spacing: 8) {
                         Text(hop.hostname ?? hop.ipAddress ?? "unknown")
                             .font(.system(.body, design: .monospaced))
+                            .foregroundStyle(hop.isDestination ? accentColor : .primary)
 
                         if let ip = hop.ipAddress, hop.hostname != nil {
                             Text("(\(ip))")
                                 .font(.system(.caption, design: .monospaced))
                                 .foregroundStyle(.secondary)
+                        }
+
+                        if hop.isDestination {
+                            Text("← \(host)")
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundStyle(accentColor)
                         }
                     }
 
@@ -219,6 +226,7 @@ struct TracerouteHop: Identifiable, Sendable {
     var ipAddress: String?
     var latencies: [Double] = []
     var isTimeout: Bool
+    var isDestination: Bool = false
 }
 
 #Preview {
