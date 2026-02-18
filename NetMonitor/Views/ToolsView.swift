@@ -71,19 +71,30 @@ struct ToolsView: View {
         .sheet(item: $selectedTool) { tool in
             toolSheet(for: tool)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .quickLaunchTool)) { notification in
-            if let toolName = notification.userInfo?["tool"] as? String {
-                switch toolName {
-                case "ping":
-                    selectedTool = .ping
-                case "traceroute":
-                    selectedTool = .traceroute
-                case "portScanner":
-                    selectedTool = .portScanner
-                default:
-                    break
+        .onAppear {
+            // Fallback: if navigated here via quick-launch but notification was
+            // missed (ToolsView wasn't in the hierarchy yet), check UserDefaults.
+            if let pendingTool = UserDefaults.standard.string(forKey: "netmonitor.tools.pendingLaunchTool") {
+                UserDefaults.standard.removeObject(forKey: "netmonitor.tools.pendingLaunchTool")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    selectedTool = toolFromName(pendingTool)
                 }
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .quickLaunchTool)) { notification in
+            if let toolName = notification.userInfo?["tool"] as? String {
+                UserDefaults.standard.removeObject(forKey: "netmonitor.tools.pendingLaunchTool")
+                selectedTool = toolFromName(toolName)
+            }
+        }
+    }
+
+    private func toolFromName(_ name: String) -> NetworkTool? {
+        switch name {
+        case "ping": return .ping
+        case "traceroute": return .traceroute
+        case "portScanner": return .portScanner
+        default: return nil
         }
     }
 

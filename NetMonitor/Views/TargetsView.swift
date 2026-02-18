@@ -146,6 +146,7 @@ struct TargetsView: View {
 
     private func handleQuickLaunch(tool: String, host: String) {
         UserDefaults.standard.set(host, forKey: "netmonitor.tools.launchHost")
+        UserDefaults.standard.set(tool, forKey: "netmonitor.tools.pendingLaunchTool")
         NotificationCenter.default.post(
             name: .quickLaunchTool,
             object: nil,
