@@ -49,6 +49,12 @@ struct PortScannerToolView: View {
             outputArea: { outputArea },
             footerContent: { footer }
         )
+        .onAppear {
+            if let launchHost = UserDefaults.standard.string(forKey: "netmonitor.tools.launchHost"), !launchHost.isEmpty {
+                host = launchHost
+                UserDefaults.standard.removeObject(forKey: "netmonitor.tools.launchHost")
+            }
+        }
         .onDisappear {
             scanTask?.cancel()
             scanTask = nil

@@ -71,6 +71,20 @@ struct ToolsView: View {
         .sheet(item: $selectedTool) { tool in
             toolSheet(for: tool)
         }
+        .onReceive(NotificationCenter.default.publisher(for: .quickLaunchTool)) { notification in
+            if let toolName = notification.userInfo?["tool"] as? String {
+                switch toolName {
+                case "ping":
+                    selectedTool = .ping
+                case "traceroute":
+                    selectedTool = .traceroute
+                case "portScanner":
+                    selectedTool = .portScanner
+                default:
+                    break
+                }
+            }
+        }
     }
 
     @ViewBuilder

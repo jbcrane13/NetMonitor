@@ -29,6 +29,12 @@ struct TracerouteToolView: View {
             outputArea: { outputArea },
             footerContent: { footer }
         )
+        .onAppear {
+            if let launchHost = UserDefaults.standard.string(forKey: "netmonitor.tools.launchHost"), !launchHost.isEmpty {
+                host = launchHost
+                UserDefaults.standard.removeObject(forKey: "netmonitor.tools.launchHost")
+            }
+        }
         .onDisappear {
             tracerouteTask?.cancel()
             tracerouteTask = nil

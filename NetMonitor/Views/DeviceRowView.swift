@@ -35,8 +35,8 @@ struct DeviceRowView: View {
             if let vendor = device.vendor {
                 Text(vendor)
                     .font(.caption2)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
                     .background(.ultraThinMaterial)
                     .clipShape(Capsule())
             }
