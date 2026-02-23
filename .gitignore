@@ -66,3 +66,8 @@ build/
 
 # OpenCode / omc state
 .omc/
+
+# Beads issue tracker (local)
+.beads/
+beads/
+.beads/dolt/
