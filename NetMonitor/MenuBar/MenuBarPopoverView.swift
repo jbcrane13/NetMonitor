@@ -10,7 +10,6 @@ import SwiftData
 
 struct MenuBarPopoverView: View {
     @Bindable var session: MonitoringSession
-    @Environment(DeviceDiscoveryCoordinator.self) private var coordinator: DeviceDiscoveryCoordinator?
     let onClose: () -> Void
 
     var body: some View {
@@ -25,8 +24,8 @@ struct MenuBarPopoverView: View {
 
             Divider()
 
-            // Device list
-            deviceList
+            // Target status list
+            targetList
 
             Divider()
 
@@ -49,15 +48,9 @@ struct MenuBarPopoverView: View {
                         .fill(session.isMonitoring ? Color.green : Color.gray)
                         .frame(width: 8, height: 8)
 
-                    if session.isMonitoring && (coordinator?.isScanning == true) {
-                        Text("Scanning…")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text(session.isMonitoring ? "Monitoring" : "Stopped")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                    Text(session.isMonitoring ? "Monitoring" : "Stopped")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -75,7 +68,7 @@ struct MenuBarPopoverView: View {
                     .foregroundStyle(session.isMonitoring ? .red : .green)
             }
             .buttonStyle(.borderless)
-            .help(session.isMonitoring ? "Stop Scanning" : "Start Scanning")
+            .help(session.isMonitoring ? "Stop Monitoring" : "Start Monitoring")
         }
         .padding()
     }
@@ -85,20 +78,20 @@ struct MenuBarPopoverView: View {
     private var quickStats: some View {
         HStack(spacing: 16) {
             statItem(
-                value: "\(onlineCount)",
+                value: "\(onlineTargetCount)",
                 label: "Online",
                 color: .green
             )
 
             statItem(
-                value: "\(offlineCount)",
+                value: "\(offlineTargetCount)",
                 label: "Offline",
                 color: .red
             )
 
             statItem(
-                value: "\(totalCount)",
-                label: "Devices",
+                value: averageLatencyString,
+                label: "Avg Latency",
                 color: .blue
             )
         }
@@ -119,28 +112,29 @@ struct MenuBarPopoverView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Device List
+    // MARK: - Target List
 
-    private var sortedDevices: [LocalDevice] {
-        (coordinator?.discoveredDevices ?? [])
+    /// Sorted measurement entries for stable display order (by target name, then host)
+    private var sortedEntries: [(id: UUID, measurement: TargetMeasurement)] {
+        session.latestResults
             .sorted { lhs, rhs in
-                // Online first, then by lastSeen descending
-                if lhs.isOnline != rhs.isOnline { return lhs.isOnline }
-                return lhs.lastSeen > rhs.lastSeen
+                let lName = lhs.value.target?.name ?? lhs.value.target?.host ?? ""
+                let rName = rhs.value.target?.name ?? rhs.value.target?.host ?? ""
+                return lName.localizedCaseInsensitiveCompare(rName) == .orderedAscending
             }
             .prefix(5)
-            .map { $0 }
+            .map { (id: $0.key, measurement: $0.value) }
     }
 
-    private var deviceList: some View {
+    private var targetList: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
-                ForEach(sortedDevices) { device in
-                    deviceRow(device: device)
+                ForEach(sortedEntries, id: \.id) { entry in
+                    targetRow(measurement: entry.measurement)
                 }
 
-                if sortedDevices.isEmpty {
-                    Text(session.isMonitoring ? "Scanning for devices…" : "No devices discovered")
+                if session.latestResults.isEmpty {
+                    Text("No targets configured")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                         .padding()
@@ -151,22 +145,39 @@ struct MenuBarPopoverView: View {
         .frame(maxHeight: 200)
     }
 
-    private func deviceRow(device: LocalDevice) -> some View {
+    /// Display name for a measurement: prefer target name, fall back to host
+    private func displayName(for measurement: TargetMeasurement) -> String {
+        if let name = measurement.target?.name, !name.isEmpty {
+            return name
+        }
+        if let host = measurement.target?.host, !host.isEmpty {
+            return host
+        }
+        return "Unknown"
+    }
+
+    private func targetRow(measurement: TargetMeasurement) -> some View {
         HStack {
             Circle()
-                .fill(device.isOnline ? Color.green : Color.red)
+                .fill(measurement.isReachable ? Color.green : Color.red)
                 .frame(width: 8, height: 8)
 
-            Text(device.customName ?? device.hostname ?? device.vendor ?? device.ipAddress)
+            Text(displayName(for: measurement))
                 .font(.caption)
                 .lineLimit(1)
 
             Spacer()
 
-            Text(device.ipAddress)
-                .font(.caption)
-                .fontDesign(.monospaced)
-                .foregroundStyle(.secondary)
+            if measurement.isReachable, let latency = measurement.latency {
+                Text("\(Int(latency))ms")
+                    .font(.caption)
+                    .fontDesign(.monospaced)
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("Offline")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
         }
         .padding(.vertical, 4)
     }
@@ -176,7 +187,10 @@ struct MenuBarPopoverView: View {
     private var footer: some View {
         HStack {
             Button("Open NetMonitor") {
-                WindowOpener.shared.openMainWindow()
+                NSApp.activate(ignoringOtherApps: true)
+                if let window = NSApp.windows.first(where: { $0.title.contains("NetMonitor") || $0.isMainWindow }) {
+                    window.makeKeyAndOrderFront(nil)
+                }
                 onClose()
             }
             .buttonStyle(.borderless)
@@ -192,42 +206,30 @@ struct MenuBarPopoverView: View {
         .padding()
     }
 
-    // MARK: - Computed Properties
+    // MARK: - Computed Properties (delegated to MonitoringSession for testability)
 
-    private var onlineCount: Int {
-        coordinator?.discoveredDevices.filter { $0.isOnline }.count ?? 0
-    }
-
-    private var offlineCount: Int {
-        coordinator?.discoveredDevices.filter { !$0.isOnline }.count ?? 0
-    }
-
-    private var totalCount: Int {
-        coordinator?.discoveredDevices.count ?? 0
-    }
+    private var onlineTargetCount: Int { session.onlineTargetCount }
+    private var offlineTargetCount: Int { session.offlineTargetCount }
+    private var averageLatencyString: String { session.averageLatencyString }
 }
 
 // MARK: - Preview
 
 #Preview {
     let container = try! ModelContainer(
-        for: NetworkTarget.self, TargetMeasurement.self, LocalDevice.self,
+        for: NetworkTarget.self, TargetMeasurement.self,
         configurations: ModelConfiguration(isStoredInMemoryOnly: true)
     )
     let context = container.mainContext
-    let coordinator = DeviceDiscoveryCoordinator(
-        modelContext: context,
-        arpScanner: ARPScannerService(),
-        bonjourScanner: BonjourDiscoveryService()
-    )
+    let httpService = HTTPMonitorService()
+    let icmpService = ICMPMonitorService()
+    let tcpService = TCPMonitorService()
     let session = MonitoringSession(
         modelContext: context,
-        coordinator: coordinator,
-        httpService: HTTPMonitorService(),
-        icmpService: ICMPMonitorService(),
-        tcpService: TCPMonitorService()
+        httpService: httpService,
+        icmpService: icmpService,
+        tcpService: tcpService
     )
-
+    
     return MenuBarPopoverView(session: session, onClose: {})
-        .environment(coordinator)
 }
